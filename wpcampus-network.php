@@ -187,8 +187,13 @@ class WPCampus_Network {
 
 		// Only allow from WPCampus domains.
 		$origin = get_http_origin();
-		if ( $origin && preg_match( '/([^\.]\.)?wpcampus\.org/i', $origin ) ) {
-			header( 'Access-Control-Allow-Origin: ' . esc_url_raw( $origin ) );
+		if ( $origin ) {
+
+			// Only allow from production or Pantheon domains.
+			if ( preg_match( '/([^\.]\.)?wpcampus\.org/i', $origin )
+				|| preg_match( '/[^\-\.]+\-wpcampus\.pantheonsite\.io/i', $origin ) ) {
+				header( 'Access-Control-Allow-Origin: ' . esc_url_raw( $origin ) );
+			}
 		}
 
 		header( 'Access-Control-Allow-Methods: GET' );
