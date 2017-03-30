@@ -1,18 +1,20 @@
 // Require all the things (that we need)
-var gulp = require('gulp');
-var watch = require('gulp-watch');
-var sass = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
+var gulp = require('gulp');
+var phpcs = require('gulp-phpcs');
+var sass = require('gulp-sass');
+var watch = require('gulp-watch');
 
 // Define the source paths for each file type
 var src = {
-    scss: './assets/scss/**/*'
+    scss: './assets/scss/**/*',
+	php: ['**/*.php','!vendor/**','!node_modules/**']
 };
 
 // Define the destination paths for each file type
 var dest = {
 	scss: './assets/css'
-}
+};
 
 // Sass is pretty awesome, right?
 gulp.task('sass', function() {
@@ -28,10 +30,24 @@ gulp.task('sass', function() {
 		.pipe(gulp.dest(dest.scss));
 });
 
+// Check our PHP
+gulp.task('php',function() {
+	gulp.src(src.php)
+		.pipe(phpcs({
+			bin: 'vendor/bin/phpcs',
+			standard: 'WordPress-Core'
+		}))
+		.pipe(phpcs.reporter('log'));
+});
+
 // I've got my eyes on you(r file changes)
 gulp.task('watch', function() {
 	gulp.watch(src.scss, ['sass']);
+	gulp.watch(src.php,['php']);
 });
 
+// Test our files.
+gulp.task('test',['php']);
+
 // Let's get this party started
-gulp.task('default', ['sass','watch']);
+gulp.task('default', ['sass','test','watch']);

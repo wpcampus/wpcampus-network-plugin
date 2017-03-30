@@ -1,9 +1,8 @@
 <?php
-
 /**
  * Plugin Name:       WPCampus Network
  * Plugin URI:        https://wpcampus.org
- * Description:       Holds network-wide functionality for the WPCampus network of sites.
+ * Description:       Handles network-wide functionality for the WPCampus network of sites.
  * Version:           1.0.0
  * Author:            WPCampus
  * Author URI:        https://wpcampus.org
@@ -42,8 +41,8 @@ class WPCampus_Network {
 	 */
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {
-			$className = __CLASS__;
-			self::$instance = new $className;
+			$class_name = __CLASS__;
+			self::$instance = new $class_name;
 		}
 		return self::$instance;
 	}
@@ -72,6 +71,12 @@ class WPCampus_Network {
 
 		// Hide Query Monitor if admin bar isn't showing.
 		add_filter( 'qm/process', array( $this, 'hide_query_monitor' ), 10, 2 );
+
+		// Removes default REST API functionality.
+		add_action( 'rest_api_init', array( $this, 'init_rest_api' ) );
+
+		// Add custom CORS headers for the REST API.
+		add_filter( 'rest_pre_serve_request', array( $this, 'add_rest_cors_headers' ) );
 
 	}
 
@@ -154,6 +159,44 @@ class WPCampus_Network {
 		return $is_admin_bar_showing;
 	}
 
+	/**
+	 * Fires when preparing to serve an API request.
+	 *
+	 * @since   1.0.0
+	 * @access  public
+	 * @param   $wp_rest_server - WP_REST_Server - Server object.
+	 */
+	public function init_rest_api( $wp_rest_server ) {
+
+		// Remove the default headers so we can add our own.
+		remove_filter( 'rest_pre_serve_request', 'rest_send_cors_headers' );
+
+	}
+
+	/**
+	 * Filters whether the request has already been served.
+	 *
+	 * We use this hook to add custom CORS headers.
+	 *
+	 * @since   1.0.0
+	 * @access  public
+	 * @param   $value - bool - Whether the request has already been served. Default false.
+	 * @return  bool - the filtered value
+	 */
+	public function add_rest_cors_headers( $value ) {
+
+		// Only allow from WPCampus domains.
+		$origin = get_http_origin();
+		if ( $origin && preg_match( '/([^\.]\.)?wpcampus\.org/i', $origin ) ) {
+			header( 'Access-Control-Allow-Origin: ' . esc_url_raw( $origin ) );
+		}
+
+		header( 'Access-Control-Allow-Methods: GET' );
+		header( 'Access-Control-Allow-Credentials: true' );
+
+		return $value;
+	}
+
 }
 
 /**
@@ -169,5 +212,5 @@ function wpcampus_network() {
 	return WPCampus_Network::instance();
 }
 
-// Let's get this show on the road
+// Let's get this show on the road.
 wpcampus_network();
