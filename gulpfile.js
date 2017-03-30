@@ -49,5 +49,8 @@ gulp.task('watch', function() {
 // Test our files.
 gulp.task('test',['php']);
 
+// Compile our assets.
+gulp.task('compile',['sass']);
+
 // Let's get this party started
-gulp.task('default', ['sass','test','watch']);
+gulp.task('default', ['compile','test']);
