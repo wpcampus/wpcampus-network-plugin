@@ -1,6 +1,7 @@
 // Require all the things (that we need)
 var autoprefixer = require('gulp-autoprefixer');
 var gulp = require('gulp');
+var minify = require('gulp-minify');
 var phpcs = require('gulp-phpcs');
 var sass = require('gulp-sass');
 var watch = require('gulp-watch');
@@ -8,12 +9,14 @@ var watch = require('gulp-watch');
 // Define the source paths for each file type
 var src = {
     scss: './assets/scss/**/*',
+	js: ['assets/js/**/*','!assets/js/*.min.js'],
 	php: ['**/*.php','!vendor/**','!node_modules/**']
 };
 
 // Define the destination paths for each file type
 var dest = {
-	scss: './assets/css'
+	scss: './assets/css',
+	js: 'assets/js'
 };
 
 // Sass is pretty awesome, right?
@@ -30,6 +33,20 @@ gulp.task('sass', function() {
 		.pipe(gulp.dest(dest.scss));
 });
 
+// We don't need this... yet
+gulp.task('js',function() {
+	gulp.src('./node_modules/mustache/mustache.min.js')
+		.pipe(gulp.dest('assets/js'));
+	gulp.src(src.js)
+		.pipe(minify({
+			mangle: false,
+			ext:{
+				min:'.min.js'
+			}
+		}))
+		.pipe(gulp.dest(dest.js))
+});
+
 // Check our PHP
 gulp.task('php',function() {
 	gulp.src(src.php)
@@ -43,6 +60,7 @@ gulp.task('php',function() {
 // I've got my eyes on you(r file changes)
 gulp.task('watch', function() {
 	gulp.watch(src.scss, ['sass']);
+	gulp.watch(src.js,['js']);
 	gulp.watch(src.php,['php']);
 });
 
@@ -50,7 +68,7 @@ gulp.task('watch', function() {
 gulp.task('test',['php']);
 
 // Compile our assets.
-gulp.task('compile',['sass']);
+gulp.task('compile',['sass','js']);
 
 // Let's get this party started
 gulp.task('default', ['compile','test']);

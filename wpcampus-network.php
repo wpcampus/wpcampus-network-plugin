@@ -24,10 +24,20 @@ if ( ! defined( 'WPINC' ) ) {
 class WPCampus_Network {
 
 	/**
+	 * Holds the absolute URL to
+	 * the main plugin directory.
+	 *
+	 * @since   1.0.0
+	 * @access  public
+	 * @var     string
+	 */
+	public $plugin_url;
+
+	/**
 	 * Holds the class instance.
 	 *
-	 * @access	private
 	 * @since   1.0.0
+	 * @access	private
 	 * @var		WPCampus_Network
 	 */
 	private static $instance;
@@ -35,8 +45,8 @@ class WPCampus_Network {
 	/**
 	 * Returns the instance of this class.
 	 *
-	 * @access  public
 	 * @since   1.0.0
+	 * @access  public
 	 * @return	WPCampus_Network
 	 */
 	public static function instance() {
@@ -53,6 +63,9 @@ class WPCampus_Network {
 	 * @since   1.0.0
 	 */
 	protected function __construct() {
+
+		// Store the plugin URL.
+		$this->plugin_url = plugin_dir_url( __FILE__ );
 
 		// Load our text domain.
 		add_action( 'init', array( $this, 'textdomain' ) );
@@ -78,13 +91,16 @@ class WPCampus_Network {
 		// Add custom CORS headers for the REST API.
 		add_filter( 'rest_pre_serve_request', array( $this, 'add_rest_cors_headers' ) );
 
+		// Enqueue front-end scripts.
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+
 	}
 
 	/**
 	 * Method to keep our instance from being cloned.
 	 *
-	 * @access	private
 	 * @since   1.0.0
+	 * @access	private
 	 * @return	void
 	 */
 	private function __clone() {}
@@ -92,8 +108,8 @@ class WPCampus_Network {
 	/**
 	 * Method to keep our instance from being unserialized.
 	 *
-	 * @access	private
 	 * @since   1.0.0
+	 * @access	private
 	 * @return	void
 	 */
 	private function __wakeup() {}
@@ -101,16 +117,16 @@ class WPCampus_Network {
 	/**
 	 * Runs when the plugin is installed.
 	 *
-	 * @access  public
 	 * @since   1.0.0
+	 * @access  public
 	 */
 	public function install() {}
 
 	/**
 	 * Runs when the plugin is upgraded.
 	 *
-	 * @access  public
 	 * @since   1.0.0
+	 * @access  public
 	 */
 	public function upgrader_process_complete( $upgrader, $upgrade_info ) {}
 
@@ -118,8 +134,8 @@ class WPCampus_Network {
 	 * Internationalization FTW.
 	 * Load our text domain.
 	 *
-	 * @access  public
 	 * @since   1.0.0
+	 * @access  public
 	 */
 	public function textdomain() {
 		load_plugin_textdomain( 'wpcampus-network', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
@@ -129,8 +145,8 @@ class WPCampus_Network {
 	 * Change the login logo URL to point
 	 * to the site's home page.
 	 *
-	 * @access  public
 	 * @since   1.0.0
+	 * @access  public
 	 */
 	public function change_login_header_url( $login_header_url ) {
 		return get_bloginfo( 'url' );
@@ -139,8 +155,8 @@ class WPCampus_Network {
 	/**
 	 * Add login stylesheet.
 	 *
-	 * @access  public
 	 * @since   1.0.0
+	 * @access  public
 	 */
 	public function enqueue_login_styles() {
 
@@ -152,8 +168,8 @@ class WPCampus_Network {
 	/**
 	 * Hide Query Monitor if admin bar isn't showing.
 	 *
-	 * @access  public
 	 * @since   1.0.0
+	 * @access  public
 	 */
 	public function hide_query_monitor( $show_qm, $is_admin_bar_showing ) {
 		return $is_admin_bar_showing;
@@ -200,6 +216,26 @@ class WPCampus_Network {
 		header( 'Access-Control-Allow-Credentials: true' );
 
 		return $value;
+	}
+
+	/**
+	 * Enqueue our front-end scripts.
+	 *
+	 * @since   1.0.0
+	 * @access  public
+	 * @return  void
+	 */
+	public function enqueue_scripts() {
+
+		// Define the JS directory.
+		$js_dir = trailingslashit( $this->plugin_url . 'assets/js' );
+
+		// Register mustache - goes in footer.
+		wp_register_script( 'mustache', $js_dir . 'mustache.min.js', array(), null, true );
+
+		// Enqueue the notifications script - goes in footer.
+		wp_enqueue_script( 'wpcampus-notifications', $js_dir . 'wpcampus-notifications.min.js', array( 'jquery', 'mustache' ), null, true );
+
 	}
 
 }
