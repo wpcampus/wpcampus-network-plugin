@@ -1,6 +1,12 @@
 (function( $ ) {
 	'use strict';
 
+	// Make sure the template exists.
+	var template_id = 'wpc-notification-template';
+	if ( ! $( '#' + template_id ).length ) {
+		return;
+	}
+
 	// Process the notifications.
 	$.get( 'https://wpcampus.org/wp-json/wp/v2/notifications?per_page=1' ).done(function( data ) {
 
@@ -10,7 +16,7 @@
 		 * It is up to each theme to
 		 * provide this template.
 		 */
-		var template = $( '#wpc-notification-template' ).html();
+		var template = $( '#' + template_id ).html();
 		Mustache.parse( template );
 
 		// Render the template.
