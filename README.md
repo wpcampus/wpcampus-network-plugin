@@ -1,6 +1,6 @@
 # WPCampus Network - WordPress Plugin
 
-This plugin powers network-wide functionality for the WPCampus websites at [https://wpcampus.org](https://wpcampus.org).
+WordPress plugin that manages network-wide functionality for the WPCampus websites at [https://wpcampus.org](https://wpcampus.org).
 
 ## Disclaimer
 
