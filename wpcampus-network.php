@@ -17,11 +17,24 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+// Load the files
+require_once wpcampus_network()->plugin_dir . 'inc/wpcampus-forms.php';
+
 /**
  * Class WPCampus_Network
  * @since   1.0.0
  */
 class WPCampus_Network {
+
+	/**
+	 * Holds the directory path
+	 * to the main plugin directory.
+	 *
+	 * @since   1.0.0
+	 * @access  public
+	 * @var     string
+	 */
+	public $plugin_dir;
 
 	/**
 	 * Holds the absolute URL to
@@ -64,17 +77,12 @@ class WPCampus_Network {
 	 */
 	protected function __construct() {
 
-		// Store the plugin URL.
+		// Store the plugin DIR and URL.
+		$this->plugin_dir = plugin_dir_path( __FILE__ );
 		$this->plugin_url = plugin_dir_url( __FILE__ );
 
 		// Load our text domain.
 		add_action( 'init', array( $this, 'textdomain' ) );
-
-		// Runs on install.
-		register_activation_hook( __FILE__, array( $this, 'install' ) );
-
-		// Runs when the plugin is upgraded.
-		add_action( 'upgrader_process_complete', array( $this, 'upgrader_process_complete' ), 1, 2 );
 
 		// Change the login logo URL.
 		add_filter( 'login_headerurl', array( $this, 'change_login_header_url' ) );
@@ -97,38 +105,15 @@ class WPCampus_Network {
 	}
 
 	/**
-	 * Method to keep our instance from being cloned.
+	 * Method to keep our instance from
+	 * being cloned or unserialized.
 	 *
-	 * @since   1.0.0
 	 * @access	private
+	 * @since	1.0.0
 	 * @return	void
 	 */
 	private function __clone() {}
-
-	/**
-	 * Method to keep our instance from being unserialized.
-	 *
-	 * @since   1.0.0
-	 * @access	private
-	 * @return	void
-	 */
 	private function __wakeup() {}
-
-	/**
-	 * Runs when the plugin is installed.
-	 *
-	 * @since   1.0.0
-	 * @access  public
-	 */
-	public function install() {}
-
-	/**
-	 * Runs when the plugin is upgraded.
-	 *
-	 * @since   1.0.0
-	 * @access  public
-	 */
-	public function upgrader_process_complete( $upgrader, $upgrade_info ) {}
 
 	/**
 	 * Internationalization FTW.

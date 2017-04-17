@@ -33,7 +33,7 @@ gulp.task('sass', function() {
 		.pipe(gulp.dest(dest.scss));
 });
 
-// We don't need this... yet
+// Compile the JS.
 gulp.task('js',function() {
 	gulp.src('./node_modules/mustache/mustache.min.js')
 		.pipe(gulp.dest('assets/js'));
