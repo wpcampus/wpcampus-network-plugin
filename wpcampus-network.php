@@ -102,6 +102,9 @@ class WPCampus_Network {
 		// Enqueue front-end scripts.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
+		// Customize the arguments for the multi author post author dropdown.
+		add_filter( 'my_multi_author_post_author_dropdown_args', array( $this, 'filter_multi_author_primary_dropdown_args' ), 10, 2 );
+
 	}
 
 	/**
@@ -223,6 +226,24 @@ class WPCampus_Network {
 
 	}
 
+	/**
+	 * Customize the dropdown args for the multi author
+	 * post author dropdown so we can get all members.
+	 *
+	 * @access  public
+	 * @param   $args - array - the default arguments.
+	 * @param   $post - object - the post object.
+	 * @return  array - the filtered arguments.
+	 */
+	public function filter_multi_author_primary_dropdown_args( $args, $post ) {
+
+		// Remove the "who" so any user can be assigned as a post author.
+		if ( isset( $args['who'] ) ) {
+			unset( $args['who'] );
+		}
+
+		return $args;
+	}
 }
 
 /**
