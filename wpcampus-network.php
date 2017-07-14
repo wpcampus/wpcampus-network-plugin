@@ -195,7 +195,7 @@ class WPCampus_Network {
 
 			// Only allow from production or Pantheon domains.
 			if ( preg_match( '/([^\.]\.)?wpcampus\.org/i', $origin )
-				|| preg_match( '/[^\-\.]+\-wpcampus\.pantheonsite\.io/i', $origin ) ) {
+				|| preg_match( '/([^\-\.]+\-)wpcampus\.pantheonsite\.io/i', $origin ) ) {
 				header( 'Access-Control-Allow-Origin: ' . esc_url_raw( $origin ) );
 			}
 		}
