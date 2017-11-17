@@ -96,8 +96,8 @@ class WPCampus_Network {
 		// Removes default REST API functionality.
 		add_action( 'rest_api_init', array( $this, 'init_rest_api' ) );
 
-		// Add custom CORS headers for the REST API.
-		add_filter( 'rest_pre_serve_request', array( $this, 'add_rest_cors_headers' ) );
+		// Add custom headers for the REST API.
+		add_filter( 'rest_pre_serve_request', array( $this, 'add_rest_headers' ) );
 
 		// Enqueue front-end scripts.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
@@ -180,14 +180,15 @@ class WPCampus_Network {
 	/**
 	 * Filters whether the request has already been served.
 	 *
-	 * We use this hook to add custom CORS headers.
+	 * We use this hook to add custom CORS headers
+	 * and to disable the cache.
 	 *
 	 * @since   1.0.0
 	 * @access  public
 	 * @param   $value - bool - Whether the request has already been served. Default false.
 	 * @return  bool - the filtered value
 	 */
-	public function add_rest_cors_headers( $value ) {
+	public function add_rest_headers( $value ) {
 
 		// Only allow from WPCampus domains.
 		$origin = get_http_origin();
@@ -202,6 +203,9 @@ class WPCampus_Network {
 
 		header( 'Access-Control-Allow-Methods: GET' );
 		header( 'Access-Control-Allow-Credentials: true' );
+
+		// Disable the cache.
+		header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
 
 		return $value;
 	}
