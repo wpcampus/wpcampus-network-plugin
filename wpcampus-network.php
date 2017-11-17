@@ -8,7 +8,7 @@
  * Author URI:        https://wpcampus.org
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       wpcampus-network
+ * Text Domain:       wpcampus
  * Domain Path:       /languages
  */
 
@@ -126,7 +126,7 @@ class WPCampus_Network {
 	 * @access  public
 	 */
 	public function textdomain() {
-		load_plugin_textdomain( 'wpcampus-network', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+		load_plugin_textdomain( 'wpcampus', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 	}
 
 	/**
