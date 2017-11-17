@@ -44,6 +44,15 @@ class WPCampus_Network {
 	public $plugin_url;
 
 	/**
+	 * Whether or not we want
+	 * to print the network banner.
+	 *
+	 * @access  private
+	 * @var     string
+	 */
+	private $enable_network_banner;
+
+	/**
 	 * Holds the class instance.
 	 *
 	 * @access  private
@@ -205,6 +214,7 @@ class WPCampus_Network {
 	public function enqueue_scripts() {
 
 		// Define the JS directory.
+		$css_dir = trailingslashit( $this->plugin_url . 'assets/css' );
 		$js_dir = trailingslashit( $this->plugin_url . 'assets/js' );
 
 		// Register mustache - goes in footer.
@@ -213,6 +223,10 @@ class WPCampus_Network {
 		// Enqueue the notifications script - goes in footer.
 		wp_enqueue_script( 'wpcampus-notifications', $js_dir . 'wpcampus-notifications.min.js', array( 'jquery', 'mustache' ), null, true );
 
+		// Enqueue the network banner styles.
+		if ( $this->enable_network_banner ) {
+			wp_enqueue_style( 'wpcampus-network-banner', $css_dir . 'wpcampus-network-banner.min.css', array(), null );
+		}
 	}
 
 	/**
@@ -233,6 +247,54 @@ class WPCampus_Network {
 
 		return $args;
 	}
+
+	/**
+	 * Enable and disable the network banner.
+	 *
+	 * We need this to know whether or not to enqueue styles.
+	 *
+	 * @access  public
+	 * @return  void
+	 */
+	public function enable_network_banner() {
+		$this->enable_network_banner = true;
+	}
+	public function disable_network_banner() {
+		$this->enable_network_banner = false;
+	}
+
+	/**
+	 * Get the network banner markup.
+	 *
+	 * @access  public
+	 * @return  string|HTML - the markup.
+	 */
+	public function get_network_banner() {
+
+		// Make sure it's enabled.
+		if ( ! $this->enable_network_banner ) {
+			return;
+		}
+
+		// Build the banner.
+		$banner = '<div id="wpcampus-network-banner" role="navigation">
+			<div class="container">
+				<p>' . sprintf( __( '%1$s: Where %2$s Meets Higher Education' ), 'WPCampus', 'WordPress' ) . '</p>
+			</div>
+		</div>';
+
+		return $banner;
+	}
+
+	/**
+	 * Print the network banner markup.
+	 *
+	 * @access  public
+	 * @return  void
+	 */
+	public function print_network_banner() {
+		echo $this->get_network_banner();
+	}
 }
 
 /**
@@ -250,3 +312,19 @@ function wpcampus_network() {
 
 // Let's get this show on the road.
 wpcampus_network();
+
+/**
+ * Interact with the banner.
+ */
+function wpcampus_enable_network_banner() {
+	return wpcampus_network()->enable_network_banner();
+}
+function wpcampus_disable_network_banner() {
+	return wpcampus_network()->disable_network_banner();
+}
+function wpcampus_get_network_banner() {
+	return wpcampus_network()->get_network_banner();
+}
+function wpcampus_print_network_banner() {
+	wpcampus_network()->print_network_banner();
+}
