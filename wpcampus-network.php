@@ -149,7 +149,7 @@ class WPCampus_Network {
 	public function enqueue_login_styles() {
 
 		// Add our login stylesheet
-		wp_enqueue_style( 'wpc-network-login', trailingslashit( plugin_dir_url( __FILE__ ) . 'assets/css' ) . 'login.css' );
+		wp_enqueue_style( 'wpc-network-login', trailingslashit( plugin_dir_url( __FILE__ ) . 'assets/css' ) . 'login.min.css' );
 
 	}
 

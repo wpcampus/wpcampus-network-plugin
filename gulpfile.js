@@ -1,39 +1,48 @@
-// Require all the things (that we need)
-var autoprefixer = require('gulp-autoprefixer');
-var gulp = require('gulp');
-var minify = require('gulp-minify');
-var phpcs = require('gulp-phpcs');
-var sass = require('gulp-sass');
-var watch = require('gulp-watch');
+const autoprefixer = require('gulp-autoprefixer');
+const cleanCSS = require('gulp-clean-css');
+const gulp = require('gulp');
+const mergeMediaQueries = require('gulp-merge-media-queries');
+const minify = require('gulp-minify');
+const notify = require('gulp-notify');
+const rename = require('gulp-rename');
+const sass = require('gulp-sass');
+const shell = require('gulp-shell');
 
-// Define the source paths for each file type
-var src = {
-    scss: './assets/scss/**/*',
+// Define the source paths for each file type.
+const src = {
 	js: ['assets/js/**/*','!assets/js/*.min.js'],
-	php: ['**/*.php','!vendor/**','!node_modules/**']
+	php: ['**/*.php','!vendor/**','!node_modules/**'],
+    sass: ['assets/sass/**/*']
 };
 
-// Define the destination paths for each file type
-var dest = {
-	scss: './assets/css',
-	js: 'assets/js'
+// Define the destination paths for each file type.
+const dest = {
+	js: 'assets/js',
+	sass: 'assets/css'
 };
 
-// Sass is pretty awesome, right?
+// Take care of SASS.
 gulp.task('sass', function() {
-    return gulp.src(src.scss)
-        .pipe(sass({
-			outputStyle: 'compressed'
-		})
-		.on('error', sass.logError))
-        .pipe(autoprefixer({
-        	browsers: ['last 2 versions'],
+	return gulp.src(src.sass)
+		.pipe(sass({
+			outputStyle: 'expanded' //nested, expanded, compact, compressed
+		}).on('error', sass.logError))
+		.pipe(mergeMediaQueries())
+		.pipe(autoprefixer({
+			browsers: ['last 2 versions'],
 			cascade: false
 		}))
-		.pipe(gulp.dest(dest.scss));
+		.pipe(cleanCSS({
+			compatibility: 'ie8'
+		}))
+		.pipe(rename({
+			suffix: '.min'
+		}))
+		.pipe(gulp.dest(dest.sass))
+		.pipe(notify('WPC Online SASS compiled'));
 });
 
-// Compile the JS.
+// Take care of JS.
 gulp.task('js',function() {
 	gulp.src('./node_modules/mustache/mustache.min.js')
 		.pipe(gulp.dest('assets/js'));
@@ -45,23 +54,21 @@ gulp.task('js',function() {
 			}
 		}))
 		.pipe(gulp.dest(dest.js))
+		.pipe(notify('WPC Online JS compiled'));
 });
 
-// Check our PHP
-gulp.task('php',function() {
-	gulp.src(src.php)
-		.pipe(phpcs({
-			bin: 'vendor/bin/phpcs',
-			standard: 'WordPress-Core'
+// "Sniff" our PHP.
+gulp.task('php', function() {
+	// TODO: Clean up. Want to run command and show notify for sniff errors.
+	return gulp.src('index.php', {read: false})
+		.pipe(shell(['composer sniff'], {
+			ignoreErrors: true,
+			verbose: false
 		}))
-		.pipe(phpcs.reporter('log'));
-});
-
-// I've got my eyes on you(r file changes)
-gulp.task('watch', function() {
-	gulp.watch(src.scss, ['sass']);
-	gulp.watch(src.js,['js']);
-	gulp.watch(src.php,['php']);
+		.pipe(notify('WPC Online PHP sniffed'), {
+			onLast: true,
+			emitError: true
+		});
 });
 
 // Test our files.
@@ -70,5 +77,12 @@ gulp.task('test',['php']);
 // Compile our assets.
 gulp.task('compile',['sass','js']);
 
-// Let's get this party started
-gulp.task('default', ['compile','test']);
+// I've got my eyes on you(r file changes).
+gulp.task('watch',function() {
+	gulp.watch(src.sass, ['sass']);
+	gulp.watch(src.js,['js']);
+	gulp.watch(src.php,['php']);
+});
+
+// Let's get this party started.
+gulp.task('default',['compile','test']);
