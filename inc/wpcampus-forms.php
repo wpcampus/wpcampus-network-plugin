@@ -32,6 +32,9 @@ class WPCampus_Forms {
 	 */
 	protected function __construct() {
 
+		// Always use the form anchor in the <form> action.
+		add_filter( 'gform_confirmation_anchor', array( $this, 'filter_use_confirmation_anchor' ), 100, 2 );
+
 		// Filter field values.
 		add_filter( 'gform_field_value', array( $this, 'filter_field_value' ), 10, 3 );
 
@@ -46,6 +49,13 @@ class WPCampus_Forms {
 	 */
 	private function __clone() {}
 	private function __wakeup() {}
+
+	/**
+	 *
+	 */
+	public function filter_use_confirmation_anchor( $default_anchor, $form ) {
+		return true;
+	}
 
 	/**
 	 * Get post created from entry.
