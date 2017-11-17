@@ -22,7 +22,6 @@ require_once wpcampus_network()->plugin_dir . 'inc/wpcampus-forms.php';
 
 /**
  * Class WPCampus_Network
- * @since   1.0.0
  */
 class WPCampus_Network {
 
@@ -30,7 +29,6 @@ class WPCampus_Network {
 	 * Holds the directory path
 	 * to the main plugin directory.
 	 *
-	 * @since   1.0.0
 	 * @access  public
 	 * @var     string
 	 */
@@ -40,7 +38,6 @@ class WPCampus_Network {
 	 * Holds the absolute URL to
 	 * the main plugin directory.
 	 *
-	 * @since   1.0.0
 	 * @access  public
 	 * @var     string
 	 */
@@ -49,18 +46,16 @@ class WPCampus_Network {
 	/**
 	 * Holds the class instance.
 	 *
-	 * @since   1.0.0
-	 * @access	private
-	 * @var		WPCampus_Network
+	 * @access  private
+	 * @var     WPCampus_Network
 	 */
 	private static $instance;
 
 	/**
 	 * Returns the instance of this class.
 	 *
-	 * @since   1.0.0
 	 * @access  public
-	 * @return	WPCampus_Network
+	 * @return  WPCampus_Network
 	 */
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {
@@ -72,8 +67,6 @@ class WPCampus_Network {
 
 	/**
 	 * Warming up the engine.
-	 *
-	 * @since   1.0.0
 	 */
 	protected function __construct() {
 
@@ -112,7 +105,6 @@ class WPCampus_Network {
 	 * being cloned or unserialized.
 	 *
 	 * @access	private
-	 * @since	1.0.0
 	 * @return	void
 	 */
 	private function __clone() {}
@@ -122,7 +114,6 @@ class WPCampus_Network {
 	 * Internationalization FTW.
 	 * Load our text domain.
 	 *
-	 * @since   1.0.0
 	 * @access  public
 	 */
 	public function textdomain() {
@@ -133,7 +124,6 @@ class WPCampus_Network {
 	 * Change the login logo URL to point
 	 * to the site's home page.
 	 *
-	 * @since   1.0.0
 	 * @access  public
 	 */
 	public function change_login_header_url( $login_header_url ) {
@@ -143,7 +133,6 @@ class WPCampus_Network {
 	/**
 	 * Add login stylesheet.
 	 *
-	 * @since   1.0.0
 	 * @access  public
 	 */
 	public function enqueue_login_styles() {
@@ -156,7 +145,6 @@ class WPCampus_Network {
 	/**
 	 * Hide Query Monitor if admin bar isn't showing.
 	 *
-	 * @since   1.0.0
 	 * @access  public
 	 */
 	public function hide_query_monitor( $show_qm, $is_admin_bar_showing ) {
@@ -166,7 +154,6 @@ class WPCampus_Network {
 	/**
 	 * Fires when preparing to serve an API request.
 	 *
-	 * @since   1.0.0
 	 * @access  public
 	 * @param   $wp_rest_server - WP_REST_Server - Server object.
 	 */
@@ -183,7 +170,6 @@ class WPCampus_Network {
 	 * We use this hook to add custom CORS headers
 	 * and to disable the cache.
 	 *
-	 * @since   1.0.0
 	 * @access  public
 	 * @param   $value - bool - Whether the request has already been served. Default false.
 	 * @return  bool - the filtered value
@@ -213,7 +199,6 @@ class WPCampus_Network {
 	/**
 	 * Enqueue our front-end scripts.
 	 *
-	 * @since   1.0.0
 	 * @access  public
 	 * @return  void
 	 */
