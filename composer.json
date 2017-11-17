@@ -2,7 +2,7 @@
 	"name": "wpcampus/wpcampus-network-plugin",
 	"description": "WordPress plugin that handles network-wide functionality for the WPCampus network of sites.",
 	"type": "wordpress-plugin",
-	"license": "GPL2.0+",
+	"license": "GPL-2.0+",
 	"authors": [
 		{
 			"name": "WPCampus",
@@ -17,6 +17,7 @@
 		"post-install-cmd": [
 			"./vendor/bin/phpcs --config-set bin vendor/bin/phpcs",
 			"./vendor/bin/phpcs --config-set installed_paths ../../wp-coding-standards/wpcs"
-		]
+		],
+		"sniff": "vendor/bin/phpcs --runtime-set installed_paths vendor/wp-coding-standards/wpcs -p ./ --standard=WordPress-Core --report=full --extensions=php --ignore=*/vendor/*,*/node_modules/*"
 	}
 }
