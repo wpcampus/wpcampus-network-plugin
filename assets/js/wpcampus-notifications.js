@@ -26,5 +26,4 @@
 		$( '#wpc-notifications' ).html( rendered ).fadeIn();
 
 	});
-
 })( jQuery );

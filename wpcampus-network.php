@@ -53,6 +53,15 @@ class WPCampus_Network {
 	private $enable_network_banner;
 
 	/**
+	 * Whether or not we want
+	 * to print the network notifications.
+	 *
+	 * @access  private
+	 * @var     string
+	 */
+	private $enable_network_notifications;
+
+	/**
 	 * Holds the class instance.
 	 *
 	 * @access  private
@@ -147,7 +156,7 @@ class WPCampus_Network {
 	public function enqueue_login_styles() {
 
 		// Add our login stylesheet
-		wp_enqueue_style( 'wpc-network-login', trailingslashit( plugin_dir_url( __FILE__ ) . 'assets/css' ) . 'login.min.css' );
+		wp_enqueue_style( 'wpc-network-login', trailingslashit( plugin_dir_url( __FILE__ ) . 'assets/css' ) . 'login.min.css', array(), null );
 
 	}
 
@@ -227,6 +236,11 @@ class WPCampus_Network {
 		if ( $this->enable_network_banner ) {
 			wp_enqueue_style( 'wpcampus-network-banner', $css_dir . 'wpcampus-network-banner.min.css', array(), null );
 		}
+
+		// Enqueue the network notification styles.
+		if ( $this->enable_network_notifications ) {
+			wp_enqueue_style( 'wpcampus-network-notification', $css_dir . 'wpcampus-network-notifications.min.css', array(), null );
+		}
 	}
 
 	/**
@@ -264,6 +278,21 @@ class WPCampus_Network {
 	}
 
 	/**
+	 * Enable and disable the network notifications.
+	 *
+	 * We need this to know whether or not to enqueue styles.
+	 *
+	 * @access  public
+	 * @return  void
+	 */
+	public function enable_network_notifications() {
+		$this->enable_network_notifications = true;
+	}
+	public function disable_network_notifications() {
+		$this->enable_network_notifications = false;
+	}
+
+	/**
 	 * Get the network banner markup.
 	 *
 	 * @access  public
@@ -294,6 +323,44 @@ class WPCampus_Network {
 	 */
 	public function print_network_banner() {
 		echo $this->get_network_banner();
+	}
+
+	/**
+	 * Get the network notifications markup.
+	 *
+	 * @access  public
+	 * @return  string|HTML - the markup.
+	 */
+	public function get_network_notifications() {
+
+		// Make sure it's enabled.
+		if ( ! $this->enable_network_notifications ) {
+			return;
+		}
+
+		// Build the notifications.
+		$notifications = '<div id="wpc-notifications"></div>
+		<script id="wpc-notification-template" type="x-tmpl-mustache">
+			{{#.}}
+				<div class="wpc-notification">
+					<div class="wpc-notification-message">
+						{{{content.rendered}}}
+					</div>
+				</div>
+			{{/.}}
+		</script>';
+
+		return $notifications;
+	}
+
+	/**
+	 * Print the network notifications markup.
+	 *
+	 * @access  public
+	 * @return  void
+	 */
+	public function print_network_notifications() {
+		echo $this->get_network_notifications();
 	}
 }
 
@@ -327,4 +394,20 @@ function wpcampus_get_network_banner() {
 }
 function wpcampus_print_network_banner() {
 	wpcampus_network()->print_network_banner();
+}
+
+/**
+ * Interact with the notifications.
+ */
+function wpcampus_enable_network_notifications() {
+	return wpcampus_network()->enable_network_notifications();
+}
+function wpcampus_disable_network_notifications() {
+	return wpcampus_network()->disable_network_notifications();
+}
+function wpcampus_get_network_notifications() {
+	return wpcampus_network()->get_network_notifications();
+}
+function wpcampus_print_network_notifications() {
+	wpcampus_network()->print_network_notifications();
 }

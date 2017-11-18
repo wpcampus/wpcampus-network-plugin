@@ -1,0 +1,68 @@
+$wpc-notification-max-width: 920px;
+$wpc-notification-bg: rgba(17,89,189,0.1);
+
+$wpc-notification-font-size: 1rem;
+$wpc-notification-line-height: 1.6;
+
+$wpc-notification-info-icon-width: 28px;
+$wpc-notification-info-icon-height: 28px;
+$wpc-notification-info-icon-opacity: 0.7;
+
+$wpc-notification-padding-vert: 20px;
+$wpc-notification-padding-horiz: 20px;
+$wpc-notification-padding-left: $wpc-notification-info-icon-width + $wpc-notification-padding-vert;
+
+#wpc-notifications {
+	display: none;
+
+	* {
+		font-size: inherit;
+		color: inherit;
+
+		&:first-child {
+			margin-top: 0;
+		}
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	.wpc-notification-message {
+		max-width: $wpc-notification-max-width;
+		min-height: $wpc-notification-info-icon-height + $wpc-notification-padding-vert;
+		font-size: $wpc-notification-font-size;
+		line-height: $wpc-notification-line-height;
+		text-align: left;
+		margin: 0 auto;
+		padding: $wpc-notification-padding-vert 0 $wpc-notification-padding-vert $wpc-notification-padding-left;
+		vertical-align: middle;
+		position: relative;
+
+		p {
+			line-height: inherit;
+			margin-bottom: 0;
+		}
+
+		&:before {
+			content: '';
+			display: inline-block;
+			line-height: inherit;
+			width: $wpc-notification-info-icon-width;
+			height: $wpc-notification-info-icon-height;
+			background: url( '../images/information.png' ) 0 0 no-repeat;
+			background-size: $wpc-notification-info-icon-width auto;
+			opacity: $wpc-notification-info-icon-opacity;
+			vertical-align: middle;
+			position: absolute;
+			left: 0;
+			top: 50%;
+			transform: translateY(-50%);
+		}
+	}
+
+	.wpc-notification {
+		background: $wpc-notification-bg;
+		padding: 0 $wpc-notification-padding-horiz;
+	}
+}

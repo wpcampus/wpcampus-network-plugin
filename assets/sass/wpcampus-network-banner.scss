@@ -1,26 +1,32 @@
-$wpc-network-banner-bg: #222;
-$wpc-network-banner-color: #fff;
-$wpc-network-banner-max-width: 920px;
-$wpc-network-banner-padding-vert: 8px;
+$wpc-banner-bg: #222;
+$wpc-banner-color: #fff;
+$wpc-banner-max-width: 920px;
+$wpc-banner-padding-vert: 8px;
 
 #wpcampus-network-banner {
-	background: $wpc-network-banner-bg;
-	color: $wpc-network-banner-color;
+	background: $wpc-banner-bg;
+	color: $wpc-banner-color;
 
 	a {
 		color: inherit;
 	}
 
-	*:first-child {
-		margin-top: 0;
-	}
-	*:last-child {
-		margin-bottom: 0;
+	* {
+		font-size: inherit;
+		color: inherit;
+
+		&:first-child {
+			margin-top: 0;
+		}
+
+		&:last-child {
+			margin-bottom: 0;
+		}
 	}
 
 	.container {
-		max-width: $wpc-network-banner-max-width;
+		max-width: $wpc-banner-max-width;
 		margin: 0 auto;
-		padding: $wpc-network-banner-padding-vert 0;
+		padding: $wpc-banner-padding-vert 0;
 	}
 }
