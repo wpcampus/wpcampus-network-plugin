@@ -234,7 +234,7 @@ class WPCampus_Network {
 
 		// Enqueue the network banner styles.
 		if ( $this->enable_network_banner ) {
-			wp_enqueue_style( 'wpcampus-network-banner', $css_dir . 'wpcampus-network-banner.min.css', array(), null );
+			wp_enqueue_style( 'wpc-network-banner', $css_dir . 'wpc-network-banner.min.css', array(), null );
 		}
 
 		// Enqueue the network notification styles.
@@ -306,7 +306,7 @@ class WPCampus_Network {
 		}
 
 		// Build the banner.
-		$banner = '<div id="wpcampus-network-banner" role="navigation">
+		$banner = '<div id="wpc-network-banner" role="navigation">
 			<div class="container">
 				<p>' . sprintf( __( '%1$s: Where %2$s Meets Higher Education' ), 'WPCampus', 'WordPress' ) . '</p>
 			</div>
