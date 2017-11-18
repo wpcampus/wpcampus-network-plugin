@@ -1,0 +1,140 @@
+$wpc-footer-bg: #fafafa;
+$wpc-footer-color: #444;
+$wpc-footer-font-size: 0.9rem;
+$wpc-footer-line-height: 1.8;
+$wpc-footer-margin-bottom: 1.5rem;
+
+$wpc-footer-padding-vert: 45px;
+$wpc-footer-padding-side: 40px;
+
+$wpc-footer-opacity: 0.65;
+$wpc-footer-opacity-hover: 0.8;
+
+$wpc-copyright-font-size: 0.8rem;
+$wpc-copyright-line-height: 1;
+$wpc-copyright-opacity: 0.8;
+
+#wpc-network-footer {
+	background: $wpc-footer-bg;
+	color: $wpc-footer-color;
+	font-size: $wpc-footer-font-size;
+	line-height: $wpc-footer-line-height;
+	text-align: center;
+	padding: $wpc-footer-padding-vert $wpc-footer-padding-side;
+
+	* {
+		font-size: inherit;
+		line-height: inherit;
+		color: inherit;
+
+		&:first-child {
+			margin-top: 0;
+		}
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	p, img, ul, ol, li {
+		margin: 0 0 $wpc-footer-margin-bottom;
+	}
+
+	.wpc-logo {
+		display: inline-block;
+		clear: both;
+		opacity: $wpc-footer-opacity;
+		margin: 0 0 15px 0;
+
+		img {
+			display: block;
+			height: 50px;
+		}
+
+		&:hover {
+			opacity: $wpc-footer-opacity-hover;
+		}
+	}
+
+	.wpc-network-footer-menu {
+		display: inline-block;
+		clear: both;
+		margin: 0 0 0.9rem;
+		border: 0;
+		padding: 0;
+		list-style: none;
+		overflow: visible;
+		text-align: center;
+
+		li {
+			display: block;
+			float: left;
+			margin: 0;
+			border: 0;
+			padding: 0;
+			list-style: none;
+
+			a {
+				color: inherit;
+			}
+
+			&:before {
+				content: '-';
+				padding: 0 5px;
+			}
+
+			&:first-child:before {
+				display: none;
+			}
+		}
+	}
+
+	.disclaimer {
+		font-style: italic;
+	}
+
+	.copyright {
+		font-size: $wpc-copyright-font-size;
+		line-height: $wpc-copyright-line-height;
+		opacity: $wpc-copyright-opacity;
+	}
+
+	.social-media-icons {
+		display: inline-block;
+		margin: 0 0 0.9rem;
+		padding: 0;
+		border: 0;
+		text-align: center;
+		overflow: visible;
+
+		li {
+			display: block;
+			float: left;
+			list-style: none;
+			margin: 0 8px;
+			padding: 0;
+		}
+
+		img {
+			width: auto;
+			height: 30px;
+			vertical-align: baseline;
+		}
+
+		a {
+			display: block;
+			opacity: $wpc-footer-opacity;
+
+			&:hover {
+				opacity: $wpc-footer-opacity-hover;
+			}
+		}
+	}
+
+	h3 {
+		text-transform: uppercase;
+		color: #222;
+		font-weight: 600;
+		margin: 0 0 3px 0;
+	}
+}

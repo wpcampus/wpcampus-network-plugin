@@ -45,21 +45,15 @@ class WPCampus_Network {
 
 	/**
 	 * Whether or not we want
-	 * to print the network banner.
+	 * to print the network banner,
+	 * notifications, or footer.
 	 *
 	 * @access  private
 	 * @var     string
 	 */
 	private $enable_network_banner;
-
-	/**
-	 * Whether or not we want
-	 * to print the network notifications.
-	 *
-	 * @access  private
-	 * @var     string
-	 */
 	private $enable_network_notifications;
+	private $enable_network_footer;
 
 	/**
 	 * Holds the class instance.
@@ -109,6 +103,9 @@ class WPCampus_Network {
 
 		// Add custom headers for the REST API.
 		add_filter( 'rest_pre_serve_request', array( $this, 'add_rest_headers' ) );
+
+		// Register the network footer menu.
+		add_action( 'after_setup_theme', array( $this, 'register_network_footer_menu' ), 20 );
 
 		// Enqueue front-end scripts.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
@@ -241,6 +238,11 @@ class WPCampus_Network {
 		if ( $this->enable_network_notifications ) {
 			wp_enqueue_style( 'wpc-network-notifications', $css_dir . 'wpc-network-notifications.min.css', array(), null );
 		}
+
+		// Enqueue the network footer styles.
+		if ( $this->enable_network_footer ) {
+			wp_enqueue_style( 'wpc-network-footer', $css_dir . 'wpc-network-footer.min.css', array(), null );
+		}
 	}
 
 	/**
@@ -260,6 +262,69 @@ class WPCampus_Network {
 		}
 
 		return $args;
+	}
+
+	/**
+	 * Gets markup for list of social media icons.
+	 *
+	 * @access  public
+	 * @param   $color - string - color of icon, black is default.
+	 * @return  string|HTML - the markup.
+	 */
+	public function get_social_media_icons( $color = 'black' ) {
+
+		if ( $color ) {
+			$color = "-{$color}";
+		}
+
+		$images_dir = "{$this->plugin_url}assets/images/";
+
+		$social = array(
+			'slack' => array(
+				'href'  => 'https://wpcampus.org/get-involved/',
+				'alt'   => sprintf( __( 'Join %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'Slack' ),
+			),
+			'twitter' => array(
+				'href'  => 'https://twitter.com/wpcampusorg',
+				'alt'   => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'Twitter' ),
+			),
+			'facebook' => array(
+				'href'  => 'https://www.facebook.com/wpcampus',
+				'alt'   => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'Facebook' ),
+			),
+			'youtube' => array(
+				'href'  => 'https://www.youtube.com/wpcampusorg',
+				'alt'   => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'YouTube' ),
+			),
+			'github' => array(
+				'href'  => 'https://github.com/wpcampus/',
+				'alt'   => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'GitHub' ),
+			),
+		);
+
+		$icons = '<ul class="social-media-icons">';
+			foreach( $social as $key => $info ) {
+				$icons .= sprintf( '<li class="%1$s"><a href="%2$s"><img src="%3$s" alt="%4$s" /></a></li>',
+					$key,
+					$info['href'],
+					$images_dir . $key . $color . '.svg',
+					$info['alt']
+				);
+			}
+		$icons .= '</ul>';
+
+		return $icons;
+	}
+
+	/**
+	 * Prints markup for list of social media icons.
+	 *
+	 * @access  public
+	 * @param   $color - string - color of icon, black is default.
+	 * @return  void
+	 */
+	public function print_social_media_icons( $color = 'black' ) {
+		echo $this->get_social_media_icons( $color );
 	}
 
 	/**
@@ -290,6 +355,21 @@ class WPCampus_Network {
 	}
 	public function disable_network_notifications() {
 		$this->enable_network_notifications = false;
+	}
+
+	/**
+	 * Enable and disable the network footer.
+	 *
+	 * We need this to know whether or not to enqueue styles.
+	 *
+	 * @access  public
+	 * @return  void
+	 */
+	public function enable_network_footer() {
+		$this->enable_network_footer = true;
+	}
+	public function disable_network_footer() {
+		$this->enable_network_footer = false;
 	}
 
 	/**
@@ -362,6 +442,70 @@ class WPCampus_Network {
 	public function print_network_notifications() {
 		echo $this->get_network_notifications();
 	}
+
+	/**
+	 * Register the network footer menu.
+	 *
+	 * @access  public
+	 * @return  void
+	 */
+	function register_network_footer_menu() {
+		if ( $this->enable_network_footer ) {
+			register_nav_menu( 'footer', __( 'Footer Menu', 'wpcampus' ) );
+		}
+	}
+
+	/**
+	 * Get the network footer markup.
+	 *
+	 * @access  public
+	 * @return  string|HTML - the markup.
+	 */
+	public function get_network_footer() {
+
+		// Make sure it's enabled.
+		if ( ! $this->enable_network_footer ) {
+			return;
+		}
+
+		$images_dir = "{$this->plugin_url}assets/images/";
+
+		$home_url = 'https://wpcampus.org/';
+		$get_involved_url = 'https://wpcampus.org/get-involved/';
+		$github_url = 'https://github.com/wpcampus/wpcampus-wp-theme';
+		$wp_org_url = 'https://wordpress.org/';
+
+		// Build the footer.
+		$footer = '<div id="wpc-network-footer">
+			<a class="wpc-logo" href="' . $home_url . '"><img src="' . $images_dir . 'wpcampus-black-tagline.svg" alt="' . sprintf( __( '%1$s: Where %2$s Meets Higher Education', 'wpcampus' ), 'WPCampus', 'WordPress' ) . '" /></a><br />';
+
+			// Add the footer menu.
+			$footer .= wp_nav_menu( array(
+				'echo'              => false,
+				'theme_location'    => 'footer',
+				'container'         => false,
+				'menu_id'           => 'wpc-network-footer-menu',
+				'menu_class'        => 'wpc-network-footer-menu',
+				'fallback_cb'       => false,
+			));
+
+		$footer .= '<p class="message"><strong>' . sprintf( __( '%1$s is a community of networking, resources, and events for those using %2$s in the world of higher education.', 'wpcampus' ), 'WPCampus', 'WordPress' ) . '</strong><br />' . sprintf( __( 'If you are not a member of the %1$s community, we\'d love for you to %2$sget involved%3$s.', 'wpcampus' ), 'WPCampus', '<a href="' . $get_involved_url . '">', '</a>' ) . '</p>
+			<p class="disclaimer">' . sprintf( __( 'This site is powered by %1$s. You can view, and contribute to, the theme on %2$s.', 'wpcampus' ), '<a href="' . $wp_org_url . '">WordPress</a>', '<a href="' . $github_url . '">GitHub</a>' ) . '<br />' . sprintf( __( '%1$s events are not %2$s and are not affiliated with the %3$s Foundation.', 'wpcampus' ), 'WPCampus', 'WordCamps', 'WordPress' ) . '</p>' .
+		    $this->get_social_media_icons() . '<p class="copyright">&copy; ' . date( 'Y' ) . ' WPCampus</p>
+		</div>';
+
+		return $footer;
+	}
+
+	/**
+	 * Print the network footer markup.
+	 *
+	 * @access  public
+	 * @return  void
+	 */
+	public function print_network_footer() {
+		echo $this->get_network_footer();
+	}
 }
 
 /**
@@ -411,3 +555,20 @@ function wpcampus_get_network_notifications() {
 function wpcampus_print_network_notifications() {
 	wpcampus_network()->print_network_notifications();
 }
+
+/**
+ * Interact with the footer.
+ */
+function wpcampus_enable_network_footer() {
+	return wpcampus_network()->enable_network_footer();
+}
+function wpcampus_disable_network_footer() {
+	return wpcampus_network()->disable_network_footer();
+}
+function wpcampus_get_network_footer() {
+	return wpcampus_network()->get_network_footer();
+}
+function wpcampus_print_network_footer() {
+	wpcampus_network()->print_network_footer();
+}
+
