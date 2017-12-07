@@ -1,29 +1,32 @@
 (function( $ ) {
 	'use strict';
 
-	// Make sure the template exists.
-	var template_id = 'wpc-notification-template';
-	if ( ! $( '#' + template_id ).length ) {
-		return;
-	}
+	$(document).ready(function() {
 
-	// Process the notifications.
-	$.get( 'https://wpcampus.org/wp-json/wp/v2/notifications?per_page=1' ).done(function( data ) {
+		// Make sure the template exists.
+		var template_id = 'wpc-notification-template';
+		if ( ! $( '#' + template_id ).length ) {
+			return;
+		}
 
-		/*
-		 * Get the template HTML.
-		 *
-		 * It is up to each theme to
-		 * provide this template.
-		 */
-		var template = $( '#' + template_id ).html();
-		Mustache.parse( template );
+		// Process the notifications.
+		$.get( 'https://wpcampus.org/wp-json/wp/v2/notifications?per_page=1' ).done(function( data ) {
 
-		// Render the template.
-		var rendered = Mustache.render( template, data );
+			/*
+			 * Get the template HTML.
+			 *
+			 * It is up to each theme to
+			 * provide this template.
+			 */
+			var template = $( '#' + template_id ).html();
+			Mustache.parse( template );
 
-		// Add the result to the page.
-		$( '#wpc-notifications' ).html( rendered ).fadeIn();
+			// Render the template.
+			var rendered = Mustache.render( template, data );
 
+			// Add the result to the page.
+			$( '#wpc-notifications' ).html( rendered ).fadeIn();
+
+		});
 	});
 })( jQuery );
