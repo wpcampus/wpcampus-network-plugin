@@ -14,6 +14,8 @@ $wpc-copyright-font-size: 0.8rem;
 $wpc-copyright-line-height: 1;
 $wpc-copyright-opacity: 0.8;
 
+$wpc-footer-social-color: #000;
+
 #wpc-network-footer {
 	background: $wpc-footer-bg;
 	color: $wpc-footer-color;
@@ -115,10 +117,11 @@ $wpc-copyright-opacity: 0.8;
 			padding: 0;
 		}
 
-		img {
+		svg {
 			width: auto;
 			height: 30px;
 			vertical-align: baseline;
+			fill: $wpc-footer-social-color;
 		}
 
 		a {

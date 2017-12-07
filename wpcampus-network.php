@@ -268,48 +268,39 @@ class WPCampus_Network {
 	 * Gets markup for list of social media icons.
 	 *
 	 * @access  public
-	 * @param   $color - string - color of icon, black is default.
 	 * @return  string|HTML - the markup.
 	 */
-	public function get_social_media_icons( $color = 'black' ) {
+	public function get_social_media_icons() {
 
-		if ( $color ) {
-			$color = "-{$color}";
-		}
-
-		$images_dir = "{$this->plugin_url}assets/images/";
-
+		$images_dir = $this->plugin_dir . 'assets/images/';
 		$social = array(
 			'slack' => array(
-				'href'  => 'https://wpcampus.org/get-involved/',
-				'alt'   => sprintf( __( 'Join %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'Slack' ),
+				'href' => 'https://wpcampus.org/get-involved/',
 			),
 			'twitter' => array(
-				'href'  => 'https://twitter.com/wpcampusorg',
-				'alt'   => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'Twitter' ),
+				'href' => 'https://twitter.com/wpcampusorg',
 			),
 			'facebook' => array(
-				'href'  => 'https://www.facebook.com/wpcampus',
-				'alt'   => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'Facebook' ),
+				'href' => 'https://www.facebook.com/wpcampus',
 			),
 			'youtube' => array(
-				'href'  => 'https://www.youtube.com/wpcampusorg',
-				'alt'   => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'YouTube' ),
+				'href' => 'https://www.youtube.com/wpcampusorg',
 			),
 			'github' => array(
-				'href'  => 'https://github.com/wpcampus/',
-				'alt'   => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'GitHub' ),
+				'href' => 'https://github.com/wpcampus/',
 			),
 		);
 
 		$icons = '<ul class="social-media-icons">';
 			foreach( $social as $key => $info ) {
-				$icons .= sprintf( '<li class="%1$s"><a href="%2$s"><img src="%3$s" alt="%4$s" /></a></li>',
-					$key,
-					$info['href'],
-					$images_dir . $key . $color . '.svg',
-					$info['alt']
-				);
+				$filename = "{$images_dir}{$key}.php";
+				if ( file_exists( $filename ) ) {
+					$icons .= sprintf( '<li class="%1$s"><a href="%2$s">%3$s</a></li>',
+						$key,
+						$info['href'],
+						file_get_contents( $filename )
+					);
+				}
 			}
 		$icons .= '</ul>';
 
@@ -320,11 +311,10 @@ class WPCampus_Network {
 	 * Prints markup for list of social media icons.
 	 *
 	 * @access  public
-	 * @param   $color - string - color of icon, black is default.
 	 * @return  void
 	 */
-	public function print_social_media_icons( $color = 'black' ) {
-		echo $this->get_social_media_icons( $color );
+	public function print_social_media_icons() {
+		echo $this->get_social_media_icons();
 	}
 
 	/**
