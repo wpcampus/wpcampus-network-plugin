@@ -15,6 +15,9 @@ $wpc-copyright-line-height: 1;
 $wpc-copyright-opacity: 0.8;
 
 $wpc-footer-social-color: #000;
+$wpc-footer-social-height: 30px;
+$wpc-footer-social-margin-horiz: 8px;
+$wpc-footer-social-margin-bottom: 0.9rem;
 
 #wpc-network-footer {
 	background: $wpc-footer-bg;
@@ -103,7 +106,7 @@ $wpc-footer-social-color: #000;
 
 	.social-media-icons {
 		display: inline-block;
-		margin: 0 0 0.9rem;
+		margin: 0 0 $wpc-footer-social-margin-bottom;
 		padding: 0;
 		border: 0;
 		text-align: center;
@@ -113,13 +116,13 @@ $wpc-footer-social-color: #000;
 			display: block;
 			float: left;
 			list-style: none;
-			margin: 0 8px;
+			margin: 0 $wpc-footer-social-margin-horiz;
 			padding: 0;
 		}
 
 		svg {
 			width: auto;
-			height: 30px;
+			height: $wpc-footer-social-height;
 			vertical-align: baseline;
 			fill: $wpc-footer-social-color;
 		}
