@@ -52,6 +52,7 @@ class WPCampus_Network {
 	 * @var     string
 	 */
 	private $enable_network_banner;
+	private $network_banner_args;
 	private $enable_network_notifications;
 	private $enable_network_footer;
 
@@ -107,8 +108,8 @@ class WPCampus_Network {
 		// Register the network footer menu.
 		add_action( 'after_setup_theme', array( $this, 'register_network_footer_menu' ), 20 );
 
-		// Enqueue front-end scripts.
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		// Enqueue front-end scripts and styles.
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts_styles' ) );
 
 		// Customize the arguments for the multi author post author dropdown.
 		add_filter( 'my_multi_author_post_author_dropdown_args', array( $this, 'filter_multi_author_primary_dropdown_args' ), 10, 2 );
@@ -217,21 +218,23 @@ class WPCampus_Network {
 	 * @access  public
 	 * @return  void
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_scripts_styles() {
 
-		// Define the JS directory.
+		// Define the directories.
 		$css_dir = trailingslashit( $this->plugin_url . 'assets/css' );
 		$js_dir = trailingslashit( $this->plugin_url . 'assets/js' );
 
-		// Register mustache - goes in footer.
+		// Register assets needed below.
 		wp_register_script( 'mustache', $js_dir . 'mustache.min.js', array(), null, true );
 
 		// Enqueue the notifications script - goes in footer.
 		wp_enqueue_script( 'wpc-network-notifications', $js_dir . 'wpc-network-notifications.min.js', array( 'jquery', 'mustache' ), null, true );
+		wp_register_script( 'wpc-network-toggle-menu', $js_dir . 'wpc-network-toggle-menu.min.js', array( 'jquery', 'jquery-ui-core' ), null );
 
 		// Enqueue the network banner styles.
 		if ( $this->enable_network_banner ) {
 			wp_enqueue_style( 'wpc-network-banner', $css_dir . 'wpc-network-banner.min.css', array(), null );
+			wp_enqueue_script( 'wpc-network-toggle-menu' );
 		}
 
 		// Enqueue the network notification styles.
@@ -325,11 +328,13 @@ class WPCampus_Network {
 	 * @access  public
 	 * @return  void
 	 */
-	public function enable_network_banner() {
+	public function enable_network_banner( $skip_nav_args = array() ) {
 		$this->enable_network_banner = true;
+		$this->network_banner_args = is_array( $skip_nav_args ) ? $skip_nav_args : array();
 	}
 	public function disable_network_banner() {
 		$this->enable_network_banner = false;
+		$this->network_banner_args = array();
 	}
 
 	/**
@@ -376,9 +381,63 @@ class WPCampus_Network {
 		}
 
 		// Build the banner.
-		$banner = '<div id="wpc-network-banner" role="navigation">
-			<div class="container">
-				<p>' . sprintf( __( '%1$s: Where %2$s Meets Higher Education' ), 'WPCampus', 'WordPress' ) . '</p>
+		$banner = '';
+
+		// Add skip navigation.
+		if ( ! empty( $this->network_banner_args['skip_nav_id'] ) ) {
+
+			// Make sure we have a valid ID.
+			$skip_nav_id = preg_replace( '/[^a-z0-9\-]/i', '', $this->network_banner_args['skip_nav_id'] );
+			if ( ! empty( $skip_nav_id ) ) {
+
+				// Define the label.
+				$skip_nav_label = __( 'Skip to Content', 'wpcampus' );
+				if ( ! empty( $this->network_banner_args['skip_nav_label'] ) ) {
+					$skip_nav_label = $this->network_banner_args['skip_nav_label'];
+				}
+
+				$banner .= sprintf( '<a href="#%s" id="wpc-skip-to-content">%s</a>',
+					$skip_nav_id,
+					$skip_nav_label
+				);
+			}
+		}
+
+		// Add the banner.
+		$banner .= '<div id="wpc-network-banner" role="navigation">
+			<div class="wpc-container">
+				<div class="wpc-logo">
+					<a href="https://wpcampus.org">
+						<?xml version="1.0" encoding="utf-8"?>
+						<svg version="1.1" id="WPCampusOrgLogo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1275 100" style="enable-background:new 0 0 1275 100;" xml:space="preserve">
+							<title>' . sprintf( __( '%1$s: Where %2$s Meets Higher Education', 'wpcampus' ), 'WPCampus', 'WordPress' ) . '</title>
+							<style type="text/css">.st0{opacity:0.7;enable-background:new;}</style>
+							<path class="st0" d="M113.5,1.5l-23.4,97H77.9L56.8,23.2L37.1,98.5H24.6L0,1.5h12.6L32,80.1L52.6,1.5h9.9l22.2,78.6l18.1-78.6H113.5 z"/>
+							<path class="st0" d="M152.6,98.5h-12.2v-97h34.4c10.8,0,18.7,2.9,23.8,8.8s7.7,12.5,7.7,20c0,8.3-2.8,15.2-8.4,20.7 c-5.6,5.4-12.9,8.2-21.9,8.2h-23.5L152.6,98.5L152.6,98.5z M152.6,49h22.3c5.7,0,10.4-1.7,13.9-5.2c3.5-3.4,5.3-8,5.3-13.6 c0-4.8-1.6-9.1-4.7-12.9c-3.1-3.8-7.7-5.7-13.6-5.7h-23.2V49z"/>
+							<path d="M288.1,61.5l27.2,1.6c-1.3,11.9-5.7,21-13.2,27.4c-7.5,6.3-16.7,9.5-27.7,9.5c-13.2,0-23.8-4.4-31.9-13.1 c-8.1-8.7-12.2-20.8-12.2-36.1c0-15.2,3.8-27.5,11.5-36.8s18.4-14,32.1-14c12.8,0,22.7,3.6,29.6,10.7s10.8,16.5,11.7,28.3l-27.8,1.5 c0-6.5-1.2-11.2-3.7-14.1s-5.4-4.3-8.8-4.3c-9.4,0-14.1,9.4-14.1,28.3c0,10.6,1.2,17.7,3.7,21.5c2.4,3.8,5.9,5.7,10.3,5.7 C282.7,77.5,287.1,72.2,288.1,61.5z"/>
+							<path d="M397.3,98.5l-5.5-19.1h-26L360,98.5h-24.2l29.9-97h31.5l30.4,97H397.3z M370.9,58.2h15.7l-7.8-28.1L370.9,58.2z"/>
+							<path d="M558.6,1.5v97H531V29.1l-18,69.4h-18.9l-18.7-69.4v69.4h-22.3v-97H492L506.1,53l13.4-51.5H558.6z"/>
+							<path d="M619.8,63.3v35.3h-30.2v-97H631c10.3,0,18.2,1.2,23.6,3.6c5.4,2.4,9.6,6,12.8,10.9s4.7,10.4,4.7,16.4 c0,9.2-3.2,16.7-9.7,22.4c-6.4,5.7-15,8.5-25.8,8.5h-16.8V63.3z M619.4,42.4h10c8.8,0,13.1-3.2,13.1-9.7c0-6.1-4.1-9.1-12.2-9.1 h-10.9L619.4,42.4L619.4,42.4z"/>
+							<path d="M777.8,1.5v64.3c0,12.2-3.6,20.9-10.8,26.3c-7.2,5.3-16.6,8-28.3,8c-12.2,0-22-2.6-29.5-7.7c-7.4-5.1-11.1-13.5-11.1-25V1.5 h30.3v62.3c0,4.6,1,8,2.9,10.2c2,2.1,5.1,3.2,9.4,3.2c3.6,0,6.5-0.8,8.8-2.3s3.7-3.3,4.1-5.2c0.4-1.9,0.7-5.7,0.7-11.4V1.5H777.8z" />
+							<path d="M805.9,70.4l27.6-5c2.3,7.8,8.3,11.7,17.9,11.7c7.5,0,11.2-2,11.2-6c0-2.1-0.9-3.7-2.6-4.9c-1.7-1.2-4.8-2.2-9.3-3.1 c-17-3.3-27.9-7.5-32.8-12.8c-4.8-5.3-7.2-11.4-7.2-18.6c0-9.1,3.5-16.8,10.4-22.8c6.9-6.1,16.9-9.1,30-9.1 C871,0,884,7.9,890.4,23.8l-24.7,7.5c-2.6-6.5-7.7-9.7-15.6-9.7c-6.5,0-9.7,2-9.7,6c0,1.8,0.7,3.2,2.2,4.2s4.3,1.9,8.5,2.8 c11.6,2.5,19.9,4.6,24.7,6.5c4.9,1.9,9,5.1,12.2,9.7c3.3,4.6,4.9,10,4.9,16.2c0,9.8-4,17.8-11.9,23.9c-8,6.1-18.4,9.1-31.3,9.1 C826.1,100,811.5,90.1,805.9,70.4z"/>
+							<path d="M939.8,72.6v25.9h-27V72.6H939.8z"/>
+							<path d="M1003.3,100c-13.6,0-24.8-4.5-33.4-13.6c-8.6-9-12.9-21.2-12.9-36.3c0-14.5,4.1-26.5,12.3-35.9C977.6,4.7,989,0,1003.6,0 c13.5,0,24.5,4.5,33,13.4s12.8,20.8,12.8,35.7c0,15.4-4.3,27.7-12.9,37S1016.8,100,1003.3,100z M1003.1,78c5,0,8.6-2.2,10.8-6.6 s3.3-12.4,3.3-24.1c0-16.9-4.5-25.3-13.6-25.3c-9.8,0-14.6,9.6-14.6,28.9C989.1,68.9,993.7,78,1003.1,78z"/>
+							<path d="M1162.2,98.5h-33L1115,61.4h-9.4v37.1h-29.8v-97h50.7c11.2,0,19.9,2.6,26,7.9c6.2,5.2,9.3,12.1,9.3,20.7 c0,5.6-1.1,10.5-3.4,14.8s-6.9,8.1-13.8,11.3L1162.2,98.5z M1105.7,40.7h12.7c3.7,0,6.8-0.8,9-2.3c2.3-1.6,3.4-3.9,3.4-6.9 c0-6.2-3.8-9.3-11.4-9.3h-13.7V40.7z"/>
+							<path d="M1275,44.1v54.4h-14.6c-1.2-4-2.5-7.4-3.9-10.2c-6,7.8-14.9,11.7-26.7,11.7c-12.5,0-22.8-4.4-30.8-13.1 c-8.1-8.7-12.1-20.6-12.1-35.5c0-14.5,3.9-26.7,11.7-36.6C1206.4,4.9,1218,0,1233.4,0c11.6,0,20.9,2.9,27.9,8.8 c7.1,5.9,11.6,14.2,13.7,25l-28.9,2.8c-1.4-10.1-5.9-15.1-13.3-15.1c-9.8,0-14.6,9.3-14.6,27.9c0,11.2,1.6,18.6,4.7,22.2 s6.9,5.4,11.4,5.4c3.6,0,6.7-1.1,9.2-3.3c2.5-2.2,3.8-5.2,3.9-9h-16.1V44.1H1275z"/>
+						</svg>
+					</a>
+				</div>
+				<div class="wpc-menu-container" role="navigation">
+					<button class="wpc-toggle-menu" data-toggle="wpc-network-banner" aria-label="' . __( 'Toggle menu', 'wpcampus' ) . '">
+						<div class="wpc-toggle-bar"></div>
+					</button>
+					<ul class="wpc-menu">
+						<li><a href="https://wpcampus.org/about/">' . sprintf( __( 'What is %s?', 'wpcampus' ), 'WPCampus' ) . '</a></li>
+						<li><a href="https://wpcampus.org/conferences/">' . __( 'Conferences', 'wpcampus' ) . '</a></li>
+						<li><a href="https://wpcampus.org/contact/">' . __( 'Contact', 'wpcampus' ) . '</a></li>
+						<li class="highlight"><a href="https://wpcampus.org/get-involved/">' . __( 'Get Involved', 'wpcampus' ) . '</a></li>
+					</ul>' . $this->get_social_media_icons() .
+		        '</div>
 			</div>
 		</div>';
 
@@ -517,8 +576,8 @@ wpcampus_network();
 /**
  * Interact with the banner.
  */
-function wpcampus_enable_network_banner() {
-	return wpcampus_network()->enable_network_banner();
+function wpcampus_enable_network_banner( $skip_nav_args = array() ) {
+	return wpcampus_network()->enable_network_banner( $skip_nav_args );
 }
 function wpcampus_disable_network_banner() {
 	return wpcampus_network()->disable_network_banner();

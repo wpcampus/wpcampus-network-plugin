@@ -1,14 +1,117 @@
-$wpc-banner-bg: #222;
-$wpc-banner-color: #fff;
+$wpc-banner-bg: #fff;
 $wpc-banner-max-width: 920px;
-$wpc-banner-padding-vert: 8px;
+$wpc-banner-height: 40px;
+$wpc-banner-color: #222;
+$wpc-banner-font-size: 0.8rem;
+$wpc-banner-line-height: 1.3;
+$wpc-banner-padding-vert: 0;
+$wpc-banner-padding-horiz: 20px;
+$wpc-banner-logo-height: 12px;
+$wpc-banner-opacity: 0.8;
+$wpc-banner-opacity-hover: 1;
+$wpc-banner-menu-padding: 8px;
+$wpc-banner-menu-height: $wpc-banner-height - 13px;
+$wpc-banner-highlight-bg: #1159bd;
+$wpc-banner-highlight-color: #fff;
+$wpc-banner-highlight-margin-left: 5px;
+
+$wpc-toggle-bar-bg: #444;
+$wpc-toggle-bar-bg-open: #fff;
+$wpc-toggle-bar-width: 25px;
+$wpc-toggle-bar-height: 5px;
+$wpc-toggle-bar-spacing-vert: 3px;
+$wpc-toggle-bar-total-height: ($wpc-toggle-bar-height * 3) + ($wpc-toggle-bar-spacing-vert * 2);
+
+$wpc-banner-breakpoint: 660px;
+
+$wpc-banner-open-bg: #2e3641;
+$wpc-banner-open-container-padding: 20px;
+$wpc-banner-open-color: #fff;
+$wpc-banner-open-font-size: 2rem;
+$wpc-banner-open-line-height: 1.4;
+$wpc-banner-open-opacity: 1;
+$wpc-banner-open-logo-height: 15px;
+$wpc-banner-open-menu-item-padding-vert: 8px;
+$wpc-banner-open-highlight-bg: #fff;
+$wpc-banner-open-highlight-color: #222;
+$wpc-banner-open-highlight-margin-top: 15px;
+$wpc-banner-open-highlight-padding-vert: 5px;
+$wpc-banner-open-highlight-padding-horiz: 10px;
+
+$wpc-toggle-bar-open-width: $wpc-toggle-bar-width + 10px;
+$wpc-toggle-bar-open-right: 25px;
+$wpc-toggle-bar-open-top: 25px;
+
+$wpc-banner-open-logo-margin-bottom: 10px;
+$wpc-banner-open-logo-margin-right: 45px;
+$wpc-banner-open-logo-padding-top: 14px;
+$wpc-banner-open-logo-padding-bottom: 30px;
+
+$wpc-skip-to-content-bg: #eee;
+$wpc-skip-to-content-color: #000;
+$wpc-skip-to-content-font-size: 1rem;
+$wpc-skip-to-content-font-weight: 600;
+$wpc-skip-to-content-padding-horiz: 15px;
+
+body.wpc-menu-open {
+	overflow: hidden;
+}
+
+// Stylize the "Skip To Content" link
+#wpc-skip-to-content {
+	display: block;
+	position: fixed;
+	top: -1000px;
+	left: -1000px;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	border: 0;
+	padding: 0;
+	margin: 0;
+	z-index: -1;
+	clip: rect(1px, 1px, 1px, 1px);
+
+	&:active,
+	&:focus,
+	&:hover {
+		clip: auto;
+		background: $wpc-skip-to-content-bg;
+		left: 0;
+		top: 0;
+		width: auto;
+		height: auto;
+		text-decoration: underline;
+		text-align: center;
+		color: $wpc-skip-to-content-color;
+		font-size: $wpc-skip-to-content-font-size;
+		font-weight: $wpc-skip-to-content-font-weight;
+		line-height: $wpc-banner-height;
+		padding: 0 $wpc-skip-to-content-padding-horiz;
+		overflow: visible;
+		z-index: 10000;
+	}
+}
 
 #wpc-network-banner {
 	background: $wpc-banner-bg;
+	height: $wpc-banner-height;
 	color: $wpc-banner-color;
+	padding: $wpc-banner-padding-vert $wpc-banner-padding-horiz;
+	font-size: $wpc-banner-font-size;
+	line-height: $wpc-banner-line-height;
 
 	a {
+		display: block;
 		color: inherit;
+		text-decoration: none;
+		opacity: $wpc-banner-opacity;
+		cursor: pointer;
+
+		&:hover,
+		&:focus {
+			opacity: $wpc-banner-opacity-hover;
+		}
 	}
 
 	* {
@@ -25,9 +128,249 @@ $wpc-banner-padding-vert: 8px;
 		}
 	}
 
-	.container {
+	.wpc-logo {
+
+		a {
+			height: $wpc-banner-logo-height;
+		}
+
+		svg {
+			display: block;
+			width: auto;
+			height: 100%;
+			margin: 0;
+		}
+	}
+
+	.social-media-icons {
+		display: none;
+	}
+
+	.wpc-menu {
+		display: none;
+		margin: 0;
+		border: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.wpc-toggle-menu {
+		display: block;
+		background: transparent;
+		cursor: pointer;
+		width: $wpc-toggle-bar-width;
+		height: $wpc-toggle-bar-total-height;
+		position: relative;
+		border: 0;
+		margin: 0;
+		padding: 0;
+
+		.wpc-toggle-bar {
+			background: $wpc-toggle-bar-bg;
+			width: 100%;
+			height: $wpc-toggle-bar-height;
+			position: absolute;
+			left: 0;
+			top: 50%;
+			transform: translateY(-50%);
+
+			&:before,
+			&:after {
+				content: '';
+				background: $wpc-toggle-bar-bg;
+				width: 100%;
+				height: $wpc-toggle-bar-height;
+				position: absolute;
+				left: 0;
+				top: ( 0 - $wpc-toggle-bar-height - $wpc-toggle-bar-spacing-vert);
+			}
+
+			&:after {
+				top: ( 0 + $wpc-toggle-bar-height + $wpc-toggle-bar-spacing-vert);
+			}
+		}
+	}
+
+	.wpc-container {
+		display: flex;
+		height: $wpc-banner-height;
 		max-width: $wpc-banner-max-width;
 		margin: 0 auto;
-		padding: $wpc-banner-padding-vert 0;
+		align-items: center;
+		justify-content: space-between;
+		z-index: 100000000;
+	}
+
+	@media screen and (max-width: $wpc-banner-breakpoint) {
+
+		&.wpc-menu-open {
+			font-size: $wpc-banner-open-font-size;
+			line-height: $wpc-banner-open-line-height;
+			color: $wpc-banner-open-color;
+
+			a {
+				opacity: $wpc-banner-open-opacity;
+			}
+
+			.wpc-logo {
+				margin-bottom: $wpc-banner-open-logo-margin-bottom;
+				margin-right: $wpc-banner-open-logo-margin-right;
+
+				a {
+					height: $wpc-banner-open-logo-height;
+					padding: $wpc-banner-open-logo-padding-top 0 $wpc-banner-open-logo-padding-bottom 0;
+				}
+
+				svg {
+					height: $wpc-banner-open-logo-height;
+					fill: $wpc-banner-open-color;
+				}
+			}
+
+			.social-media-icons {
+				display: inline-block;
+				margin: 30px 0 0;
+				padding: 0;
+				border: 0;
+				text-align: center;
+				overflow: visible;
+
+				li {
+					display: block;
+					float: left;
+					list-style: none;
+					margin: 0 18px 0 0;
+					padding: 0;
+				}
+
+				svg {
+					width: auto;
+					height: 35px;
+					vertical-align: baseline;
+					fill: $wpc-banner-open-color;
+				}
+
+				a {
+					display: block;
+					line-height: 35px;
+				}
+			}
+
+			.wpc-menu {
+				display: block !important;
+
+				a {
+					padding: $wpc-banner-open-menu-item-padding-vert 0;
+				}
+
+				li {
+					display: block;
+					clear: both;
+
+					&.highlight {
+						background: $wpc-banner-open-highlight-bg;
+						color: $wpc-banner-open-highlight-color;
+						margin-top: $wpc-banner-open-highlight-margin-top;
+
+						a {
+							padding: $wpc-banner-open-highlight-padding-vert $wpc-banner-open-highlight-padding-horiz;
+						}
+					}
+				}
+			}
+			.wpc-toggle-menu {
+				position: fixed;
+				right: $wpc-toggle-bar-open-right;
+				top: $wpc-toggle-bar-open-top;
+				width: $wpc-toggle-bar-open-width;
+				height: $wpc-toggle-bar-open-width;
+
+				.wpc-toggle-bar {
+					background: $wpc-toggle-bar-bg-open;
+					transform: rotate(45deg);
+					left: 0;
+					top: 40%;
+
+					&:before {
+						background: $wpc-toggle-bar-bg-open;
+						transform: rotate(90deg);
+						top: 0;
+					}
+
+					&:after {
+						display: none;
+					}
+				}
+			}
+
+			.wpc-container {
+				display: block;
+				background: $wpc-banner-open-bg;
+				position: absolute;
+				right: 0;
+				top: 0;
+				max-width: none;
+				width: 100%;
+				height: 100%;
+				padding: $wpc-banner-open-container-padding;
+			}
+		}
+	}
+
+	@media screen and (min-width: $wpc-banner-breakpoint) {
+
+		.social-media-icons {
+			display: none;
+		}
+
+		.wpc-toggle-menu {
+			display: none !important;
+		}
+
+		.wpc-menu {
+			display: flex;
+			text-transform: uppercase;
+			align-items: center;
+
+			li {
+				display: block;
+				margin: 0;
+				border: 0;
+				padding: 0;
+				list-style: none;
+				text-align: center;
+
+				a {
+					height: $wpc-banner-menu-height;
+					line-height: $wpc-banner-menu-height;
+					padding: 0 $wpc-banner-menu-padding;
+
+					&:hover,
+					&:focus {
+						background: rgba(0,0,0,0.05);
+					}
+				}
+
+				&.highlight {
+					border: 0;
+					margin-left: $wpc-banner-highlight-margin-left;
+
+					a {
+						display: block;
+						background: $wpc-banner-highlight-bg;
+						color: $wpc-banner-highlight-color;
+						opacity: 1;
+						text-align: center;
+						position: relative;
+						z-index: 0;
+
+						&:hover,
+						&:focus {
+							background: darken($wpc-banner-highlight-bg, 10%);
+						}
+					}
+				}
+			}
+		}
 	}
 }
