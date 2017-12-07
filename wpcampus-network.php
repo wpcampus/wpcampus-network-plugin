@@ -52,7 +52,6 @@ class WPCampus_Network {
 	 * @var     string
 	 */
 	private $enable_network_banner;
-	private $network_banner_args;
 	private $enable_network_notifications;
 	private $enable_network_footer;
 
@@ -326,13 +325,11 @@ class WPCampus_Network {
 	 * @access  public
 	 * @return  void
 	 */
-	public function enable_network_banner( $skip_nav_args = array() ) {
+	public function enable_network_banner() {
 		$this->enable_network_banner = true;
-		$this->network_banner_args = is_array( $skip_nav_args ) ? $skip_nav_args : array();
 	}
 	public function disable_network_banner() {
 		$this->enable_network_banner = false;
-		$this->network_banner_args = array();
 	}
 
 	/**
@@ -371,32 +368,31 @@ class WPCampus_Network {
 	 * @access  public
 	 * @return  string|HTML - the markup.
 	 */
-	public function get_network_banner() {
+	public function get_network_banner( $args = array() ) {
 
 		// Make sure it's enabled.
 		if ( ! $this->enable_network_banner ) {
 			return;
 		}
 
+		// Parse incoming $args with defaults.
+		$args = wp_parse_args( $args, array(
+			'skip_nav_id'       => '',
+			'skip_nav_label'    => __( 'Skip to Content', 'wpcampus' ),
+		));
+
 		// Build the banner.
 		$banner = '';
 
 		// Add skip navigation.
-		if ( ! empty( $this->network_banner_args['skip_nav_id'] ) ) {
+		if ( ! empty( $args['skip_nav_id'] ) ) {
 
 			// Make sure we have a valid ID.
-			$skip_nav_id = preg_replace( '/[^a-z0-9\-]/i', '', $this->network_banner_args['skip_nav_id'] );
+			$skip_nav_id = preg_replace( '/[^a-z0-9\-]/i', '', $args['skip_nav_id'] );
 			if ( ! empty( $skip_nav_id ) ) {
-
-				// Define the label.
-				$skip_nav_label = __( 'Skip to Content', 'wpcampus' );
-				if ( ! empty( $this->network_banner_args['skip_nav_label'] ) ) {
-					$skip_nav_label = $this->network_banner_args['skip_nav_label'];
-				}
-
 				$banner .= sprintf( '<a href="#%s" id="wpc-skip-to-content">%s</a>',
 					$skip_nav_id,
-					$skip_nav_label
+					$args['skip_nav_label']
 				);
 			}
 		}
@@ -448,8 +444,8 @@ class WPCampus_Network {
 	 * @access  public
 	 * @return  void
 	 */
-	public function print_network_banner() {
-		echo $this->get_network_banner();
+	public function print_network_banner( $args = array() ) {
+		echo $this->get_network_banner( $args );
 	}
 
 	/**
@@ -578,8 +574,8 @@ wpcampus_network();
 /**
  * Interact with the banner.
  */
-function wpcampus_enable_network_banner( $skip_nav_args = array() ) {
-	return wpcampus_network()->enable_network_banner( $skip_nav_args );
+function wpcampus_enable_network_banner() {
+	return wpcampus_network()->enable_network_banner();
 }
 function wpcampus_disable_network_banner() {
 	return wpcampus_network()->disable_network_banner();
@@ -587,8 +583,8 @@ function wpcampus_disable_network_banner() {
 function wpcampus_get_network_banner() {
 	return wpcampus_network()->get_network_banner();
 }
-function wpcampus_print_network_banner() {
-	wpcampus_network()->print_network_banner();
+function wpcampus_print_network_banner( $args = array() ) {
+	wpcampus_network()->print_network_banner( $args );
 }
 
 /**
