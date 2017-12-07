@@ -226,9 +226,6 @@ class WPCampus_Network {
 
 		// Register assets needed below.
 		wp_register_script( 'mustache', $js_dir . 'mustache.min.js', array(), null, true );
-
-		// Enqueue the notifications script - goes in footer.
-		wp_enqueue_script( 'wpc-network-notifications', $js_dir . 'wpc-network-notifications.min.js', array( 'jquery', 'mustache' ), null, true );
 		wp_register_script( 'wpc-network-toggle-menu', $js_dir . 'wpc-network-toggle-menu.min.js', array( 'jquery', 'jquery-ui-core' ), null );
 
 		// Enqueue the network banner styles.
@@ -237,9 +234,10 @@ class WPCampus_Network {
 			wp_enqueue_script( 'wpc-network-toggle-menu' );
 		}
 
-		// Enqueue the network notification styles.
+		// Enqueue the network notification assets.
 		if ( $this->enable_network_notifications ) {
 			wp_enqueue_style( 'wpc-network-notifications', $css_dir . 'wpc-network-notifications.min.css', array(), null );
+			wp_enqueue_script( 'wpc-network-notifications', $js_dir . 'wpc-network-notifications.min.js', array( 'jquery', 'mustache' ), null, true );
 		}
 
 		// Enqueue the network footer styles.
