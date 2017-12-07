@@ -472,8 +472,10 @@ class WPCampus_Network {
 		<script id="wpc-notification-template" type="x-tmpl-mustache">
 			{{#.}}
 				<div class="wpc-notification">
-					<div class="wpc-notification-message">
-						{{{content.rendered}}}
+					<div class="wpc-container">
+						<div class="wpc-notification-message">
+							{{{content.rendered}}}
+						</div>
 					</div>
 				</div>
 			{{/.}}
@@ -526,21 +528,23 @@ class WPCampus_Network {
 
 		// Build the footer.
 		$footer = '<div id="wpc-network-footer">
-			<a class="wpc-logo" href="' . $home_url . '"><img src="' . $images_dir . 'wpcampus-black-tagline.svg" alt="' . sprintf( __( '%1$s: Where %2$s Meets Higher Education', 'wpcampus' ), 'WPCampus', 'WordPress' ) . '" /></a><br />';
+			<div class="wpc-container">
+				<a class="wpc-logo" href="' . $home_url . '"><img src="' . $images_dir . 'wpcampus-black-tagline.svg" alt="' . sprintf( __( '%1$s: Where %2$s Meets Higher Education', 'wpcampus' ), 'WPCampus', 'WordPress' ) . '" /></a><br />';
 
-			// Add the footer menu.
-			$footer .= wp_nav_menu( array(
-				'echo'              => false,
-				'theme_location'    => 'footer',
-				'container'         => false,
-				'menu_id'           => 'wpc-network-footer-menu',
-				'menu_class'        => 'wpc-network-footer-menu',
-				'fallback_cb'       => false,
-			));
+				// Add the footer menu.
+				$footer .= wp_nav_menu( array(
+					'echo'              => false,
+					'theme_location'    => 'footer',
+					'container'         => false,
+					'menu_id'           => 'wpc-network-footer-menu',
+					'menu_class'        => 'wpc-network-footer-menu',
+					'fallback_cb'       => false,
+				));
 
 		$footer .= '<p class="message"><strong>' . sprintf( __( '%1$s is a community of networking, resources, and events for those using %2$s in the world of higher education.', 'wpcampus' ), 'WPCampus', 'WordPress' ) . '</strong><br />' . sprintf( __( 'If you are not a member of the %1$s community, we\'d love for you to %2$sget involved%3$s.', 'wpcampus' ), 'WPCampus', '<a href="' . $get_involved_url . '">', '</a>' ) . '</p>
-			<p class="disclaimer">' . sprintf( __( 'This site is powered by %1$s. You can view, and contribute to, the theme on %2$s.', 'wpcampus' ), '<a href="' . $wp_org_url . '">WordPress</a>', '<a href="' . $github_url . '">GitHub</a>' ) . '<br />' . sprintf( __( '%1$s events are not %2$s and are not affiliated with the %3$s Foundation.', 'wpcampus' ), 'WPCampus', 'WordCamps', 'WordPress' ) . '</p>' .
-		    $this->get_social_media_icons() . '<p class="copyright">&copy; ' . date( 'Y' ) . ' WPCampus</p>
+				<p class="disclaimer">' . sprintf( __( 'This site is powered by %1$s. You can view, and contribute to, the theme on %2$s.', 'wpcampus' ), '<a href="' . $wp_org_url . '">WordPress</a>', '<a href="' . $github_url . '">GitHub</a>' ) . '<br />' . sprintf( __( '%1$s events are not %2$s and are not affiliated with the %3$s Foundation.', 'wpcampus' ), 'WPCampus', 'WordCamps', 'WordPress' ) . '</p>' .
+		        $this->get_social_media_icons() . '<p class="copyright">&copy; ' . date( 'Y' ) . ' <a href="' . $home_url . '">WPCampus</a></p>
+			</div>
 		</div>';
 
 		return $footer;

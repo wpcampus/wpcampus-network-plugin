@@ -1,7 +1,7 @@
-$wpc-notification-max-width: 920px;
 $wpc-notification-bg: rgba(17,89,189,0.1);
+$wpc-container-max-width: 920px;
 
-$wpc-notification-font-size: 1rem;
+$wpc-notification-font-size: 0.95rem;
 $wpc-notification-line-height: 1.6;
 
 $wpc-notification-info-icon-width: 28px;
@@ -30,12 +30,10 @@ $wpc-notification-padding-left: $wpc-notification-info-icon-width + $wpc-notific
 	}
 
 	.wpc-notification-message {
-		max-width: $wpc-notification-max-width;
 		min-height: $wpc-notification-info-icon-height + $wpc-notification-padding-vert;
 		font-size: $wpc-notification-font-size;
 		line-height: $wpc-notification-line-height;
 		text-align: left;
-		margin: 0 auto;
 		padding: $wpc-notification-padding-vert 0 $wpc-notification-padding-vert $wpc-notification-padding-left;
 		vertical-align: middle;
 		position: relative;
@@ -65,5 +63,10 @@ $wpc-notification-padding-left: $wpc-notification-info-icon-width + $wpc-notific
 	.wpc-notification {
 		background: $wpc-notification-bg;
 		padding: 0 $wpc-notification-padding-horiz;
+	}
+
+	.wpc-container {
+		max-width: $wpc-container-max-width;
+		margin: 0 auto;
 	}
 }
