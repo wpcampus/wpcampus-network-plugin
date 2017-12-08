@@ -1,4 +1,4 @@
-(function( $ ) {
+(function($) {
 	'use strict';
 
 	$(document).ready(function() {
@@ -10,7 +10,7 @@
 		}
 
 		// Process the notifications.
-		$.get( 'https://wpcampus.org/wp-json/wp/v2/notifications?per_page=1' ).done(function( data ) {
+		$.get('https://wpcampus.org/wp-json/wp/v2/notifications?per_page=1').done(function(data) {
 
 			/*
 			 * Get the template HTML.
@@ -29,4 +29,4 @@
 
 		});
 	});
-})( jQuery );
+})(jQuery);
