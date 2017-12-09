@@ -1,4 +1,4 @@
-<svg version="1.1" id="YouTubeLogo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 84 60" style="enable-background:new 0 0 84 60;" xml:space="preserve">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 84 60" style="enable-background:new 0 0 84 60;" xml:space="preserve">
 	<title>Follow WPCampus on YouTube</title>
 	<path d="M84,23c0,1.7,0,4,0,7s0,5.3,0,7s-0.1,3.8-0.4,6.4c-0.2,2.3-0.6,4.6-1.1,6.9c-0.5,2.2-1.6,4.2-3.2,5.8
 	c-1.6,1.5-3.6,2.5-5.8,2.7C66.5,59.6,56,60,42,60s-24.5-0.4-31.5-1.2c-2.2-0.2-4.2-1.2-5.8-2.7c-1.7-1.5-2.8-3.6-3.3-5.8

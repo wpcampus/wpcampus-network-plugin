@@ -1,4 +1,4 @@
-<svg version="1.1" id="GitHubLogo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 62 60" style="enable-background:new 0 0 62 60;" xml:space="preserve">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 62 60" style="enable-background:new 0 0 62 60;" xml:space="preserve">
 	<title>Follow WPCampus on GitHub</title>
 	<path d="M30.8,0C13.8,0,0,13.8,0,30.8C0,44.4,8.8,55.9,21,60c1.5,0.3,2.1-0.7,2.1-1.5c0-0.7,0-2.7,0-5.2c-8.6,1.9-10.4-4.1-10.4-4.1
 	c-1.4-3.6-3.4-4.5-3.4-4.5c-2.8-1.9,0.2-1.9,0.2-1.9c3.1,0.2,4.7,3.2,4.7,3.2c2.7,4.7,7.2,3.3,9,2.6c0.3-2,1.1-3.3,2-4.1

@@ -1,4 +1,4 @@
-<svg version="1.1" id="TwitterLogo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 70 60" style="enable-background:new 0 0 70 60;" xml:space="preserve">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 70 60" style="enable-background:new 0 0 70 60;" xml:space="preserve">
 	<title>Follow WPCampus on Twitter</title>
 	<path d="M70,9c-2.1,2.9-4.5,5.5-7.3,7.7v1.7c0,3.9-0.6,7.9-1.7,11.7c-1.2,3.9-3,7.6-5.3,11c-2.3,4-5.3,6.7-8.6,9.7
 	c-3.3,2.8-7.1,5.1-11.2,6.7c-4.4,1.7-9.1,2.6-13.9,2.7C14.2,60,6.5,57.7,0,53.3h3.6c6.6,0.1,12.9-2.3,17.8-6.7
