@@ -275,19 +275,24 @@ class WPCampus_Network {
 		$images_dir = $this->plugin_dir . 'assets/images/';
 		$social = array(
 			'slack' => array(
-				'href' => 'https://wpcampus.org/get-involved/',
+				'title' => sprintf( __( 'Join %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'Slack' ),
+				'href'  => 'https://wpcampus.org/get-involved/',
 			),
 			'twitter' => array(
-				'href' => 'https://twitter.com/wpcampusorg',
+				'title' => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'Twitter' ),
+				'href'  => 'https://twitter.com/wpcampusorg',
 			),
 			'facebook' => array(
-				'href' => 'https://www.facebook.com/wpcampus',
+				'title' => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'Facebook' ),
+				'href'  => 'https://www.facebook.com/wpcampus',
 			),
 			'youtube' => array(
-				'href' => 'https://www.youtube.com/wpcampusorg',
+				'title' => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'YouTube' ),
+				'href'  => 'https://www.youtube.com/wpcampusorg',
 			),
 			'github' => array(
-				'href' => 'https://github.com/wpcampus/',
+				'title' => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'GitHub' ),
+				'href'  => 'https://github.com/wpcampus/',
 			),
 		);
 
@@ -295,9 +300,10 @@ class WPCampus_Network {
 			foreach( $social as $key => $info ) {
 				$filename = "{$images_dir}{$key}.php";
 				if ( file_exists( $filename ) ) {
-					$icons .= sprintf( '<li class="%1$s"><a href="%2$s">%3$s</a></li>',
+					$icons .= sprintf( '<li class="%1$s"><a href="%2$s" title="%3$s">%4$s</a></li>',
 						$key,
 						$info['href'],
+						$info['title'],
 						file_get_contents( $filename )
 					);
 				}
