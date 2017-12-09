@@ -225,6 +225,8 @@ class WPCampus_Network {
 
 		// Register assets needed below.
 		wp_register_script( 'mustache', $js_dir . 'mustache.min.js', array(), null, true );
+
+		// Keep this one outside logic so I can register as a dependency in scripts outside the plugin.
 		wp_register_script( 'wpc-network-toggle-menu', $js_dir . 'wpc-network-toggle-menu.min.js', array( 'jquery', 'jquery-ui-core' ), null );
 
 		// Enqueue the network banner styles.
