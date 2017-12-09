@@ -1,5 +1,5 @@
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 200 200" style="enable-background:new 0 0 200 200;" xml:space="preserve">
-	<title><?php printf( __( 'Join %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'Slack' ); ?></title>
+<svg version="1.1" id="SlackLogo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 200 200" style="enable-background:new 0 0 200 200;" xml:space="preserve">
+	<title>Join WPCampus on Slack</title>
 	<path d="M200,124.8c0.5,18.1-9.5,35.8-29,48.2c-16.7,10.7-35.2,17-54.3,21.5c-11.9,2.8-24.1,5-36.2,5.4
 	c-23.3,0.8-41.3-9.4-53.7-29.3C15.2,152.2,8.9,131.7,4,110.8C0.9,97.9-0.9,84.9,0.5,71.6c2-18.8,11.3-32.9,26.7-43.3
 	C42.4,18,59.6,12.2,77,7.1c13.3-3.9,26.9-6.8,40.8-7.1c20.1-0.5,37.4,5.9,50.3,22.2c9.8,12.4,15.9,26.7,20.8,41.6
