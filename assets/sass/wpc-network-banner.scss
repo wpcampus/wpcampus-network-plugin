@@ -60,6 +60,7 @@ body.wpc-menu-open {
 // Stylize the "Skip To Content" link
 #wpc-skip-to-content {
 	display: block;
+	background: $wpc-skip-to-content-bg;
 	position: fixed;
 	top: -1000px;
 	left: -1000px;
@@ -67,27 +68,25 @@ body.wpc-menu-open {
 	height: 1px;
 	overflow: hidden;
 	border: 0;
-	padding: 0;
+	padding: 0 $wpc-skip-to-content-padding-horiz;
 	margin: 0;
 	z-index: -1;
 	clip: rect(1px, 1px, 1px, 1px);
+	color: $wpc-skip-to-content-color;
+	font-size: $wpc-skip-to-content-font-size;
+	font-weight: $wpc-skip-to-content-font-weight;
+	line-height: $wpc-banner-height;
+	text-decoration: underline;
+	text-align: center;
 
 	&:active,
 	&:focus,
 	&:hover {
 		clip: auto;
-		background: $wpc-skip-to-content-bg;
 		left: 0;
 		top: 0;
 		width: auto;
 		height: auto;
-		text-decoration: underline;
-		text-align: center;
-		color: $wpc-skip-to-content-color;
-		font-size: $wpc-skip-to-content-font-size;
-		font-weight: $wpc-skip-to-content-font-weight;
-		line-height: $wpc-banner-height;
-		padding: 0 $wpc-skip-to-content-padding-horiz;
 		overflow: visible;
 		z-index: 10000;
 	}
