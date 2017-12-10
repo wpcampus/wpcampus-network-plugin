@@ -561,6 +561,19 @@ class WPCampus_Network {
 	public function print_network_footer() {
 		echo $this->get_network_footer();
 	}
+
+	/**
+	 * Print the code of conduct message.
+	 */
+	public function print_code_of_conduct_message() {
+
+		?>
+		<div id="wpc-code-of-conduct">
+			<h2><?php _e( 'Code of Conduct', 'wpcampus' ); ?></h2>
+			<p><?php printf( __( '%1$s seeks to provide a friendly, safe environment in which all participants can engage in productive dialogue, sharing, and learning with each other in an atmosphere of mutual respect. In order to promote such an environment, we require all participants to adhere to our %2$scode of conduct%3$s, which applies to all community interaction and events.', 'wpcampus' ), 'WPCampus', '<a href="https://wpcampus.org/code-of-conduct/">', '</a>' ); ?></p>
+		</div>
+		<?php
+	}
 }
 
 /**
@@ -627,3 +640,9 @@ function wpcampus_print_network_footer() {
 	wpcampus_network()->print_network_footer();
 }
 
+/**
+ * Interact with the code of conduct.
+ */
+function wpcampus_print_code_of_conduct_message() {
+	return wpcampus_network()->print_code_of_conduct_message();
+}
