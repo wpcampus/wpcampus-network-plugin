@@ -298,7 +298,7 @@ class WPCampus_Network {
 			),
 		);
 
-		$icons = '<ul class="social-media-icons">';
+		$icons = '<ul class="social-media-icons" role="navigation">';
 			foreach( $social as $key => $info ) {
 				$filename = "{$images_dir}{$key}.php";
 				if ( file_exists( $filename ) ) {
@@ -638,6 +638,13 @@ function wpcampus_get_network_footer() {
 }
 function wpcampus_print_network_footer() {
 	wpcampus_network()->print_network_footer();
+}
+
+/**
+ * Interact with social media.
+ */
+function wpcampus_print_social_media_icons() {
+	return wpcampus_network()->print_social_media_icons();
 }
 
 /**
