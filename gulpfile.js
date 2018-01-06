@@ -60,7 +60,7 @@ gulp.task('js',function() {
 // "Sniff" our PHP.
 gulp.task('php', function() {
 	// TODO: Clean up. Want to run command and show notify for sniff errors.
-	return gulp.src('index.php', {read: false})
+	return gulp.src('wpcampus-network.php', {read: false})
 		.pipe(shell(['composer sniff'], {
 			ignoreErrors: true,
 			verbose: false
