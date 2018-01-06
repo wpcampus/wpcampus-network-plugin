@@ -7,7 +7,9 @@
     "url": "git+https://github.com/wpcampus/wpcampus-network-plugin.git"
   },
   "scripts": {
-    "postinstall": "gulp"
+    "install": "composer install",
+    "postinstall": "gulp",
+    "test": "composer sniff"
   },
   "author": "WPCampus",
   "license": "GPL-2.0",
