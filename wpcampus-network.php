@@ -113,6 +113,9 @@ class WPCampus_Network {
 		// Customize the arguments for the multi author post author dropdown.
 		add_filter( 'my_multi_author_post_author_dropdown_args', array( $this, 'filter_multi_author_primary_dropdown_args' ), 10, 2 );
 
+		// Adding titles to iframes for accessibility.
+		add_filter( 'oembed_dataparse', array( $this, 'filter_oembed_dataparse' ), 10, 3 );
+
 	}
 
 	/**
@@ -264,6 +267,54 @@ class WPCampus_Network {
 		}
 
 		return $args;
+	}
+
+	/**
+	 * Filters the returned oEmbed HTML.
+	 *
+	 * @param   string - $return - The returned oEmbed HTML.
+	 * @param   object - $data - A data object result from an oEmbed provider.
+	 * @param   string - $url - The URL of the content to be embedded.
+	 * @return  string - the HTML.
+	 */
+	public function filter_oembed_dataparse( $return, $data, $url ) {
+
+		// Get title from embed data to start.
+		$title = ! empty( $data->title ) ? $data->title : '';
+
+		// If no embed title, search the return markup for a title attribute.
+		$preg_match = '/title\=[\"|\\\']{1}([^\"\\\']*)[\"|\\\']{1}/i';
+		$has_title_attr = preg_match( $preg_match, $return, $matches );
+		if ( $has_title_attr && ! empty( $matches[1] )) {
+			$title = $matches[1];
+		}
+
+		// Add embed type as title prefix.
+		if ( $title && ! empty( $data->type ) ) {
+			switch( $data->type ) {
+
+				// Capitalize first word.
+				case 'video':
+					$title = sprintf( __( '%s:', 'wpcampus' ), ucfirst( $data->type ) ) . ' ' . $title;
+					break;
+			}
+		}
+
+		$title = apply_filters( 'wpcampus_oembed_title', $title, $return, $data, $url );
+
+		/*
+		 * If the title attribute already
+		 * exists, replace with new value.
+		 *
+		 * Otherwise, add the title attribute.
+		 */
+		if ( $has_title_attr ) {
+			$return = preg_replace( $preg_match, 'title="' . $title . '"', $return );
+		} else {
+			$return = preg_replace( '/^\<iframe/i', '<iframe title="' . $title . '"', $return );
+		}
+
+		return $return;
 	}
 
 	/**
