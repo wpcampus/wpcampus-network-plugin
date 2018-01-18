@@ -52,6 +52,7 @@ class WPCampus_Network {
 	 * @var     string
 	 */
 	private $enable_network_banner;
+	private $enable_network_subscribe;
 	private $enable_network_notifications;
 	private $enable_network_footer;
 
@@ -237,6 +238,10 @@ class WPCampus_Network {
 			wp_enqueue_style( 'wpc-network-banner', $css_dir . 'wpc-network-banner.min.css', array(), null );
 			wp_enqueue_script( 'wpc-network-toggle-menu' );
 		}
+		
+		if ( $this->enable_network_subscribe ) {
+			
+		}
 
 		// Enqueue the network notification assets.
 		if ( $this->enable_network_notifications ) {
@@ -394,6 +399,21 @@ class WPCampus_Network {
 	}
 
 	/**
+	 * Enable and disable the network subscribe popup.
+	 *
+	 * We need this to know whether or not to enqueue styles.
+	 *
+	 * @access  public
+	 * @return  void
+	 */
+	public function enable_network_subscribe() {
+		$this->enable_network_subscribe = true;
+	}
+	public function disable_network_subscribe() {
+		$this->disable_network_subscribe = false;
+	}
+
+	/**
 	 * Enable and disable the network notifications.
 	 *
 	 * We need this to know whether or not to enqueue styles.
@@ -507,6 +527,25 @@ class WPCampus_Network {
 	 */
 	public function print_network_banner( $args = array() ) {
 		echo $this->get_network_banner( $args );
+	}
+
+	/**
+	 * Get the network subscribe popup markup.
+	 *
+	 * @access  public
+	 * @return  string|HTML - the markup.
+	 */
+	public function get_network_subscribe() {
+
+		// Make sure it's enabled.
+		if ( ! $this->enable_network_subscribe ) {
+			return;
+		}
+
+		// Build the subscribe popup.
+		$subscribe = '<div id="wpc-network-subscribe"></div>';
+
+		return $subscribe;
 	}
 
 	/**
@@ -660,6 +699,19 @@ function wpcampus_get_network_banner() {
 }
 function wpcampus_print_network_banner( $args = array() ) {
 	wpcampus_network()->print_network_banner( $args );
+}
+
+/**
+ * Interact with the subscribe popup.
+ */
+function wpcampus_enable_network_subscribe() {
+	return wpcampus_network()->enable_network_subscribe();
+}
+function wpcampus_disable_network_subscribe() {
+	return wpcampus_network()->disable_network_subscribe();
+}
+function wpcampus_get_network_subscribe() {
+	return wpcampus_network()->get_network_subscribe();
 }
 
 /**
