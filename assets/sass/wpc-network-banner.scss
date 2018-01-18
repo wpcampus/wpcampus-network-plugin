@@ -11,9 +11,6 @@ $wpc-banner-opacity: 0.8;
 $wpc-banner-opacity-hover: 1;
 $wpc-banner-menu-padding: 8px;
 $wpc-banner-menu-height: $wpc-banner-height - 13px;
-$wpc-banner-highlight-bg: #1159bd;
-$wpc-banner-highlight-color: #fff;
-$wpc-banner-highlight-margin-left: 5px;
 
 $wpc-toggle-bar-bg: #444;
 $wpc-toggle-bar-bg-open: #fff;
@@ -341,6 +338,7 @@ body.wpc-menu-open {
 				text-align: center;
 
 				a {
+					display: block;
 					height: $wpc-banner-menu-height;
 					line-height: $wpc-banner-menu-height;
 					padding: 0 $wpc-banner-menu-padding;
@@ -352,22 +350,11 @@ body.wpc-menu-open {
 				}
 
 				&.highlight {
-					border: 0;
-					margin-left: $wpc-banner-highlight-margin-left;
+					font-weight: bold;
+					font-size: 112%;
 
 					a {
-						display: block;
-						background: $wpc-banner-highlight-bg;
-						color: $wpc-banner-highlight-color;
 						opacity: 1;
-						text-align: center;
-						position: relative;
-						z-index: 0;
-
-						&:hover,
-						&:focus {
-							background: darken($wpc-banner-highlight-bg, 10%);
-						}
 					}
 				}
 			}
