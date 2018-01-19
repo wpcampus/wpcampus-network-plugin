@@ -240,7 +240,8 @@ class WPCampus_Network {
 		}
 		
 		if ( $this->enable_network_subscribe ) {
-			
+			wp_enqueue_style( 'wpc-network-subscribe', $css_dir . 'wpc-network-subscribe.min.css', array(), null );
+			wp_enqueue_script( 'wpc-network-subscribe', $js_dir . 'wpc-network-subscribe.min.js', array( 'jquery' ), null, true );
 		}
 
 		// Enqueue the network notification assets.
@@ -535,7 +536,7 @@ class WPCampus_Network {
 	 * @access  public
 	 * @return  string|HTML - the markup.
 	 */
-	public function get_network_subscribe() {
+	public function get_network_subscribe( $args = array() ) {
 
 		// Make sure it's enabled.
 		if ( ! $this->enable_network_subscribe ) {
@@ -546,6 +547,16 @@ class WPCampus_Network {
 		$subscribe = '<div id="wpc-network-subscribe"></div>';
 
 		return $subscribe;
+	}
+
+	/**
+	 * Print the network subscribe markup.
+	 *
+	 * @access  public
+	 * @return  void
+	 */
+	public function print_network_subscribe( $args = array() ) {
+		echo $this->get_network_subscribe( $args );
 	}
 
 	/**
@@ -712,6 +723,9 @@ function wpcampus_disable_network_subscribe() {
 }
 function wpcampus_get_network_subscribe() {
 	return wpcampus_network()->get_network_subscribe();
+}
+function wpcampus_print_network_subscribe( $args = array() ) {
+	wpcampus_network()->print_network_subscribe( $args );
 }
 
 /**

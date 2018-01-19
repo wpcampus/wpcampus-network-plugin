@@ -10,7 +10,11 @@ const shell = require('gulp-shell');
 
 // Define the source paths for each file type.
 const src = {
-	js: ['assets/js/wpc-network-notifications.js','assets/js/wpc-network-toggle-menu.js'],
+	js: [
+		'assets/js/wpc-network-notifications.js',
+		'assets/js/wpc-network-subscribe.js'
+		'assets/js/wpc-network-toggle-menu.js',
+	],
 	php: ['**/*.php','!vendor/**','!node_modules/**'],
     sass: ['assets/sass/**/*']
 };
