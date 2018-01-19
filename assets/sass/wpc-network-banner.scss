@@ -50,7 +50,10 @@ $wpc-skip-to-content-font-size: 1rem;
 $wpc-skip-to-content-font-weight: 600;
 $wpc-skip-to-content-padding-horiz: 15px;
 
-body.wpc-menu-open {
+html.wpc-menu-open,
+html.wpc-menu-open body {
+	width: 100%;
+	height: 100%;
 	overflow: hidden;
 }
 

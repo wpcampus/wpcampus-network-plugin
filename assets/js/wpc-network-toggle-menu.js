@@ -32,7 +32,7 @@
 
 	$.fn.wpc_network_open_toggle_menu = function() {
 		var $menuContainer = $(this);
-		$('body').addClass(openMenuClass);
+		$('html').addClass(openMenuClass);
 		$menuContainer.addClass(openMenuClass);
 		$(window).on('keydown.wpcMenu', function(e) {
 
@@ -67,7 +67,7 @@
 
 	$.fn.wpc_network_close_toggle_menu = function() {
 		var $menuContainer = $(this);
-		$('body').removeClass(openMenuClass);
+		$('html').removeClass(openMenuClass);
 		$menuContainer.removeClass(openMenuClass).find('.wpc-toggle-menu').focus();
 		$(window).off('keydown.wpcMenu');
 	};
