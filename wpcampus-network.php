@@ -108,7 +108,7 @@ class WPCampus_Network {
 		add_action( 'after_setup_theme', array( $this, 'register_network_footer_menu' ), 20 );
 
 		// Enqueue front-end scripts and styles.
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts_styles' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts_styles' ), 0 );
 
 		// Customize the arguments for the multi author post author dropdown.
 		add_filter( 'my_multi_author_post_author_dropdown_args', array( $this, 'filter_multi_author_primary_dropdown_args' ), 10, 2 );
