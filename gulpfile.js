@@ -39,7 +39,7 @@ gulp.task('sass', function() {
 			suffix: '.min'
 		}))
 		.pipe(gulp.dest(dest.sass))
-		.pipe(notify('WPC Online SASS compiled'));
+		.pipe(notify('WPC Network SASS compiled'));
 });
 
 // Take care of JS.
@@ -54,7 +54,7 @@ gulp.task('js',function() {
 			}
 		}))
 		.pipe(gulp.dest(dest.js))
-		.pipe(notify('WPC Online JS compiled'));
+		.pipe(notify('WPC Network JS compiled'));
 });
 
 // "Sniff" our PHP.
@@ -65,7 +65,7 @@ gulp.task('php', function() {
 			ignoreErrors: true,
 			verbose: false
 		}))
-		.pipe(notify('WPC Online PHP sniffed'), {
+		.pipe(notify('WPC Network PHP sniffed'), {
 			onLast: true,
 			emitError: true
 		});
