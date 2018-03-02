@@ -1,3 +1,5 @@
+$wpc-banner-font-family: 'Open Sans', sans-serif;
+
 $wpc-banner-bg: #fff;
 $wpc-banner-max-width: 920px;
 $wpc-banner-height: 40px;
@@ -73,6 +75,7 @@ html.wpc-menu-open body {
 	z-index: -1;
 	clip: rect(1px, 1px, 1px, 1px);
 	color: $wpc-skip-to-content-color;
+	font-family: $wpc-banner-font-family;
 	font-size: $wpc-skip-to-content-font-size;
 	font-weight: $wpc-skip-to-content-font-weight;
 	line-height: $wpc-banner-height;
@@ -97,8 +100,24 @@ html.wpc-menu-open body {
 	height: $wpc-banner-height;
 	color: $wpc-banner-color;
 	padding: $wpc-banner-padding-vert $wpc-banner-padding-horiz;
+	font-family: $wpc-banner-font-family;
 	font-size: $wpc-banner-font-size;
 	line-height: $wpc-banner-line-height;
+
+	* {
+		font-family: inherit;
+		font-size: inherit;
+		line-height: inherit;
+		color: inherit;
+
+		&:first-child {
+			margin-top: 0;
+		}
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
 
 	a {
 		display: block;
@@ -110,20 +129,6 @@ html.wpc-menu-open body {
 		&:hover,
 		&:focus {
 			opacity: $wpc-banner-opacity-hover;
-		}
-	}
-
-	* {
-		font-size: inherit;
-		line-height: inherit;
-		color: inherit;
-
-		&:first-child {
-			margin-top: 0;
-		}
-
-		&:last-child {
-			margin-bottom: 0;
 		}
 	}
 
@@ -353,7 +358,7 @@ html.wpc-menu-open body {
 				}
 
 				&.highlight {
-					font-weight: bold;
+					font-weight: 700;
 					font-size: 112%;
 
 					a {

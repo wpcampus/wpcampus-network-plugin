@@ -1,3 +1,5 @@
+$wpc-footer-font-family: 'Open Sans', sans-serif;
+
 $wpc-footer-bg: #fafafa;
 $wpc-footer-color: #444;
 $wpc-footer-font-size: 0.9rem;
@@ -22,12 +24,14 @@ $wpc-footer-social-margin-bottom: 0.9rem;
 #wpc-network-footer {
 	background: $wpc-footer-bg;
 	color: $wpc-footer-color;
+	font-family: $wpc-footer-font-family;
 	font-size: $wpc-footer-font-size;
 	line-height: $wpc-footer-line-height;
 	text-align: center;
 	padding: $wpc-footer-padding-vert $wpc-footer-padding-side;
 
 	* {
+		font-family: inherit;
 		font-size: inherit;
 		line-height: inherit;
 		color: inherit;
@@ -39,6 +43,10 @@ $wpc-footer-social-margin-bottom: 0.9rem;
 		&:last-child {
 			margin-bottom: 0;
 		}
+	}
+
+	strong {
+		font-weight: 600;
 	}
 
 	p, img, ul, ol, li {

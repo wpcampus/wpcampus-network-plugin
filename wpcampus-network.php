@@ -226,6 +226,31 @@ class WPCampus_Network {
 		$css_dir = trailingslashit( $this->plugin_url . 'assets/css' );
 		$js_dir = trailingslashit( $this->plugin_url . 'assets/js' );
 
+		// Setup the font weights we need.
+		$open_sans_weights = apply_filters( 'wpcampus_open_sans_font_weights', array() );
+
+		if ( ! is_array( $open_sans_weights ) ) {
+			$open_sans_weights = array();
+		} else {
+			$open_sans_weights = array_filter( $open_sans_weights, 'intval' );
+		}
+
+		// Make sure the weights we need for our components are there.
+		if ( $this->enable_network_banner ) {
+			$open_sans_weights = array_merge( $open_sans_weights, array( 400, 600, 700 ) );
+		}
+
+		if ( $this->enable_network_notifications ) {
+			$open_sans_weights = array_merge( $open_sans_weights, array( 400 ) );
+		}
+
+		if ( $this->enable_network_footer ) {
+			$open_sans_weights = array_merge( $open_sans_weights, array( 400, 600 ) );
+		}
+
+		// Register our fonts.
+		wp_register_style( 'wpc-fonts-open-sans', 'https://fonts.googleapis.com/css?family=Open+Sans:' . implode( ',', array_unique( $open_sans_weights ) ) );
+
 		// Register assets needed below.
 		wp_register_script( 'mustache', $js_dir . 'mustache.min.js', array(), null, true );
 
@@ -234,19 +259,19 @@ class WPCampus_Network {
 
 		// Enqueue the network banner styles.
 		if ( $this->enable_network_banner ) {
-			wp_enqueue_style( 'wpc-network-banner', $css_dir . 'wpc-network-banner.min.css', array(), null );
+			wp_enqueue_style( 'wpc-network-banner', $css_dir . 'wpc-network-banner.min.css', array( 'wpc-fonts-open-sans' ), null );
 			wp_enqueue_script( 'wpc-network-toggle-menu' );
 		}
 
 		// Enqueue the network notification assets.
 		if ( $this->enable_network_notifications ) {
-			wp_enqueue_style( 'wpc-network-notifications', $css_dir . 'wpc-network-notifications.min.css', array(), null );
+			wp_enqueue_style( 'wpc-network-notifications', $css_dir . 'wpc-network-notifications.min.css', array( 'wpc-fonts-open-sans' ), null );
 			wp_enqueue_script( 'wpc-network-notifications', $js_dir . 'wpc-network-notifications.min.js', array( 'jquery', 'mustache' ), null, true );
 		}
 
 		// Enqueue the network footer styles.
 		if ( $this->enable_network_footer ) {
-			wp_enqueue_style( 'wpc-network-footer', $css_dir . 'wpc-network-footer.min.css', array(), null );
+			wp_enqueue_style( 'wpc-network-footer', $css_dir . 'wpc-network-footer.min.css', array( 'wpc-fonts-open-sans' ), null );
 		}
 	}
 
