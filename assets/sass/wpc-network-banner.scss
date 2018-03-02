@@ -205,7 +205,7 @@ html.wpc-menu-open body {
 		z-index: 100000000;
 	}
 
-	@media screen and (max-width: $wpc-banner-breakpoint) {
+	@media screen and (max-width: $wpc-banner-breakpoint - 1px) {
 
 		&.wpc-menu-open {
 			font-size: $wpc-banner-open-font-size;
