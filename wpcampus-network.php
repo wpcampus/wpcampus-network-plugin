@@ -227,21 +227,23 @@ class WPCampus_Network {
 		$css_dir = trailingslashit( $this->plugin_url . 'assets/css' );
 		$js_dir = trailingslashit( $this->plugin_url . 'assets/js' );
 
-		// Register assets needed below.
+		// Register assets needed below (and possibly in other libraries).
+		wp_register_script( 'launchy', $js_dir . 'launchy.js', array(), null, true );
 		wp_register_script( 'mustache', $js_dir . 'mustache.min.js', array(), null, true );
 
 		// Keep this one outside logic so I can register as a dependency in scripts outside the plugin.
 		wp_register_script( 'wpc-network-toggle-menu', $js_dir . 'wpc-network-toggle-menu.min.js', array( 'jquery', 'jquery-ui-core' ), null );
 
-		// Enqueue the network banner styles.
+		// Enqueue the network banner assets.
 		if ( $this->enable_network_banner ) {
 			wp_enqueue_style( 'wpc-network-banner', $css_dir . 'wpc-network-banner.min.css', array(), null );
 			wp_enqueue_script( 'wpc-network-toggle-menu' );
 		}
-		
+
+		// Enqueue the network subscribe assets.
 		if ( $this->enable_network_subscribe ) {
 			wp_enqueue_style( 'wpc-network-subscribe', $css_dir . 'wpc-network-subscribe.min.css', array(), null );
-			wp_enqueue_script( 'wpc-network-subscribe', $js_dir . 'wpc-network-subscribe.min.js', array( 'jquery' ), null, true );
+			wp_enqueue_script( 'launchy' );
 		}
 
 		// Enqueue the network notification assets.
@@ -250,7 +252,7 @@ class WPCampus_Network {
 			wp_enqueue_script( 'wpc-network-notifications', $js_dir . 'wpc-network-notifications.min.js', array( 'jquery', 'mustache' ), null, true );
 		}
 
-		// Enqueue the network footer styles.
+		// Enqueue the network footer assets.
 		if ( $this->enable_network_footer ) {
 			wp_enqueue_style( 'wpc-network-footer', $css_dir . 'wpc-network-footer.min.css', array(), null );
 		}
@@ -544,7 +546,38 @@ class WPCampus_Network {
 		}
 
 		// Build the subscribe popup.
-		$subscribe = '<div id="wpc-network-subscribe"></div>';
+		$subscribe = '<div id="wpc-network-subscribe">
+			<div class="modal-button-label">' . sprintf( __( 'Want to stay informed on all things %s?', 'wpcampus' ), 'WPCampus' ) . '</div>
+			<div class="wpc-network-subscribe-modal" data-launchy data-launchy-button data-launchy-text="' . esc_attr__( 'Subscribe', 'wpcampus' ) . '" data-launchy-title="' . sprintf( esc_attr__( 'Subscribe to the %s mailing list', 'wpcampus' ), 'WPCampus' ) . '">
+				<!-- Begin MailChimp Signup Form -->
+				<link href="//cdn-images.mailchimp.com/embedcode/classic-10_7.css" rel="stylesheet" type="text/css">
+				<div class="wpc-network-signup">
+					<form action="https://wpcampus.us11.list-manage.com/subscribe/post?u=6d71860d429d3461309568b92&amp;id=05f39a2a20" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+						<div class="indicates-required"><span class="asterisk">*</span> indicates required</div>
+						<div class="mc-field-group">
+							<label for="mce-FNAME">First Name</label>
+							<input type="text" value="" name="FNAME" class="" id="mce-FNAME">
+						</div>
+						<div class="mc-field-group">
+							<label for="mce-LNAME">Last Name</label>
+							<input type="text" value="" name="LNAME" class="" id="mce-LNAME">
+						</div>
+						<div class="mc-field-group">
+							<label for="mce-EMAIL">Email Address  <span class="asterisk">*</span></label>
+							<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL">
+						</div>
+						<div id="mce-responses" class="clear">
+							<div class="response" id="mce-error-response" style="display:none"></div>
+							<div class="response" id="mce-success-response" style="display:none"></div>
+						</div><!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+						<div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_6d71860d429d3461309568b92_05f39a2a20" tabindex="-1" value=""></div>
+						<div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+					</form>
+				</div>
+				<script type="text/javascript" src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"></script>';
+				$subscribe .= "<script type='text/javascript'>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';fnames[0]='EMAIL';ftypes[0]='email';fnames[6]='MMERGE6';ftypes[6]='radio';fnames[3]='MMERGE3';ftypes[3]='text';fnames[5]='MMERGE5';ftypes[5]='radio';}(jQuery));var $mcj = jQuery.noConflict(true);</script>";
+			$subscribe .= '</div>
+		</div>';
 
 		return $subscribe;
 	}

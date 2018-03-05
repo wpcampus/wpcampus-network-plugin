@@ -12,7 +12,7 @@ const shell = require('gulp-shell');
 const src = {
 	js: [
 		'assets/js/wpc-network-notifications.js',
-		'assets/js/wpc-network-subscribe.js'
+		'assets/js/wpc-network-subscribe.js',
 		'assets/js/wpc-network-toggle-menu.js',
 	],
 	php: ['**/*.php','!vendor/**','!node_modules/**'],
@@ -29,7 +29,7 @@ const dest = {
 gulp.task('sass', function() {
 	return gulp.src(src.sass)
 		.pipe(sass({
-			outputStyle: 'expanded' //nested, expanded, compact, compressed
+			outputStyle: 'expanded'
 		}).on('error', sass.logError))
 		.pipe(mergeMediaQueries())
 		.pipe(autoprefixer({
@@ -43,13 +43,15 @@ gulp.task('sass', function() {
 			suffix: '.min'
 		}))
 		.pipe(gulp.dest(dest.sass))
-		.pipe(notify('WPC Online SASS compiled'));
+		.pipe(notify('WPC Network SASS compiled'));
 });
 
 // Take care of JS.
 gulp.task('js',function() {
-	gulp.src('./node_modules/mustache/mustache.min.js')
-		.pipe(gulp.dest('assets/js'));
+	gulp.src([
+		'./node_modules/launchy-modal-window/launchy.js',
+		'./node_modules/mustache/mustache.min.js'
+	]).pipe(gulp.dest('assets/js'));
 	gulp.src(src.js)
 		.pipe(minify({
 			mangle: false,
@@ -58,7 +60,7 @@ gulp.task('js',function() {
 			}
 		}))
 		.pipe(gulp.dest(dest.js))
-		.pipe(notify('WPC Online JS compiled'));
+		.pipe(notify('WPC Network JS compiled'));
 });
 
 // "Sniff" our PHP.
@@ -69,7 +71,7 @@ gulp.task('php', function() {
 			ignoreErrors: true,
 			verbose: false
 		}))
-		.pipe(notify('WPC Online PHP sniffed'), {
+		.pipe(notify('WPC Network PHP sniffed'), {
 			onLast: true,
 			emitError: true
 		});
