@@ -1,7 +1,7 @@
 {
   "name": "wpcampus-network-plugin",
   "version": "1.0.0",
-  "description": "WordPress plugin that handles network-wide functionality for the WPCampus network of sites.",
+  "description": "WordPress plugin that manages network-wide functionality for the WPCampus network of sites.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wpcampus/wpcampus-network-plugin.git"

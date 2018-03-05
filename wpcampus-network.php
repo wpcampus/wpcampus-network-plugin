@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name:       WPCampus Network
+ * Plugin Name:       WPCampus: Network
  * Plugin URI:        https://wpcampus.org
- * Description:       Handles network-wide functionality for the WPCampus network of sites.
+ * Description:       Manages network-wide functionality for the WPCampus network of sites.
  * Version:           1.0.0
  * Author:            WPCampus
  * Author URI:        https://wpcampus.org

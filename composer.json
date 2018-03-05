@@ -1,6 +1,6 @@
 {
 	"name": "wpcampus/wpcampus-network-plugin",
-	"description": "WordPress plugin that handles network-wide functionality for the WPCampus network of sites.",
+	"description": "WordPress plugin that manages network-wide functionality for the WPCampus network of sites.",
 	"type": "wordpress-plugin",
 	"license": "GPL-2.0+",
 	"authors": [
