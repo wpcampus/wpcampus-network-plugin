@@ -116,6 +116,9 @@ class WPCampus_Network {
 		// Adding titles to iframes for accessibility.
 		add_filter( 'oembed_dataparse', array( $this, 'filter_oembed_dataparse' ), 10, 3 );
 
+		// Make sure we can use any post type in Gravity Forms.
+		add_filter( 'gfcpt_post_type_args', array( $this, 'filter_gfcpt_post_type_args' ), 10, 2 );
+
 	}
 
 	/**
@@ -340,6 +343,18 @@ class WPCampus_Network {
 		}
 
 		return $return;
+	}
+
+	/**
+	 * Make sure we can use any post type in
+	 * the Gravity Forms custom post type extension.
+	 *
+	 * @param   $args - array - arguments passed to get_post_types().
+	 * @param   $form_id - int - the form ID.
+	 * @return  array - the arguments we want to use.
+	 */
+	public function filter_gfcpt_post_type_args( $args, $form_id ) {
+		return array();
 	}
 
 	/**
