@@ -120,6 +120,10 @@ class WPCampus_Network {
 		add_filter( 'gfcpt_post_type_args', array( $this, 'filter_gfcpt_post_type_args' ), 10, 2 );
 		add_filter( 'gfcpt_tax_args', array( $this, 'filter_gfcpt_tax_args' ), 10, 2 );
 
+		// Disable cache for account pages.
+		if ( preg_match( '#^/my\-account/?#', $_SERVER['REQUEST_URI'] ) ) {
+			add_action( 'send_headers', array( $this, 'add_header_nocache' ), 15 );
+		}
 	}
 
 	/**
@@ -140,6 +144,13 @@ class WPCampus_Network {
 	 */
 	public function textdomain() {
 		load_plugin_textdomain( 'wpcampus', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+	}
+
+	/**
+	 * Disables cache.
+	 */
+	public function add_header_nocache() {
+		header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
 	}
 
 	/**
