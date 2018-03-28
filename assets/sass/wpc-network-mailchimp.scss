@@ -1,0 +1,104 @@
+$wpc-royal-blue: #1159bd;
+$mc-signup-bp-width: 700px;
+$mc-signup-bp-open: "screen and (min-width: " + $mc-signup-bp-width + ");";
+
+#mc_embed_signup {
+	background: rgba( $wpc-royal-blue, 0.1 );
+	border: 1px solid rgba( $wpc-royal-blue, 0.08 );
+	color: #000;
+	margin: 1.5rem 0;
+
+	form.mc-embedded-subscribe-form {
+		padding: 25px 25px 28px;
+
+		h2 {
+			font-weight: 600;
+			font-size: 1.2rem;
+			text-transform: uppercase;
+			margin: 0 0 0.5rem 0;
+		}
+
+		.indicates-required {
+			text-align: left;
+		}
+
+		p {
+			clear: both;
+			margin: 0.75rem 0;
+		}
+
+		label {
+			font-size: 0.9rem;
+		}
+
+		.asterisk {
+			color: #900;
+		}
+
+		.mc-field-group {
+			padding-bottom: 1rem;
+
+			&.email {
+				clear: left;
+				width: 100%;
+			}
+		}
+
+		.mc-field-group-row {
+			clear: both;
+
+			&.name {
+				margin-top: 1rem;
+			}
+		}
+
+		#mc-embedded-subscribe {
+			background: $wpc-royal-blue;
+			color: #fff;
+			font-size: 1.2rem;
+			padding: 10px 20px;
+			height: auto;
+			width: 100%;
+			margin: 0.7rem 0 0 0;
+
+			&:focus,
+			&:hover {
+				background: darken( $wpc-royal-blue, 10% );
+			}
+		}
+
+		@media #{$mc-signup-bp-open} {
+
+			h2 {
+				float: left;
+				margin-bottom: 1rem;
+			}
+
+			.indicates-required {
+				float: right;
+				text-align: right;
+				margin-top: 8px;
+			}
+
+			.mc-field-group-row {
+				display: flex;
+
+				.mc-field-group {
+					width: 50%;
+
+					&.first-name {
+						padding-right: 10px;
+					}
+
+					&.last-name {
+						padding-left: 10px;
+					}
+				}
+
+				&.name {
+					margin-top: 1rem;
+				}
+			}
+		}
+	}
+}
