@@ -95,6 +95,9 @@ class WPCampus_Network {
 		// Add login stylesheet.
 		add_action( 'login_head', array( $this, 'enqueue_login_styles' ) );
 
+		// Set default user role to "member".
+		add_filter( 'pre_option_default_role', array( $this, 'set_default_user_role' ) );
+
 		// Hide Query Monitor if admin bar isn't showing.
 		add_filter( 'qm/process', array( $this, 'hide_query_monitor' ), 10, 2 );
 
@@ -158,10 +161,17 @@ class WPCampus_Network {
 	 * @access  public
 	 */
 	public function enqueue_login_styles() {
-
-		// Add our login stylesheet
 		wp_enqueue_style( 'wpc-network-login', trailingslashit( $this->plugin_url . 'assets/css' ) . 'wpc-network-login.min.css', array(), null );
+	}
 
+	/**
+	 * Set the default user role to "member".
+	 *
+	 * @param $default_role
+	 * @return string
+	 */
+	public function set_default_user_role( $default_role ) {
+		return 'member';
 	}
 
 	/**
