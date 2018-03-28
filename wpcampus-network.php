@@ -699,7 +699,7 @@ class WPCampus_Network {
 		<div id="wpc-code-of-conduct">
 			<div class="wpc-container">
 				<div class="container-title"><?php _e( 'Our Code of Conduct', 'wpcampus' ); ?></div>
-				<p><?php printf( __( '%1$s seeks to provide a friendly, safe environment in which all participants can engage in productive dialogue, sharing, and learning with each other in an atmosphere of mutual respect. In order to promote such an environment, we require all participants to adhere to our %2$scode of conduct%3$s, which applies to all community interaction and events.', 'wpcampus' ), 'WPCampus', '<a href="https://wpcampus.org/code-of-conduct/">', '</a>' ); ?></p>
+				<p><?php printf( __( '%1$s seeks to provide a friendly, safe environment.  All participants should be able to engage in productive dialogue. They should share and learn with each other in an atmosphere of mutual respect. We require all participants adhere to our %2$scode of conduct%3$s. This applies to all community interaction and events.', 'wpcampus' ), 'WPCampus', '<a href="https://wpcampus.org/code-of-conduct/">', '</a>' ); ?></p>
 			</div>
 		</div>
 		<?php
