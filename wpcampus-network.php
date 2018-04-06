@@ -457,7 +457,8 @@ class WPCampus_Network {
 	public function print_watch_videos( $args = array() ) {
 
 		$args = wp_parse_args( $args, array(
-			'playlist' => null,
+			'playlist'   => null,
+			'show_event' => false,
 		));
 
 		/*<div class="wpc-videos-filters">
@@ -651,10 +652,11 @@ class WPCampus_Network {
 						<div class="video-meta">
 							<?php
 
-							// Print playlists.
-							/*if ( $playlists_str ) {
-								?><span class="video-playlists"><?php echo implode( ', ', $playlists_str ); ?></span><?php
-							}*/
+							if ( isset( $args['show_event'] ) && true == $args['show_event'] ) :
+								?>
+								<span class="video-event">{{event_name}}</span>
+								<?php
+							endif;
 
 							/*// Get the playlist(s).
 							$playlists = wp_get_object_terms( $video->ID, 'playlist' );

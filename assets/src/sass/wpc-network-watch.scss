@@ -75,29 +75,25 @@
 			}
 
 			.video-meta {
-				color: #555;
 				font-size: 0.9em;
 				line-height: 1.5;
-				margin-top: 3px;
+				color: #666;
 
 				a {
 					color: inherit;
 				}
 
-				.video-playlists,
-				.video-authors {
+				.video-event {
 					display: block;
-				}
-
-				.video-playlists {
-					font-weight: 600;
+					font-weight: 300;
+					margin-top: 5px;
 				}
 
 				.video-authors {
 					display: block;
 					list-style: none;
-					color: #666;
-					margin: 12px 0 0 0;
+					font-weight: 400;
+					margin: 15px 0 0 0;
 
 					.video-author {
 						display: block;
