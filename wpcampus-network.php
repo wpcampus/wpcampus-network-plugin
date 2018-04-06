@@ -346,7 +346,7 @@ class WPCampus_Network {
 		$wp_org_url = 'https://wordpress.org/';
 
 		// Build the footer.
-		$footer = '<div id="wpc-network-footer">
+		$footer = '<div id="wpc-network-footer" role="contentinfo">
 			<div class="wpc-container">
 				<a class="wpc-logo" href="' . $home_url . '"><img src="' . $images_dir . 'wpcampus-black-tagline.svg" alt="' . sprintf( __( '%1$s: Where %2$s Meets Higher Education', 'wpcampus' ), 'WPCampus', 'WordPress' ) . '" /></a><br />';
 
