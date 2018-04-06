@@ -49,7 +49,8 @@ class WPCampus_Network {
 	 */
 	public $enable_network_banner,
 		$enable_network_notifications,
-		$enable_network_footer;
+		$enable_network_footer,
+		$enable_watch_videos;
 
 	/**
 	 * Holds the class instance.
@@ -431,6 +432,265 @@ class WPCampus_Network {
 		<script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script><script type='text/javascript'>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';fnames[0]='EMAIL';ftypes[0]='email';fnames[6]='MMERGE6';ftypes[6]='radio';fnames[3]='MMERGE3';ftypes[3]='text';fnames[5]='MMERGE5';ftypes[5]='radio';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
 		<?php
 	}
+
+	/**
+	 * Enable and disable the network watch videos assets.
+	 *
+	 * We need this to know whether or not to enqueue styles.
+	 *
+	 * @return void
+	 */
+	public function enable_watch_videos() {
+		$this->enable_watch_videos = true;
+	}
+	public function disable_watch_videos() {
+		$this->enable_watch_videos = false;
+	}
+
+	/**
+	 * Processes and returns the markup
+	 * for displaying videos.
+	 *
+	 * @param   $args - array - arguments for display.
+	 * @return  string - the markup.
+	 */
+	public function print_watch_videos( $args = array() ) {
+
+		$args = wp_parse_args( $args, array(
+			'playlist' => null,
+		));
+
+		/*<div class="wpc-videos-filters">
+			<form action="/videos/">
+				<span class="form-label"><strong><?php _e( 'Filter videos:', 'wpcampus' ); ?></strong></span>
+				<select name="e" class="filter filter-event" title="<?php esc_attr_e( 'Filter videos by event', 'wpcampus' ); ?>">
+					<option value=""><?php _e( 'All events', 'wpcampus' ); ?></option>
+					<option value="podcast"<?php selected( ! empty( $filters['type'] ) && 'podcast' == $filters['type'] ) ?>><?php printf( __( '%s Podcast', 'wpcampus' ), 'WPCampus' ); ?></option>
+					<?php
+
+					foreach ( $playlists as $playlist ) :
+						?><option value="<?php echo $playlist->slug; ?>"<?php selected( ! empty( $filters['playlist'] ) && $filters['playlist'] == $playlist->slug ) ?>><?php echo $playlist->name; ?></option><?php
+					endforeach;
+
+					?>
+				</select>
+				<select name="c" class="filter filter-category" title="<?php esc_attr_e( 'Filter videos by category', 'wpcampus' ); ?>">
+					<option value=""><?php _e( 'All categories', 'wpcampus' ); ?></option>
+					<?php
+
+					foreach ( $categories as $cat ) :
+						?><option value="<?php echo $cat->slug; ?>"<?php selected( ! empty( $filters['category'] ) && $filters['category'] == $cat->slug ) ?>><?php echo $cat->name; ?></option><?php
+					endforeach;
+
+					?>
+				</select>
+				<?php
+
+				// Filter by authors.
+				if ( function_exists( 'wpcampus_media_videos' ) && method_exists( wpcampus_media_videos(), 'get_video_authors' ) ) :
+
+					// Get authors.
+					$authors = wpcampus_media_videos()->get_video_authors();
+					if ( ! empty( $authors ) ) :
+
+						?>
+						<select name="a" class="filter filter-author" title="<?php esc_attr_e( 'Filter videos by author', 'wpcampus' ); ?>">
+							<option value=""><?php _e( 'All authors', 'wpcampus' ); ?></option>
+							<?php
+
+							foreach ( $authors as $author ) :
+								?><option value="<?php echo $author->nicename; ?>"<?php selected( ! empty( $filters['author'] ) && $filters['author'] == $author->nicename ); ?>><?php echo $author->display_name; ?></option><?php
+							endforeach;
+
+							?>
+						</select>
+						<?php
+					endif;
+				endif;
+
+				?>
+				<input type="search" class="search-videos" name="search" value="<?php echo ! empty( $filters['search'] ) ? esc_attr( $filters['search'] ) : ''; ?>" placeholder="<?php esc_attr_e( 'Search videos', 'wpcampus' ); ?>" title="<?php esc_attr_e( 'Search videos', '' ); ?>" />
+				<input type="submit" class="update-videos" value="<?php esc_attr_e( 'Update', 'wpcampus' ); ?>" title="<?php esc_attr_e( 'Update videos', 'wpcampus' ); ?>" />
+			</form>
+			<?php
+
+			// Print clear filters button.
+			if ( ! empty( $filters ) ) :
+				?><a class="button red expand clear" href="/videos/"><?php _e( 'Clear filters', 'wpcampus' ); ?></a><?php
+			endif;
+
+			?>
+		</div>
+		<?php
+
+		// Create shortcode arguments.
+		$shortcode_args = '';
+		foreach ( $filters as $filter_key => $filter_value ) {
+			$shortcode_args .= " {$filter_key}=\"{$filter_value}\"";
+		}
+
+		// Print the list of videos.
+		echo do_shortcode( "[wpc_videos{$shortcode_args}]" );*/
+
+		/*// Get the post types.
+		$podcast_post_type = $this->podcast_post_type;
+		$video_post_type = $this->video_post_type;
+
+		// Define the array of defaults.
+		$defaults = array(
+			'playlist'      => '',
+			'category'      => '',
+			'author'        => '',
+			'search'        => '',
+			'type'          => '',
+			'random'        => 'false',
+			'orderby'       => 'title',
+			'order'         => 'ASC',
+		);
+
+		// Parse incoming $args into an array and merge it with $defaults.
+		$args = wp_parse_args( $args, $defaults );
+
+		// Define the video args.
+		$videos_args = array(
+			'posts_per_page'    => -1,
+			'orderby'           => $args['orderby'],
+			'order'             => $args['order'],
+			'post_type'         => array( $video_post_type, $podcast_post_type ),
+			'post_status'       => 'publish',
+			'suppress_filters'  => false,
+		);
+
+		// Do we want a specific playlist?
+		if ( ! empty( $args['playlist'] ) ) {
+			$videos_args['playlist'] = $args['playlist'];
+		}
+
+		// Do we want a specific type?
+		if ( ! empty( $args['type'] ) ) {
+			$videos_args['post_type'] = $args['type'];
+		}
+
+		// Do we want a specific category?
+		if ( ! empty( $args['category'] ) ) {
+			$videos_args['category_name'] = $args['category'];
+		}
+
+		// Do we want a specific author?
+		if ( ! empty( $args['author'] ) ) {
+			$videos_args['author_name'] = $args['author'];
+		}
+
+		// Are we searching?
+		if ( ! empty( $args['search'] ) ) {
+			$videos_args['search'] = $args['search'];
+		}
+
+		// Get the videos.
+		$videos = get_posts( $videos_args );
+
+		// Make sure we have videos.
+		if ( empty( $videos ) ) {
+			return '<p><em>' . __( 'There are no videos available.', 'wpcampus.' ) . '</em></p>';
+		}
+
+		// Process any shuffling or ordering.
+		if ( 'true' === $args['random'] ) {
+			shuffle( $videos );
+		} else {
+
+			// Order the items.
+			switch ( $args['orderby'] ) {
+
+				case 'title':
+
+					// Make sure we have an order.
+					$order = strcasecmp( 'desc', $args['order'] ) == 0 ? 'desc' : 'asc';
+
+					if ( 'desc' == $order ) {
+						usort( $videos, function( $a, $b ) {
+							return strcasecmp( preg_replace( '/([^a-z])/i', '', $b->post_title ), preg_replace( '/([^a-z])/i', '', $a->post_title ) );
+						});
+					} else {
+						usort( $videos, function( $a, $b ) {
+							return strcasecmp( preg_replace( '/([^a-z])/i', '', $a->post_title ), preg_replace( '/([^a-z])/i', '', $b->post_title ) );
+						});
+					}
+
+					break;
+			}
+		}*/
+
+		$watch_attrs = array();
+
+		if ( ! empty( $args['playlist'] ) ) {
+			$watch_attrs['playlist'] = $args['playlist'];
+		}
+
+		$watch_attrs_string = '';
+		foreach( $watch_attrs as $attr => $value ) {
+			$watch_attrs_string .= ' data-' . $attr . '="' . esc_attr( $value ) . '"';
+		}
+
+		?>
+		<div class="wpc-watch loading"<?php echo $watch_attrs_string; ?>>
+			<span class="wpc-watch-loading-message"><?php _e( 'Loading videos...', 'wpcampus-network' ); ?></span>
+		</div>
+		<script id="wpc-watch-template" type="text/x-handlebars-template">
+			{{videos_count_message}}
+			{{#each .}}
+				<div class="wpc-watch-video">
+					<div class="video-media">
+						<a class="video-popup" role="button" title="Watch {{post_title}} video" href="{{watch_permalink}}">
+							<img class="video-thumbnail" src="{{thumbnail}}" alt="<?php _e( 'Thumbnail for the video', 'wpcampus-network' ); ?>" />
+							<span class="video-play"></span>
+						</a>
+					</div>
+					<div class="video-info">
+						<div class="video-title"><a href="{{permalink}}">{{{post_title}}}</a></div>
+						<div class="video-meta">
+							<?php
+
+							// Print playlists.
+							/*if ( $playlists_str ) {
+								?><span class="video-playlists"><?php echo implode( ', ', $playlists_str ); ?></span><?php
+							}*/
+
+							/*// Get the playlist(s).
+							$playlists = wp_get_object_terms( $video->ID, 'playlist' );
+
+							if ( ! empty( $playlists ) ) {
+								foreach ( $playlists as $playlist ) {
+
+									// Build the list with link.
+									$playlists_str[] = '<a href="/videos/' . $playlist->slug . '/">' . $playlist->name . '</a>';
+
+									// Remove name from title.
+									$video_title = preg_replace( '/\s?\-\s?' . $playlist->name . '\s?/i', '', $video_title );
+
+								}
+							}*/
+
+							?>
+							{{#if authors}}
+								<ul class="video-authors">
+									{{#each authors}}
+										<li class="video-author">
+											<a href="{{permalink}}">
+												<img class="video-author-avatar" src="{{avatar}}" alt="Avatar for {{display_name}}">
+												<span class="video-author-name">{{display_name}}</span>
+											</a>
+										</li>
+									{{/each}}
+								</ul>
+							{{/if}}
+						</div>
+					</div>
+				</div>
+			{{/each}}
+		</script>
+		<?php
+	}
 }
 
 /**
@@ -515,4 +775,17 @@ function wpcampus_print_code_of_conduct_message() {
  */
 function wpcampus_print_mailchimp_signup() {
 	wpcampus_network()->print_mailchimp_signup();
+}
+
+/**
+ * Get markup for the watch videos page.
+ */
+function wpcampus_enable_watch_videos() {
+	wpcampus_network()->enable_watch_videos();
+}
+function wpcampus_disable_watch_videos() {
+	wpcampus_network()->disable_watch_videos();
+}
+function wpcampus_print_watch_videos( $args = array() ) {
+	wpcampus_network()->print_watch_videos( $args );
 }

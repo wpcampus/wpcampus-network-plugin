@@ -193,10 +193,15 @@ final class WPCampus_Network_Global {
 			$open_sans_weights = array_merge( $open_sans_weights, array( 400, 600 ) );
 		}
 
+		if ( wpcampus_network()->enable_watch_videos ) {
+			$open_sans_weights = array_merge( $open_sans_weights, array( 600 ) );
+		}
+
 		// Register our fonts.
 		wp_register_style( 'wpc-fonts-open-sans', 'https://fonts.googleapis.com/css?family=Open+Sans:' . implode( ',', array_unique( $open_sans_weights ) ) );
 
 		// Register assets needed below.
+		wp_register_script( 'handlebars', $js_dir . 'handlebars.min.js', array(), null, true );
 		wp_register_script( 'mustache', $js_dir . 'mustache.min.js', array(), null, true );
 
 		// Keep this one outside logic so I can register as a dependency in scripts outside the plugin.
@@ -220,6 +225,20 @@ final class WPCampus_Network_Global {
 		// Enqueue the network footer styles.
 		if ( wpcampus_network()->enable_network_footer ) {
 			wp_enqueue_style( 'wpc-network-footer', $css_dir . 'wpc-network-footer.min.css', array( 'wpc-fonts-open-sans' ), null );
+		}
+
+		// Enable the watch video assets.
+		if ( wpcampus_network()->enable_watch_videos ) {
+
+			// Enqueue styles and scripts for the display.
+			wp_enqueue_style( 'magnific-popup', $css_dir . 'magnific-popup.min.css' );
+			wp_enqueue_script( 'magnific-popup', $js_dir . 'jquery.magnific-popup.min.js', array( 'jquery' ) );
+
+			wp_enqueue_style( 'wpc-network-watch', $css_dir . 'wpc-network-watch.min.css', array( 'magnific-popup' ) );
+			wp_enqueue_script( 'wpc-network-watch', $js_dir . 'wpc-network-watch.min.js', array( 'jquery', 'handlebars', 'magnific-popup' ) );
+			wp_localize_script( 'wpc-network-watch', 'wpc_network', array(
+				'main_url' => wpcampus_network()->get_network_site_url(),
+			));
 		}
 	}
 
