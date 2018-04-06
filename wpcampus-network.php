@@ -27,18 +27,25 @@ class WPCampus_Network {
 	 * and absolute URL to the
 	 * main plugin directory.
 	 *
-	 * @var     string
+	 * @var string
 	 */
 	public $plugin_dir,
 		$plugin_url,
 		$plugin_base;
 
 	/**
+	 * Holds the URL to the main site.
+	 *
+	 * @var string
+	 */
+	private $network_site_url;
+
+	/**
 	 * Whether or not we want
 	 * to print the network banner,
 	 * notifications, or footer.
 	 *
-	 * @var     string
+	 * @var string
 	 */
 	public $enable_network_banner,
 		$enable_network_notifications,
@@ -47,14 +54,14 @@ class WPCampus_Network {
 	/**
 	 * Holds the class instance.
 	 *
-	 * @var     WPCampus_Network
+	 * @var WPCampus_Network
 	 */
 	private static $instance;
 
 	/**
 	 * Returns the instance of this class.
 	 *
-	 * @return  WPCampus_Network
+	 * @return WPCampus_Network
 	 */
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {
@@ -79,15 +86,26 @@ class WPCampus_Network {
 	 * Method to keep our instance from
 	 * being cloned or unserialized.
 	 *
-	 * @return	void
+	 * @return void
 	 */
 	private function __clone() {}
 	private function __wakeup() {}
 
 	/**
+	 * Get the main site URL.
+	 */
+	public function get_network_site_url() {
+		if ( isset( $this->network_site_url ) ) {
+			return $this->network_site_url;
+		}
+		$this->network_site_url = network_site_url();
+		return $this->network_site_url;
+	}
+
+	/**
 	 * Gets markup for list of social media icons.
 	 *
-	 * @return  string|HTML - the markup.
+	 * @return string|HTML - the markup.
 	 */
 	public function get_social_media_icons() {
 
@@ -137,7 +155,7 @@ class WPCampus_Network {
 	/**
 	 * Prints markup for list of social media icons.
 	 *
-	 * @return  void
+	 * @return void
 	 */
 	public function print_social_media_icons() {
 		echo $this->get_social_media_icons();
@@ -148,7 +166,7 @@ class WPCampus_Network {
 	 *
 	 * We need this to know whether or not to enqueue styles.
 	 *
-	 * @return  void
+	 * @return void
 	 */
 	public function enable_network_banner() {
 		$this->enable_network_banner = true;
@@ -162,7 +180,7 @@ class WPCampus_Network {
 	 *
 	 * We need this to know whether or not to enqueue styles.
 	 *
-	 * @return  void
+	 * @return void
 	 */
 	public function enable_network_notifications() {
 		$this->enable_network_notifications = true;
@@ -176,7 +194,7 @@ class WPCampus_Network {
 	 *
 	 * We need this to know whether or not to enqueue styles.
 	 *
-	 * @return  void
+	 * @return void
 	 */
 	public function enable_network_footer() {
 		$this->enable_network_footer = true;
@@ -188,7 +206,7 @@ class WPCampus_Network {
 	/**
 	 * Get the network banner markup.
 	 *
-	 * @return  string|HTML - the markup.
+	 * @return string|HTML - the markup.
 	 */
 	public function get_network_banner( $args = array() ) {
 
@@ -263,7 +281,7 @@ class WPCampus_Network {
 	/**
 	 * Print the network banner markup.
 	 *
-	 * @return  void
+	 * @return void
 	 */
 	public function print_network_banner( $args = array() ) {
 		echo $this->get_network_banner( $args );
@@ -272,7 +290,7 @@ class WPCampus_Network {
 	/**
 	 * Get the network notifications markup.
 	 *
-	 * @return  string|HTML - the markup.
+	 * @return string|HTML - the markup.
 	 */
 	public function get_network_notifications() {
 
@@ -301,7 +319,7 @@ class WPCampus_Network {
 	/**
 	 * Print the network notifications markup.
 	 *
-	 * @return  void
+	 * @return void
 	 */
 	public function print_network_notifications() {
 		echo $this->get_network_notifications();
@@ -310,7 +328,7 @@ class WPCampus_Network {
 	/**
 	 * Get the network footer markup.
 	 *
-	 * @return  string|HTML - the markup.
+	 * @return string|HTML - the markup.
 	 */
 	public function get_network_footer() {
 
@@ -353,7 +371,7 @@ class WPCampus_Network {
 	/**
 	 * Print the network footer markup.
 	 *
-	 * @return  void
+	 * @return void
 	 */
 	public function print_network_footer() {
 		echo $this->get_network_footer();
@@ -374,7 +392,7 @@ class WPCampus_Network {
 	}
 
 	/**
-	 * Print the Mailchimp signup form.
+	 * Print the MailChimp signup form.
 	 */
 	public function print_mailchimp_signup() {
 
@@ -434,10 +452,10 @@ wpcampus_network();
  * Interact with the banner.
  */
 function wpcampus_enable_network_banner() {
-	return wpcampus_network()->enable_network_banner();
+	wpcampus_network()->enable_network_banner();
 }
 function wpcampus_disable_network_banner() {
-	return wpcampus_network()->disable_network_banner();
+	wpcampus_network()->disable_network_banner();
 }
 function wpcampus_get_network_banner() {
 	return wpcampus_network()->get_network_banner();
@@ -450,10 +468,10 @@ function wpcampus_print_network_banner( $args = array() ) {
  * Interact with the notifications.
  */
 function wpcampus_enable_network_notifications() {
-	return wpcampus_network()->enable_network_notifications();
+	wpcampus_network()->enable_network_notifications();
 }
 function wpcampus_disable_network_notifications() {
-	return wpcampus_network()->disable_network_notifications();
+	wpcampus_network()->disable_network_notifications();
 }
 function wpcampus_get_network_notifications() {
 	return wpcampus_network()->get_network_notifications();
@@ -466,10 +484,10 @@ function wpcampus_print_network_notifications() {
  * Interact with the footer.
  */
 function wpcampus_enable_network_footer() {
-	return wpcampus_network()->enable_network_footer();
+	wpcampus_network()->enable_network_footer();
 }
 function wpcampus_disable_network_footer() {
-	return wpcampus_network()->disable_network_footer();
+	wpcampus_network()->disable_network_footer();
 }
 function wpcampus_get_network_footer() {
 	return wpcampus_network()->get_network_footer();
@@ -482,19 +500,19 @@ function wpcampus_print_network_footer() {
  * Interact with social media.
  */
 function wpcampus_print_social_media_icons() {
-	return wpcampus_network()->print_social_media_icons();
+	wpcampus_network()->print_social_media_icons();
 }
 
 /**
  * Interact with the code of conduct.
  */
 function wpcampus_print_code_of_conduct_message() {
-	return wpcampus_network()->print_code_of_conduct_message();
+	wpcampus_network()->print_code_of_conduct_message();
 }
 
 /**
- * Interact with the Mailchimp signup.
+ * Interact with the MailChimp signup.
  */
 function wpcampus_print_mailchimp_signup() {
-	return wpcampus_network()->print_mailchimp_signup();
+	wpcampus_network()->print_mailchimp_signup();
 }

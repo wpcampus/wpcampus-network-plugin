@@ -213,7 +213,7 @@ final class WPCampus_Network_Global {
 			wp_enqueue_style( 'wpc-network-notifications', $css_dir . 'wpc-network-notifications.min.css', array( 'wpc-fonts-open-sans' ), null );
 			wp_enqueue_script( 'wpc-network-notifications', $js_dir . 'wpc-network-notifications.min.js', array( 'jquery', 'mustache' ), null, true );
 			wp_localize_script( 'wpc-network-notifications', 'wpc_network', array(
-				'main_url' => network_site_url(),
+				'main_url' => wpcampus_network()->get_network_site_url(),
 			));
 		}
 
