@@ -389,7 +389,7 @@ class WPCampus_Network {
 	 */
 	public function filter_gfcpt_tax_args( $args, $form_id ) {
 		return array(
-			'_builtin' => false
+			'_builtin' => false,
 		);
 	}
 
@@ -718,7 +718,7 @@ class WPCampus_Network {
 				<div id="mc_embed_signup_scroll">
 					<h2><?php printf( __( 'Subscribe to %s mailing list', 'wpcampus' ), 'WPCampus' ); ?></h2>
 					<div class="indicates-required"><span class="asterisk">*</span> indicates required</div>
-					<p>Sign-up to receive email updates about the WPCampus community and conference.</p>
+					<p>Sign-up to receive email updates about the WPCampus community and conferences.</p>
 					<div class="mc-field-group-row name">
 						<div class="mc-field-group first-name">
 							<label for="mce-FNAME">First Name </label>

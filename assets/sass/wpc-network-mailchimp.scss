@@ -4,12 +4,12 @@ $mc-signup-bp-open: "screen and (min-width: " + $mc-signup-bp-width + ");";
 
 #mc_embed_signup {
 	background: rgba( $wpc-royal-blue, 0.1 );
-	border: 1px solid rgba( $wpc-royal-blue, 0.08 );
 	color: #000;
-	margin: 1.5rem 0;
+	margin: 2rem 0;
 
 	form.mc-embedded-subscribe-form {
 		padding: 25px 25px 28px;
+		margin: 0;
 
 		h2 {
 			font-weight: 600;
