@@ -12,12 +12,9 @@
  * Domain Path:       /languages
  */
 
-// If this file is called directly, abort.
-if ( ! defined( 'WPINC' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) or die();
 
-// Load the files
+require_once wpcampus_network()->plugin_dir . 'inc/class-wpcampus-network-global.php';
 require_once wpcampus_network()->plugin_dir . 'inc/wpcampus-forms.php';
 
 /**
@@ -27,38 +24,29 @@ class WPCampus_Network {
 
 	/**
 	 * Holds the directory path
-	 * to the main plugin directory.
+	 * and absolute URL to the
+	 * main plugin directory.
 	 *
-	 * @access  public
 	 * @var     string
 	 */
-	public $plugin_dir;
-
-	/**
-	 * Holds the absolute URL to
-	 * the main plugin directory.
-	 *
-	 * @access  public
-	 * @var     string
-	 */
-	public $plugin_url;
+	public $plugin_dir,
+		$plugin_url,
+		$plugin_base;
 
 	/**
 	 * Whether or not we want
 	 * to print the network banner,
 	 * notifications, or footer.
 	 *
-	 * @access  private
 	 * @var     string
 	 */
-	private $enable_network_banner;
-	private $enable_network_notifications;
-	private $enable_network_footer;
+	public $enable_network_banner,
+		$enable_network_notifications,
+		$enable_network_footer;
 
 	/**
 	 * Holds the class instance.
 	 *
-	 * @access  private
 	 * @var     WPCampus_Network
 	 */
 	private static $instance;
@@ -66,7 +54,6 @@ class WPCampus_Network {
 	/**
 	 * Returns the instance of this class.
 	 *
-	 * @access  public
 	 * @return  WPCampus_Network
 	 */
 	public static function instance() {
@@ -82,321 +69,24 @@ class WPCampus_Network {
 	 */
 	protected function __construct() {
 
-		// Store the plugin DIR and URL.
 		$this->plugin_dir = plugin_dir_path( __FILE__ );
 		$this->plugin_url = plugin_dir_url( __FILE__ );
+		$this->plugin_base = dirname( plugin_basename( __FILE__ ) );
 
-		// Load our text domain.
-		add_action( 'init', array( $this, 'textdomain' ) );
-
-		// Change the login logo URL.
-		add_filter( 'login_headerurl', array( $this, 'change_login_header_url' ) );
-
-		// Add login stylesheet.
-		add_action( 'login_head', array( $this, 'enqueue_login_styles' ) );
-
-		// Set default user role to "member".
-		add_filter( 'pre_option_default_role', array( $this, 'set_default_user_role' ) );
-
-		// Hide Query Monitor if admin bar isn't showing.
-		add_filter( 'qm/process', array( $this, 'hide_query_monitor' ), 10, 2 );
-
-		// Removes default REST API functionality.
-		add_action( 'rest_api_init', array( $this, 'init_rest_api' ) );
-
-		// Add custom headers for the REST API.
-		add_filter( 'rest_pre_serve_request', array( $this, 'add_rest_headers' ) );
-
-		// Register the network footer menu.
-		add_action( 'after_setup_theme', array( $this, 'register_network_footer_menu' ), 20 );
-
-		// Enqueue front-end scripts and styles.
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts_styles' ), 0 );
-
-		// Customize the arguments for the multi author post author dropdown.
-		add_filter( 'my_multi_author_post_author_dropdown_args', array( $this, 'filter_multi_author_primary_dropdown_args' ), 10, 2 );
-
-		// Adding titles to iframes for accessibility.
-		add_filter( 'oembed_dataparse', array( $this, 'filter_oembed_dataparse' ), 10, 3 );
-
-		// Make sure we can use any post type and taxonomy in Gravity Forms.
-		add_filter( 'gfcpt_post_type_args', array( $this, 'filter_gfcpt_post_type_args' ), 10, 2 );
-		add_filter( 'gfcpt_tax_args', array( $this, 'filter_gfcpt_tax_args' ), 10, 2 );
-
-		// Disable cache for account pages.
-		if ( preg_match( '#^/my\-account/?#', $_SERVER['REQUEST_URI'] ) ) {
-			add_action( 'send_headers', array( $this, 'add_header_nocache' ), 15 );
-		}
 	}
 
 	/**
 	 * Method to keep our instance from
 	 * being cloned or unserialized.
 	 *
-	 * @access	private
 	 * @return	void
 	 */
 	private function __clone() {}
 	private function __wakeup() {}
 
 	/**
-	 * Internationalization FTW.
-	 * Load our text domain.
-	 *
-	 * @access  public
-	 */
-	public function textdomain() {
-		load_plugin_textdomain( 'wpcampus', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-	}
-
-	/**
-	 * Disables cache.
-	 */
-	public function add_header_nocache() {
-		header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
-	}
-
-	/**
-	 * Change the login logo URL to point
-	 * to the site's home page.
-	 *
-	 * @access  public
-	 */
-	public function change_login_header_url( $login_header_url ) {
-		return get_bloginfo( 'url' );
-	}
-
-	/**
-	 * Add login stylesheet.
-	 *
-	 * @access  public
-	 */
-	public function enqueue_login_styles() {
-		wp_enqueue_style( 'wpc-network-login', trailingslashit( $this->plugin_url . 'assets/css' ) . 'wpc-network-login.min.css', array(), null );
-	}
-
-	/**
-	 * Set the default user role to "member".
-	 *
-	 * @param $default_role
-	 * @return string
-	 */
-	public function set_default_user_role( $default_role ) {
-		return 'member';
-	}
-
-	/**
-	 * Hide Query Monitor if admin bar isn't showing.
-	 *
-	 * @access  public
-	 */
-	public function hide_query_monitor( $show_qm, $is_admin_bar_showing ) {
-		return $is_admin_bar_showing;
-	}
-
-	/**
-	 * Fires when preparing to serve an API request.
-	 *
-	 * @access  public
-	 * @param   $wp_rest_server - WP_REST_Server - Server object.
-	 */
-	public function init_rest_api( $wp_rest_server ) {
-
-		// Remove the default headers so we can add our own.
-		remove_filter( 'rest_pre_serve_request', 'rest_send_cors_headers' );
-
-	}
-
-	/**
-	 * Filters whether the request has already been served.
-	 *
-	 * We use this hook to add custom CORS headers
-	 * and to disable the cache.
-	 *
-	 * @access  public
-	 * @param   $value - bool - Whether the request has already been served. Default false.
-	 * @return  bool - the filtered value
-	 */
-	public function add_rest_headers( $value ) {
-
-		// Only allow from WPCampus domains.
-		$origin = get_http_origin();
-		if ( $origin ) {
-
-			// Only allow from production or Pantheon domains.
-			if ( preg_match( '/([^\.]\.)?wpcampus\.org/i', $origin )
-				|| preg_match( '/([^\-\.]+\-)wpcampus\.pantheonsite\.io/i', $origin ) ) {
-				header( 'Access-Control-Allow-Origin: ' . esc_url_raw( $origin ) );
-			}
-		}
-
-		header( 'Access-Control-Allow-Methods: GET' );
-		header( 'Access-Control-Allow-Credentials: true' );
-
-		// Disable the cache.
-		header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
-
-		return $value;
-	}
-
-	/**
-	 * Enqueue our front-end scripts.
-	 *
-	 * @access  public
-	 * @return  void
-	 */
-	public function enqueue_scripts_styles() {
-
-		// Define the directories.
-		$css_dir = trailingslashit( $this->plugin_url . 'assets/css' );
-		$js_dir = trailingslashit( $this->plugin_url . 'assets/js' );
-
-		// Setup the font weights we need.
-		$open_sans_weights = apply_filters( 'wpcampus_open_sans_font_weights', array() );
-
-		if ( ! is_array( $open_sans_weights ) ) {
-			$open_sans_weights = array();
-		} else {
-			$open_sans_weights = array_filter( $open_sans_weights, 'intval' );
-		}
-
-		// Make sure the weights we need for our components are there.
-		if ( $this->enable_network_banner ) {
-			$open_sans_weights = array_merge( $open_sans_weights, array( 400, 600, 700 ) );
-		}
-
-		if ( $this->enable_network_notifications ) {
-			$open_sans_weights = array_merge( $open_sans_weights, array( 400 ) );
-		}
-
-		if ( $this->enable_network_footer ) {
-			$open_sans_weights = array_merge( $open_sans_weights, array( 400, 600 ) );
-		}
-
-		// Register our fonts.
-		wp_register_style( 'wpc-fonts-open-sans', 'https://fonts.googleapis.com/css?family=Open+Sans:' . implode( ',', array_unique( $open_sans_weights ) ) );
-
-		// Register assets needed below.
-		wp_register_script( 'mustache', $js_dir . 'mustache.min.js', array(), null, true );
-
-		// Keep this one outside logic so I can register as a dependency in scripts outside the plugin.
-		wp_register_script( 'wpc-network-toggle-menu', $js_dir . 'wpc-network-toggle-menu.min.js', array( 'jquery', 'jquery-ui-core' ), null );
-
-		// Enqueue the network banner styles.
-		if ( $this->enable_network_banner ) {
-			wp_enqueue_style( 'wpc-network-banner', $css_dir . 'wpc-network-banner.min.css', array( 'wpc-fonts-open-sans' ), null );
-			wp_enqueue_script( 'wpc-network-toggle-menu' );
-		}
-
-		// Enqueue the network notification assets.
-		if ( $this->enable_network_notifications ) {
-			wp_enqueue_style( 'wpc-network-notifications', $css_dir . 'wpc-network-notifications.min.css', array( 'wpc-fonts-open-sans' ), null );
-			wp_enqueue_script( 'wpc-network-notifications', $js_dir . 'wpc-network-notifications.min.js', array( 'jquery', 'mustache' ), null, true );
-		}
-
-		// Enqueue the network footer styles.
-		if ( $this->enable_network_footer ) {
-			wp_enqueue_style( 'wpc-network-footer', $css_dir . 'wpc-network-footer.min.css', array( 'wpc-fonts-open-sans' ), null );
-		}
-	}
-
-	/**
-	 * Customize the dropdown args for the multi author
-	 * post author dropdown so we can get all members.
-	 *
-	 * @access  public
-	 * @param   $args - array - the default arguments.
-	 * @param   $post - object - the post object.
-	 * @return  array - the filtered arguments.
-	 */
-	public function filter_multi_author_primary_dropdown_args( $args, $post ) {
-
-		// Remove the "who" so any user can be assigned as a post author.
-		if ( isset( $args['who'] ) ) {
-			unset( $args['who'] );
-		}
-
-		return $args;
-	}
-
-	/**
-	 * Filters the returned oEmbed HTML.
-	 *
-	 * @param   string - $return - The returned oEmbed HTML.
-	 * @param   object - $data - A data object result from an oEmbed provider.
-	 * @param   string - $url - The URL of the content to be embedded.
-	 * @return  string - the HTML.
-	 */
-	public function filter_oembed_dataparse( $return, $data, $url ) {
-
-		// Get title from embed data to start.
-		$title = ! empty( $data->title ) ? $data->title : '';
-
-		// If no embed title, search the return markup for a title attribute.
-		$preg_match = '/title\=[\"|\\\']{1}([^\"\\\']*)[\"|\\\']{1}/i';
-		$has_title_attr = preg_match( $preg_match, $return, $matches );
-		if ( $has_title_attr && ! empty( $matches[1] ) ) {
-			$title = $matches[1];
-		}
-
-		// Add embed type as title prefix.
-		if ( $title && ! empty( $data->type ) ) {
-			switch ( $data->type ) {
-
-				// Capitalize first word.
-				case 'video':
-					$title = sprintf( __( '%s:', 'wpcampus' ), ucfirst( $data->type ) ) . ' ' . $title;
-					break;
-			}
-		}
-
-		$title = apply_filters( 'wpcampus_oembed_title', $title, $return, $data, $url );
-
-		/*
-		 * If the title attribute already
-		 * exists, replace with new value.
-		 *
-		 * Otherwise, add the title attribute.
-		 */
-		if ( $has_title_attr ) {
-			$return = preg_replace( $preg_match, 'title="' . $title . '"', $return );
-		} else {
-			$return = preg_replace( '/^\<iframe/i', '<iframe title="' . $title . '"', $return );
-		}
-
-		return $return;
-	}
-
-	/**
-	 * Make sure we can use any post type in
-	 * the Gravity Forms custom post type extension.
-	 *
-	 * @param   $args - array - arguments passed to get_post_types().
-	 * @param   $form_id - int - the form ID.
-	 * @return  array - the arguments we want to use.
-	 */
-	public function filter_gfcpt_post_type_args( $args, $form_id ) {
-		return array();
-	}
-
-	/**
-	 * Make sure we can use any taxonomy in
-	 * the Gravity Forms custom post type extension.
-	 *
-	 * @param   $args - array - arguments passed to get_taxonomies().
-	 * @param   $form_id - int - the form ID.
-	 * @return  array - the arguments we want to use.
-	 */
-	public function filter_gfcpt_tax_args( $args, $form_id ) {
-		return array(
-			'_builtin' => false,
-		);
-	}
-
-	/**
 	 * Gets markup for list of social media icons.
 	 *
-	 * @access  public
 	 * @return  string|HTML - the markup.
 	 */
 	public function get_social_media_icons() {
@@ -447,7 +137,6 @@ class WPCampus_Network {
 	/**
 	 * Prints markup for list of social media icons.
 	 *
-	 * @access  public
 	 * @return  void
 	 */
 	public function print_social_media_icons() {
@@ -459,7 +148,6 @@ class WPCampus_Network {
 	 *
 	 * We need this to know whether or not to enqueue styles.
 	 *
-	 * @access  public
 	 * @return  void
 	 */
 	public function enable_network_banner() {
@@ -474,7 +162,6 @@ class WPCampus_Network {
 	 *
 	 * We need this to know whether or not to enqueue styles.
 	 *
-	 * @access  public
 	 * @return  void
 	 */
 	public function enable_network_notifications() {
@@ -489,7 +176,6 @@ class WPCampus_Network {
 	 *
 	 * We need this to know whether or not to enqueue styles.
 	 *
-	 * @access  public
 	 * @return  void
 	 */
 	public function enable_network_footer() {
@@ -502,7 +188,6 @@ class WPCampus_Network {
 	/**
 	 * Get the network banner markup.
 	 *
-	 * @access  public
 	 * @return  string|HTML - the markup.
 	 */
 	public function get_network_banner( $args = array() ) {
@@ -578,7 +263,6 @@ class WPCampus_Network {
 	/**
 	 * Print the network banner markup.
 	 *
-	 * @access  public
 	 * @return  void
 	 */
 	public function print_network_banner( $args = array() ) {
@@ -588,7 +272,6 @@ class WPCampus_Network {
 	/**
 	 * Get the network notifications markup.
 	 *
-	 * @access  public
 	 * @return  string|HTML - the markup.
 	 */
 	public function get_network_notifications() {
@@ -618,7 +301,6 @@ class WPCampus_Network {
 	/**
 	 * Print the network notifications markup.
 	 *
-	 * @access  public
 	 * @return  void
 	 */
 	public function print_network_notifications() {
@@ -626,21 +308,8 @@ class WPCampus_Network {
 	}
 
 	/**
-	 * Register the network footer menu.
-	 *
-	 * @access  public
-	 * @return  void
-	 */
-	function register_network_footer_menu() {
-		if ( $this->enable_network_footer ) {
-			register_nav_menu( 'footer', __( 'Footer Menu', 'wpcampus' ) );
-		}
-	}
-
-	/**
 	 * Get the network footer markup.
 	 *
-	 * @access  public
 	 * @return  string|HTML - the markup.
 	 */
 	public function get_network_footer() {
@@ -684,7 +353,6 @@ class WPCampus_Network {
 	/**
 	 * Print the network footer markup.
 	 *
-	 * @access  public
 	 * @return  void
 	 */
 	public function print_network_footer() {
@@ -753,7 +421,6 @@ class WPCampus_Network {
  * Will come in handy when we need to access the
  * class to retrieve data throughout the plugin.
  *
- * @access	public
  * @return	WPCampus_Network
  */
 function wpcampus_network() {
