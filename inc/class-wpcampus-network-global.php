@@ -212,6 +212,9 @@ final class WPCampus_Network_Global {
 		if ( wpcampus_network()->enable_network_notifications ) {
 			wp_enqueue_style( 'wpc-network-notifications', $css_dir . 'wpc-network-notifications.min.css', array( 'wpc-fonts-open-sans' ), null );
 			wp_enqueue_script( 'wpc-network-notifications', $js_dir . 'wpc-network-notifications.min.js', array( 'jquery', 'mustache' ), null, true );
+			wp_localize_script( 'wpc-network-notifications', 'wpc_network', array(
+				'main_url' => network_site_url(),
+			));
 		}
 
 		// Enqueue the network footer styles.

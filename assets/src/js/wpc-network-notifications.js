@@ -10,7 +10,7 @@
 		}
 
 		// Process the notifications.
-		$.get('https://wpcampus.org/wp-json/wp/v2/notifications?per_page=1').done(function(data) {
+		$.get( wpc_network.main_url + '/wp-json/wp/v2/notifications?per_page=1').done(function(data) {
 
 			/*
 			 * Get the template HTML.
