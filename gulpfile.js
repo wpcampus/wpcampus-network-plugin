@@ -10,15 +10,15 @@ const shell = require('gulp-shell');
 
 // Define the source paths for each file type.
 const src = {
-	js: ['assets/js/wpc-network-notifications.js','assets/js/wpc-network-toggle-menu.js'],
+	js: ['assets/src/js/wpc-network-notifications.js','assets/src/js/wpc-network-toggle-menu.js'],
 	php: ['**/*.php','!vendor/**','!node_modules/**'],
-    sass: ['assets/sass/**/*']
+    sass: ['assets/src/sass/**/*']
 };
 
 // Define the destination paths for each file type.
 const dest = {
-	js: 'assets/js',
-	sass: 'assets/css'
+	js: 'assets/build/js',
+	sass: 'assets/build/css'
 };
 
 // Take care of SASS.
@@ -45,10 +45,11 @@ gulp.task('sass', function() {
 // Take care of JS.
 gulp.task('js',function() {
 	gulp.src('./node_modules/mustache/mustache.min.js')
-		.pipe(gulp.dest('assets/js'));
+		.pipe(gulp.dest(dest.js));
 	gulp.src(src.js)
 		.pipe(minify({
 			mangle: false,
+			noSource: true,
 			ext:{
 				min:'.min.js'
 			}

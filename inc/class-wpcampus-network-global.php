@@ -85,7 +85,7 @@ final class WPCampus_Network_Global {
 	 * Add login stylesheet.
 	 */
 	public function enqueue_login_styles() {
-		wp_enqueue_style( 'wpc-network-login', trailingslashit( wpcampus_network()->plugin_url . 'assets/css' ) . 'wpc-network-login.min.css', array(), null );
+		wp_enqueue_style( 'wpc-network-login', trailingslashit( wpcampus_network()->plugin_url . 'assets/build/css' ) . 'wpc-network-login.min.css', array(), null );
 	}
 
 	/**
@@ -168,8 +168,8 @@ final class WPCampus_Network_Global {
 
 		// Define the directories.
 		$plugin_url = wpcampus_network()->plugin_url;
-		$css_dir = trailingslashit( $plugin_url . 'assets/css' );
-		$js_dir = trailingslashit( $plugin_url . 'assets/js' );
+		$css_dir = trailingslashit( $plugin_url . 'assets/build/css' );
+		$js_dir = trailingslashit( $plugin_url . 'assets/build/js' );
 
 		// Setup the font weights we need.
 		$open_sans_weights = apply_filters( 'wpcampus_open_sans_font_weights', array() );

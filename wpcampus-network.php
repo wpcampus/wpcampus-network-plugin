@@ -380,7 +380,7 @@ class WPCampus_Network {
 
 		?>
 		<link href="//cdn-images.mailchimp.com/embedcode/classic-10_7.css" rel="stylesheet" type="text/css">
-		<link href="<?php echo trailingslashit( $this->plugin_url . 'assets/css' ); ?>wpc-network-mailchimp.min.css" rel="stylesheet" type="text/css">
+		<link href="<?php echo trailingslashit( $this->plugin_url . 'assets/build/css' ); ?>wpc-network-mailchimp.min.css" rel="stylesheet" type="text/css">
 		<div id="mc_embed_signup">
 			<form action="https://wpcampus.us11.list-manage.com/subscribe/post?u=6d71860d429d3461309568b92&amp;id=05f39a2a20" method="post" id="mc-embedded-subscribe-form" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
 				<div id="mc_embed_signup_scroll">
