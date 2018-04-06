@@ -458,7 +458,7 @@ class WPCampus_Network {
 
 		$args = wp_parse_args( $args, array(
 			'playlist'   => null,
-			'show_event' => false,
+			'show_event' => true,
 		));
 
 		/*<div class="wpc-videos-filters">
