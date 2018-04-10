@@ -50,7 +50,8 @@ class WPCampus_Network {
 	public $enable_network_banner,
 		$enable_network_notifications,
 		$enable_network_footer,
-		$enable_watch_videos;
+		$enable_watch_videos,
+		$enable_mailchimp_popup;
 
 	/**
 	 * Holds the class instance.
@@ -390,6 +391,20 @@ class WPCampus_Network {
 			</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Enable and disable the Mailchimp popup form.
+	 *
+	 * We need this to know whether or not to enqueue assets.
+	 *
+	 * @return void
+	 */
+	public function enable_mailchimp_popup() {
+		$this->enable_mailchimp_popup = true;
+	}
+	public function disable_mailchimp_popup() {
+		$this->enable_mailchimp_popup = false;
 	}
 
 	/**
@@ -775,6 +790,12 @@ function wpcampus_print_code_of_conduct_message() {
 /**
  * Interact with the MailChimp signup.
  */
+function wpcampus_enable_mailchimp_popup() {
+	wpcampus_network()->enable_mailchimp_popup();
+}
+function wpcampus_disable_mailchimp_popup() {
+	wpcampus_network()->disable_mailchimp_popup();
+}
 function wpcampus_print_mailchimp_signup() {
 	wpcampus_network()->print_mailchimp_signup();
 }

@@ -48,6 +48,7 @@ final class WPCampus_Network_Global {
 
 		// Enqueue front-end scripts and styles.
 		add_action( 'wp_enqueue_scripts', array( $plugin, 'enqueue_scripts_styles' ), 0 );
+		add_action( 'wp_print_footer_scripts', array( $plugin, 'add_mailchimp_popup_script' ) );
 
 		// Customize the arguments for the multi author post author dropdown.
 		add_filter( 'my_multi_author_post_author_dropdown_args', array( $plugin, 'filter_multi_author_primary_dropdown_args' ), 10, 2 );
@@ -240,6 +241,28 @@ final class WPCampus_Network_Global {
 				'main_url' => wpcampus_network()->get_network_site_url(),
 			));
 		}
+	}
+
+	/**
+	 * Add Mailchimp popup code to footer.
+	 */
+	function add_mailchimp_popup_script() {
+
+		if ( ! wpcampus_network()->enable_mailchimp_popup ) {
+			return;
+		}
+
+		?>
+		<script type="text/javascript" src="//downloads.mailchimp.com/js/signup-forms/popup/embed.js" data-dojo-config="usePlainJson: true, isDebug: false"></script>
+		<script type="text/javascript">
+		function showMailingPopUp() {
+			require(["mojo/signup-forms/Loader"], function(L) { L.start({"baseUrl":"mc.us11.list-manage.com","uuid":"6d71860d429d3461309568b92","lid":"05f39a2a20"}) })
+			document.cookie = "MCEvilPopupClosed=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+			document.cookie = "MCPopupClosed=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+		}
+		document.querySelector('.wpc-subscribe-open').onclick = function() {showMailingPopUp()};
+		</script>
+		<?php
 	}
 
 	/**
