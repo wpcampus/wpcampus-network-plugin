@@ -37,6 +37,9 @@ final class WPCampus_Network_Global {
 		// Hide Query Monitor if admin bar isn't showing.
 		add_filter( 'qm/process', array( $plugin, 'hide_query_monitor' ), 10, 2 );
 
+		// Mark posts as viewed.
+		add_action( 'wp', array( $plugin, 'mark_viewed' ) ) ;
+
 		// Removes default REST API functionality.
 		add_action( 'rest_api_init', array( $plugin, 'init_rest_api' ) );
 
@@ -104,6 +107,31 @@ final class WPCampus_Network_Global {
 	 */
 	public function hide_query_monitor( $show_qm, $is_admin_bar_showing ) {
 		return $is_admin_bar_showing;
+	}
+
+	/**
+	 * If somene is logged in, mark that
+	 * the user has viewed the post.
+	 */
+	public function mark_viewed() {
+		global $wpdb;
+
+		if ( ! is_singular() ) {
+			return;
+		}
+
+		// If logged in, mark that the user has viewed the post.
+		$current_user_id = get_current_user_id();
+		if ( $current_user_id > 0 ) {
+
+			$post_id  = get_the_ID();
+			$meta_key = "wpc_has_viewed_{$current_user_id}";
+
+			$has_viewed = $wpdb->get_var( $wpdb->prepare( "SELECT meta_value FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s", $post_id, $meta_key ) );
+			if ( empty( $has_viewed ) ) {
+				add_post_meta( $post_id, $meta_key, time(), false );
+			}
+		}
 	}
 
 	/**
