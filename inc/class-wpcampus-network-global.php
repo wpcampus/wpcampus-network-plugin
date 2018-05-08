@@ -34,6 +34,12 @@ final class WPCampus_Network_Global {
 		// Set default user role to "member".
 		add_filter( 'pre_option_default_role', array( $plugin, 'set_default_user_role' ) );
 
+		// When users are registered, make sure they're added to every site on the network.
+		add_action( 'user_register', array( $plugin, 'assign_user_to_all_blogs' ) );
+
+		// Enable to make sure all users are registered to all sites.
+		//add_action( 'init', array( $plugin, 'assign_all_users_to_all_blogs' ) );
+
 		// Hide Query Monitor if admin bar isn't showing.
 		add_filter( 'qm/process', array( $plugin, 'hide_query_monitor' ), 10, 2 );
 
@@ -100,6 +106,62 @@ final class WPCampus_Network_Global {
 	 */
 	public function set_default_user_role( $default_role ) {
 		return 'member';
+	}
+
+	/**
+	 * Assigns all users to all blogs.
+	 *
+	 * @TODO:
+	 * - Attach to a button on an admin page?
+	 */
+	public function assign_all_users_to_all_blogs() {
+
+		$users = get_users( array( 'fields' => 'id' ) );
+		if ( empty( $users ) ) {
+			return;
+		}
+
+		foreach( $users as $user_id ) {
+			$this->assign_user_to_all_blogs( $user_id );
+		}
+	}
+
+	/**
+	 * Makes sure a user is added to every site.
+	 */
+	public function assign_user_to_all_blogs( $user_id ) {
+
+		$all_blogs = get_sites( array(
+			'public'   => 1,
+			'archived' => 0,
+			'spam'     => 0,
+			'deleted'  => 0,
+		));
+
+		if ( empty( $all_blogs ) ) {
+			return;
+		}
+
+		// Get user's existing blog info.
+		$user_existing_blogs    = get_blogs_of_user( $user_id );
+		$user_existing_blog_ids = ! empty( $user_existing_blogs ) ? wp_list_pluck( $user_existing_blogs, 'userblog_id' ) : array();
+
+		/*
+		 * Loops through each blog. Checks if user
+		 * is already a member of the blog. If so, skips.
+		 * If not, then adds user to the blog as a "member".
+		 */
+		foreach( $all_blogs as $this_blog ) {
+
+			// Don't need to worry about if user already member of blog.
+			if ( in_array( $this_blog->blog_id, $user_existing_blog_ids ) ) {
+				continue;
+			}
+
+			// Add as "member" role.
+			add_user_to_blog( $this_blog->blog_id, $user_id, 'member' );
+
+		}
 	}
 
 	/**
