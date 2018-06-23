@@ -79,7 +79,7 @@ gulp.task('test',['php']);
 gulp.task('compile',['sass','js']);
 
 // I've got my eyes on you(r file changes).
-gulp.task('watch',function() {
+gulp.task('watch',['default'],function() {
 	gulp.watch(src.sass, ['sass']);
 	gulp.watch(src.js,['js']);
 	gulp.watch(src.php,['php']);
