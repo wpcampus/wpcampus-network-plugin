@@ -80,7 +80,7 @@ final class WPCampus_Network_Global {
 	 * Load our text domain.
 	 */
 	public function textdomain() {
-		load_plugin_textdomain( 'wpcampus', false, wpcampus_network()->plugin_base . '/languages' );
+		load_plugin_textdomain( 'wpcampus-network', false, wpcampus_network()->plugin_base . '/languages' );
 	}
 
 	/**
@@ -246,7 +246,7 @@ final class WPCampus_Network_Global {
 	 */
 	function register_network_footer_menu() {
 		if ( wpcampus_network()->enable_network_footer ) {
-			register_nav_menu( 'footer', __( 'Footer Menu', 'wpcampus' ) );
+			register_nav_menu( 'footer', __( 'Footer Menu', 'wpcampus-network' ) );
 		}
 	}
 
@@ -399,7 +399,7 @@ final class WPCampus_Network_Global {
 
 				// Capitalize first word.
 				case 'video':
-					$title = sprintf( __( '%s:', 'wpcampus' ), ucfirst( $data->type ) ) . ' ' . $title;
+					$title = sprintf( __( '%s:', 'wpcampus-network' ), ucfirst( $data->type ) ) . ' ' . $title;
 					break;
 			}
 		}

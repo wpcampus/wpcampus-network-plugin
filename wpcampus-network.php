@@ -8,7 +8,7 @@
  * Author URI:        https://wpcampus.org
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       wpcampus
+ * Text Domain:       wpcampus-network
  * Domain Path:       /languages
  */
 
@@ -114,23 +114,23 @@ class WPCampus_Network {
 		$images_dir = $this->plugin_dir . 'assets/images/';
 		$social = array(
 			'slack' => array(
-				'title' => sprintf( __( 'Join %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'Slack' ),
+				'title' => sprintf( __( 'Join %1$s on %2$s', 'wpcampus-network' ), 'WPCampus', 'Slack' ),
 				'href'  => 'https://wpcampus.org/get-involved/',
 			),
 			'twitter' => array(
-				'title' => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'Twitter' ),
+				'title' => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus-network' ), 'WPCampus', 'Twitter' ),
 				'href'  => 'https://twitter.com/wpcampusorg',
 			),
 			'facebook' => array(
-				'title' => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'Facebook' ),
+				'title' => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus-network' ), 'WPCampus', 'Facebook' ),
 				'href'  => 'https://www.facebook.com/wpcampus',
 			),
 			'youtube' => array(
-				'title' => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'YouTube' ),
+				'title' => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus-network' ), 'WPCampus', 'YouTube' ),
 				'href'  => 'https://www.youtube.com/wpcampusorg',
 			),
 			'github' => array(
-				'title' => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus' ), 'WPCampus', 'GitHub' ),
+				'title' => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus-network' ), 'WPCampus', 'GitHub' ),
 				'href'  => 'https://github.com/wpcampus/',
 			),
 		);
@@ -220,7 +220,7 @@ class WPCampus_Network {
 		// Parse incoming $args with defaults.
 		$args = wp_parse_args( $args, array(
 			'skip_nav_id'       => '',
-			'skip_nav_label'    => __( 'Skip to Content', 'wpcampus' ),
+			'skip_nav_label'    => __( 'Skip to Content', 'wpcampus-network' ),
 		));
 
 		// Build the banner.
@@ -246,7 +246,7 @@ class WPCampus_Network {
 					<a href="https://wpcampus.org">
 						<?xml version="1.0" encoding="utf-8"?>
 						<svg version="1.1" id="WPCampusOrgLogo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1275 100" style="enable-background:new 0 0 1275 100;" xml:space="preserve">
-							<title>' . sprintf( __( '%1$s: Where %2$s Meets Higher Education', 'wpcampus' ), 'WPCampus', 'WordPress' ) . '</title>
+							<title>' . sprintf( __( '%1$s: Where %2$s Meets Higher Education', 'wpcampus-network' ), 'WPCampus', 'WordPress' ) . '</title>
 							<style type="text/css">.st0{opacity:0.7;enable-background:new;}</style>
 							<path class="st0" d="M113.5,1.5l-23.4,97H77.9L56.8,23.2L37.1,98.5H24.6L0,1.5h12.6L32,80.1L52.6,1.5h9.9l22.2,78.6l18.1-78.6H113.5 z"/>
 							<path class="st0" d="M152.6,98.5h-12.2v-97h34.4c10.8,0,18.7,2.9,23.8,8.8s7.7,12.5,7.7,20c0,8.3-2.8,15.2-8.4,20.7 c-5.6,5.4-12.9,8.2-21.9,8.2h-23.5L152.6,98.5L152.6,98.5z M152.6,49h22.3c5.7,0,10.4-1.7,13.9-5.2c3.5-3.4,5.3-8,5.3-13.6 c0-4.8-1.6-9.1-4.7-12.9c-3.1-3.8-7.7-5.7-13.6-5.7h-23.2V49z"/>
@@ -264,14 +264,14 @@ class WPCampus_Network {
 					</a>
 				</div>
 				<div class="wpc-menu-container" role="navigation">
-					<button class="wpc-toggle-menu" data-toggle="wpc-network-banner" aria-label="' . __( 'Toggle menu', 'wpcampus' ) . '">
+					<button class="wpc-toggle-menu" data-toggle="wpc-network-banner" aria-label="' . __( 'Toggle menu', 'wpcampus-network' ) . '">
 						<div class="wpc-toggle-bar"></div>
 					</button>
 					<ul class="wpc-menu">
-						<li><a href="https://wpcampus.org/about/">' . sprintf( __( 'What is %s?', 'wpcampus' ), 'WPCampus' ) . '</a></li>
-						<li><a href="https://wpcampus.org/conferences/">' . __( 'Conferences', 'wpcampus' ) . '</a></li>
-						<li><a href="https://wpcampus.org/contact/">' . __( 'Contact', 'wpcampus' ) . '</a></li>
-						<li class="highlight"><a href="https://wpcampus.org/get-involved/">' . __( 'Get Involved', 'wpcampus' ) . '</a></li>
+						<li><a href="https://wpcampus.org/about/">' . sprintf( __( 'What is %s?', 'wpcampus-network' ), 'WPCampus' ) . '</a></li>
+						<li><a href="https://wpcampus.org/conferences/">' . __( 'Conferences', 'wpcampus-network' ) . '</a></li>
+						<li><a href="https://wpcampus.org/contact/">' . __( 'Contact', 'wpcampus-network' ) . '</a></li>
+						<li class="highlight"><a href="https://wpcampus.org/get-involved/">' . __( 'Get Involved', 'wpcampus-network' ) . '</a></li>
 					</ul>' . $this->get_social_media_icons() .
 		        '</div>
 			</div>
@@ -349,7 +349,7 @@ class WPCampus_Network {
 		// Build the footer.
 		$footer = '<div id="wpc-network-footer" role="contentinfo">
 			<div class="wpc-container">
-				<a class="wpc-logo" href="' . $home_url . '"><img src="' . $images_dir . 'wpcampus-black-tagline.svg" alt="' . sprintf( __( '%1$s: Where %2$s Meets Higher Education', 'wpcampus' ), 'WPCampus', 'WordPress' ) . '" /></a><br />';
+				<a class="wpc-logo" href="' . $home_url . '"><img src="' . $images_dir . 'wpcampus-black-tagline.svg" alt="' . sprintf( __( '%1$s: Where %2$s Meets Higher Education', 'wpcampus-network' ), 'WPCampus', 'WordPress' ) . '" /></a><br />';
 
 		// Add the footer menu.
 		$footer .= wp_nav_menu( array(
@@ -361,8 +361,8 @@ class WPCampus_Network {
 			'fallback_cb'       => false,
 		));
 
-		$footer .= '<p class="message"><strong>' . sprintf( __( '%1$s is a community of networking, resources, and events for those using %2$s in the world of higher education.', 'wpcampus' ), 'WPCampus', 'WordPress' ) . '</strong><br />' . sprintf( __( 'If you are not a member of the %1$s community, we\'d love for you to %2$sget involved%3$s.', 'wpcampus' ), 'WPCampus', '<a href="' . $get_involved_url . '">', '</a>' ) . '</p>
-				<p class="disclaimer">' . sprintf( __( 'This site is powered by %1$s. You can view, and contribute to, the theme on %2$s.', 'wpcampus' ), '<a href="' . $wp_org_url . '">WordPress</a>', '<a href="' . $github_url . '">GitHub</a>' ) . '<br />' . sprintf( __( '%1$s events are not %2$s and are not affiliated with the %3$s Foundation.', 'wpcampus' ), 'WPCampus', 'WordCamps', 'WordPress' ) . '</p>' .
+		$footer .= '<p class="message"><strong>' . sprintf( __( '%1$s is a community of networking, resources, and events for those using %2$s in the world of higher education.', 'wpcampus-network' ), 'WPCampus', 'WordPress' ) . '</strong><br />' . sprintf( __( 'If you are not a member of the %1$s community, we\'d love for you to %2$sget involved%3$s.', 'wpcampus-network' ), 'WPCampus', '<a href="' . $get_involved_url . '">', '</a>' ) . '</p>
+				<p class="disclaimer">' . sprintf( __( 'This site is powered by %1$s. You can view, and contribute to, the theme on %2$s.', 'wpcampus-network' ), '<a href="' . $wp_org_url . '">WordPress</a>', '<a href="' . $github_url . '">GitHub</a>' ) . '<br />' . sprintf( __( '%1$s events are not %2$s and are not affiliated with the %3$s Foundation.', 'wpcampus-network' ), 'WPCampus', 'WordCamps', 'WordPress' ) . '</p>' .
 		        $this->get_social_media_icons() . '<p class="copyright">&copy; ' . date( 'Y' ) . ' <a href="' . $home_url . '">WPCampus</a></p>
 			</div>
 		</div>';
@@ -386,8 +386,8 @@ class WPCampus_Network {
 		?>
 		<div id="wpc-code-of-conduct">
 			<div class="wpc-container">
-				<div class="container-title"><?php _e( 'Our Code of Conduct', 'wpcampus' ); ?></div>
-				<p><?php printf( __( '%1$s seeks to provide a friendly, safe environment.  All participants should be able to engage in productive dialogue. They should share and learn with each other in an atmosphere of mutual respect. We require all participants adhere to our %2$scode of conduct%3$s. This applies to all community interaction and events.', 'wpcampus' ), 'WPCampus', '<a href="https://wpcampus.org/code-of-conduct/">', '</a>' ); ?></p>
+				<div class="container-title"><?php _e( 'Our Code of Conduct', 'wpcampus-network' ); ?></div>
+				<p><?php printf( __( '%1$s seeks to provide a friendly, safe environment.  All participants should be able to engage in productive dialogue. They should share and learn with each other in an atmosphere of mutual respect. We require all participants adhere to our %2$scode of conduct%3$s. This applies to all community interaction and events.', 'wpcampus-network' ), 'WPCampus', '<a href="https://wpcampus.org/code-of-conduct/">', '</a>' ); ?></p>
 			</div>
 		</div>
 		<?php
@@ -418,7 +418,7 @@ class WPCampus_Network {
 		<div id="mc_embed_signup">
 			<form action="https://wpcampus.us11.list-manage.com/subscribe/post?u=6d71860d429d3461309568b92&amp;id=05f39a2a20" method="post" id="mc-embedded-subscribe-form" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
 				<div id="mc_embed_signup_scroll">
-					<h2><?php printf( __( 'Subscribe to %s mailing list', 'wpcampus' ), 'WPCampus' ); ?></h2>
+					<h2><?php printf( __( 'Subscribe to %s mailing list', 'wpcampus-network' ), 'WPCampus' ); ?></h2>
 					<div class="indicates-required"><span class="asterisk">*</span> indicates required</div>
 					<p>Sign-up to receive email updates about the WPCampus community and conferences.</p>
 					<div class="mc-field-group-row name">
@@ -440,7 +440,7 @@ class WPCampus_Network {
 						<div class="response" id="mce-success-response" style="display:none"></div>
 					</div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
 					<div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_6d71860d429d3461309568b92_05f39a2a20" tabindex="-1" value=""></div>
-					<div class="clear"><input type="submit" value="<?php esc_attr_e( 'Subscribe to mailing list', 'wpcampus' ); ?>" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+					<div class="clear"><input type="submit" value="<?php esc_attr_e( 'Subscribe to mailing list', 'wpcampus-network' ); ?>" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
 				</div>
 			</form>
 		</div>
