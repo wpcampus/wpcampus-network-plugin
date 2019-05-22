@@ -216,7 +216,7 @@ final class WPCampus_Network {
 	 */
 	public function enqueue_base_script() {
 		$ver = '1.0';
-		wp_enqueue_script( 'wpc-network-base', trailingslashit( $this->get_plugin_url() ) . 'assets/build/js/wpc-network.min.js', array(), null, $ver );
+		wp_enqueue_script( 'wpc-network-base', trailingslashit( $this->get_plugin_url() ) . 'assets/js/wpc-network.min.js', array(), null, $ver );
 	}
 
 	/**
@@ -228,7 +228,7 @@ final class WPCampus_Network {
 
 		// Enqueue login script.
 		$plugin_url = $this->get_plugin_url();
-		$js_dir = trailingslashit( $plugin_url . 'assets/build/js' );
+		$js_dir = trailingslashit( $plugin_url . 'assets/js' );
 
 		wp_enqueue_script( 'wpc-ajax-login', $js_dir . 'wpc-network-login.min.js', array( 'jquery' ), null, true );
 		wp_localize_script( 'wpc-ajax-login', 'wpc_ajax_login', array(
@@ -571,7 +571,7 @@ final class WPCampus_Network {
 		$css_ver = 3;
 		?>
 		<link href="//cdn-images.mailchimp.com/embedcode/classic-10_7.css" rel="stylesheet" type="text/css">
-		<link href="<?php echo trailingslashit( $this->get_plugin_url() . 'assets/build/css' ); ?>wpc-network-mailchimp.min.css?ver=<?php echo $css_ver; ?>" rel="stylesheet" type="text/css">
+		<link href="<?php echo trailingslashit( $this->get_plugin_url() . 'assets/css' ); ?>wpc-network-mailchimp.min.css?ver=<?php echo $css_ver; ?>" rel="stylesheet" type="text/css">
 		<div class="wpc-mc-signup">
 			<h2><?php printf( __( 'Subscribe to %s updates', 'wpcampus-network' ), 'WPCampus' ); ?></h2>
 			<div class="indicates-required"><span class="asterisk">*</span> indicates required</div>
