@@ -8,20 +8,21 @@ class WPCampus_Forms {
 	/**
 	 * Holds the class instance.
 	 *
-	 * @var		WPCampus_Forms
+	 * @var        WPCampus_Forms
 	 */
 	private static $instance;
 
 	/**
 	 * Returns the instance of this class.
 	 *
-	 * @return	WPCampus_Forms
+	 * @return    WPCampus_Forms
 	 */
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {
 			$class_name = __CLASS__;
 			self::$instance = new $class_name;
 		}
+
 		return self::$instance;
 	}
 
@@ -45,10 +46,11 @@ class WPCampus_Forms {
 	 * Method to keep our instance
 	 * from being cloned or unserialized.
 	 *
-	 * @return	void
+	 * @return    void
 	 */
-	private function __clone() {}
-	private function __wakeup() {}
+	private function __clone() { }
+
+	private function __wakeup() { }
 
 	/**
 	 *
@@ -162,7 +164,7 @@ class WPCampus_Forms {
  * Will come in handy when we need to access the
  * class to retrieve data throughout the plugin.
  *
- * @return	WPCampus_Forms
+ * @return    WPCampus_Forms
  */
 function wpcampus_forms() {
 	return WPCampus_Forms::instance();

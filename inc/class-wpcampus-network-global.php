@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The class that sets up
  * global plugin functionality.
@@ -14,7 +15,7 @@ final class WPCampus_Network_Global {
 	/**
 	 * We don't need to instantiate this class.
 	 */
-	protected function __construct() {}
+	protected function __construct() { }
 
 	/**
 	 * Registers all of our hooks and what not.
@@ -114,12 +115,12 @@ final class WPCampus_Network_Global {
 
 		// Don't cache specific pages.
 		$exclude_pages = array(
-			'wpcampus.org' => array(
+			'wpcampus.org'      => array(
 				'#^/donation-confirmation/?#',
-				'#^/donation-history/?#'
+				'#^/donation-history/?#',
 			),
 			'shop.wpcampus.org' => array(
-				'#^/my\-account/?#'
+				'#^/my\-account/?#',
 			),
 		);
 
@@ -152,9 +153,13 @@ final class WPCampus_Network_Global {
 	 * Processes the [wpc_print_content] shortcode.
 	 */
 	public function get_content_for_shortcode( $atts ) {
-		$atts = shortcode_atts( array(
-			'id' => 0,
-		), $atts, 'wpc_print_content' );
+		$atts = shortcode_atts(
+			array(
+				'id' => 0,
+			),
+			$atts,
+			'wpc_print_content'
+		);
 
 		if ( empty( $atts['id'] ) ) {
 			return null;
@@ -243,6 +248,7 @@ final class WPCampus_Network_Global {
 	 * Set the default user role to "member".
 	 *
 	 * @param $default_role
+	 *
 	 * @return string
 	 */
 	public function set_default_user_role( $default_role ) {
@@ -253,6 +259,7 @@ final class WPCampus_Network_Global {
 	 * Sets the default thumbnail size.
 	 *
 	 * @param mixed - $default The default value to return if the option does not exist in the database.
+	 *
 	 * @return int - the media size
 	 */
 	public function set_thumbnail_size( $default ) {
@@ -263,11 +270,13 @@ final class WPCampus_Network_Global {
 	 * Sets the default medium size.
 	 *
 	 * @param mixed - $default The default value to return if the option does not exist in the database.
+	 *
 	 * @return int - the media size
 	 */
 	public function set_medium_size_w( $default ) {
 		return 800;
 	}
+
 	public function set_medium_size_h( $default ) {
 		return 1200;
 	}
@@ -276,11 +285,13 @@ final class WPCampus_Network_Global {
 	 * Sets the default thumbnail size.
 	 *
 	 * @param mixed - $default The default value to return if the option does not exist in the database.
+	 *
 	 * @return int - the media size
 	 */
 	public function set_large_size_w( $default ) {
 		return 1200;
 	}
+
 	public function set_large_size_h( $default ) {
 		return 2000;
 	}
@@ -292,6 +303,7 @@ final class WPCampus_Network_Global {
 	 * @param   array - $caps - Actual capabilities for meta capability.
 	 * @param   array - $args - Optional parameters passed to has_cap(), typically object ID.
 	 * @param   WP_User - $user - The user object.
+	 *
 	 * @return  array - the filtered capabilities.
 	 */
 	public function filter_user_has_cap( $allcaps, $caps, $args, $user ) {
@@ -363,7 +375,14 @@ final class WPCampus_Network_Global {
 			$post_id  = get_the_ID();
 			$meta_key = "wpc_has_viewed_{$current_user_id}";
 
-			$has_viewed = $wpdb->get_var( $wpdb->prepare( "SELECT meta_value FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s", $post_id, $meta_key ) );
+			$has_viewed = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT meta_value FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s",
+					$post_id,
+			        $meta_key
+				)
+			);
+
 			if ( empty( $has_viewed ) ) {
 				add_post_meta( $post_id, $meta_key, time(), false );
 			}
@@ -389,6 +408,7 @@ final class WPCampus_Network_Global {
 	 * and to disable the cache.
 	 *
 	 * @param   $value - bool - Whether the request has already been served. Default false.
+	 *
 	 * @return  bool - the filtered value
 	 */
 	public function add_rest_headers( $value ) {
@@ -433,8 +453,8 @@ final class WPCampus_Network_Global {
 
 		// Define the directories.
 		$plugin_url = trailingslashit( wpcampus_network()->get_plugin_url() );
-		$css_dir = $plugin_url . 'assets/css/';
-		$js_dir = $plugin_url . 'assets/js/';
+		$css_dir    = $plugin_url . 'assets/css/';
+		$js_dir     = $plugin_url . 'assets/js/';
 
 		// Setup the font weights we need.
 		$open_sans_weights = apply_filters( 'wpcampus_open_sans_font_weights', array() );
@@ -564,6 +584,7 @@ final class WPCampus_Network_Global {
 	 *
 	 * @param   $args - array - the default arguments.
 	 * @param   $post - object - the post object.
+	 *
 	 * @return  array - the filtered arguments.
 	 */
 	public function filter_multi_author_primary_dropdown_args( $args, $post ) {
@@ -582,6 +603,7 @@ final class WPCampus_Network_Global {
 	 * @param   string - $return - The returned oEmbed HTML.
 	 * @param   object - $data - A data object result from an oEmbed provider.
 	 * @param   string - $url - The URL of the content to be embedded.
+	 *
 	 * @return  string - the HTML.
 	 */
 	public function filter_oembed_dataparse( $return, $data, $url ) {
@@ -590,7 +612,7 @@ final class WPCampus_Network_Global {
 		$title = ! empty( $data->title ) ? $data->title : '';
 
 		// If no embed title, search the return markup for a title attribute.
-		$preg_match = '/title\=[\"|\\\']{1}([^\"\\\']*)[\"|\\\']{1}/i';
+		$preg_match     = '/title\=[\"|\\\']{1}([^\"\\\']*)[\"|\\\']{1}/i';
 		$has_title_attr = preg_match( $preg_match, $return, $matches );
 		if ( $has_title_attr && ! empty( $matches[1] ) ) {
 			$title = $matches[1];
@@ -630,6 +652,7 @@ final class WPCampus_Network_Global {
 	 *
 	 * @param   $args - array - arguments passed to get_post_types().
 	 * @param   $form_id - int - the form ID.
+	 *
 	 * @return  array - the arguments we want to use.
 	 */
 	public function filter_gfcpt_post_type_args( $args, $form_id ) {
@@ -642,6 +665,7 @@ final class WPCampus_Network_Global {
 	 *
 	 * @param   $args - array - arguments passed to get_taxonomies().
 	 * @param   $form_id - int - the form ID.
+	 *
 	 * @return  array - the arguments we want to use.
 	 */
 	public function filter_gfcpt_tax_args( $args, $form_id ) {
@@ -654,10 +678,12 @@ final class WPCampus_Network_Global {
 	 * Filter the arguments for the FooGallery galleries post type.
 	 *
 	 * @param   $args - array - the original post type arguments.
+	 *
 	 * @return  array - the filtered arguments.
 	 */
 	public function filter_foogallery_cpt_args( $args ) {
 		$args['capability_type'] = array( 'gallery', 'galleries' );
+
 		return $args;
 	}
 
@@ -673,15 +699,16 @@ final class WPCampus_Network_Global {
 	 *
 	 * @param   $content - string - the default content, which is blank.
 	 * @param   $args - array - the login form arguments.
+	 *
 	 * @return  string - the returned content.
 	 */
 	public function add_to_login_form_top( $content, $args ) {
 		global $post;
 
-		$header = '';
+		$header         = '';
 		$default_header = 'h2';
 
-		$title   = '';
+		$title = '';
 		if ( false !== $args['wpc_form_title'] ) {
 
 			if ( is_singular() && ! empty( $post->ID ) ) {
@@ -731,23 +758,27 @@ final class WPCampus_Network_Global {
 		check_ajax_referer( 'wpc_ajax_login', 'wpc_ajax_login_nonce' );
 
 		$info = array(
-			'user_login' => $_POST['log'],
+			'user_login'    => $_POST['log'],
 			'user_password' => $_POST['pwd'],
-			'remember' => $_POST['rememberme'],
+			'remember'      => $_POST['rememberme'],
 		);
 
 		$user_signon = wp_signon( $info, false );
 
 		if ( is_wp_error( $user_signon ) ) {
-			echo json_encode( array(
-				'loggedin' => false,
-				'message'  => $user_signon->get_error_message(),
-			));
+			echo json_encode(
+				array(
+					'loggedin' => false,
+				    'message'  => $user_signon->get_error_message(),
+				)
+			);
 		} else {
-			echo json_encode( array(
-				'loggedin' => true,
-				'message'  => __( 'Login successful, redirecting...' ),
-			));
+			echo json_encode(
+				array(
+					'loggedin' => true,
+					'message'  => __( 'Login successful, redirecting...' ),
+				)
+			);
 		}
 
 		wp_die();
@@ -764,7 +795,7 @@ final class WPCampus_Network_Global {
 
 		$form_id = 9; //isset( $_GET['form_id'] ) ? absint( $_GET['form_id'] ) : 0;
 
-		gravity_form( $form_id ,true, false, false, false, true );
+		gravity_form( $form_id, true, false, false, false, true );
 
 		wp_die();
 
@@ -779,9 +810,9 @@ final class WPCampus_Network_Global {
 		if ( wpcampus_network()->is_enabled( 'sessions' ) ) :
 
 			$events = array(
-				'wpcampus-2018' => 'WPCampus 2018',
-				'wpcampus-2017' => 'WPCampus 2017',
-				'wpcampus-2016' => 'WPCampus 2016',
+				'wpcampus-2018'        => 'WPCampus 2018',
+				'wpcampus-2017'        => 'WPCampus 2017',
+				'wpcampus-2016'        => 'WPCampus 2016',
 				'wpcampus-online-2018' => 'WPCampus Online 2018',
 				'wpcampus-online-2017' => 'WPCampus Online 2017',
 			);
@@ -878,34 +909,9 @@ final class WPCampus_Network_Global {
 				</div>
 			</script>
 			<?php
-
-		/*
-best_session
-:
-"0"
-content
-:
-{raw: "I believe people of any skill and access level can…shannon3/seo-resources">Elaine's GitHub repo</a>.", rendered: "<p>I believe people of any skill and access level …on3/seo-resources">Elaine's GitHub repo</a>.</p>↵"}
-excerpt
-:
-{raw: "", rendered: ""}
-session_slides_url
-:
-"https://prezi.com/iizl-7iw1zn_/doing-seo-is-like-baking-cookies/"
-session_video
-:
-""
-session_video_url
-:
-"https://mediasite.usfsm.edu/Mediasite/Play/a93c90cd3f874c28b56c54f5173dc35e1d"
-slug
-:
-"12-powerful-seo-hacks-for-your-higher-ed-wp-site"
-subjects
-:
-null*/
 		endif;
 
 	}
 }
+
 WPCampus_Network_Global::register();

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHP class that holds the admin
  * functionality for the plugin.
@@ -11,7 +12,7 @@ class WPCampus_Network_Admin {
 	/**
 	 * We don't need to instantiate this class.
 	 */
-	protected function __construct() {}
+	protected function __construct() { }
 
 	/**
 	 * Registers all of our hooks and what not.
@@ -35,7 +36,13 @@ class WPCampus_Network_Admin {
 	public function add_network_admin_pages() {
 
 		// Add our main settings page.
-		add_menu_page( sprintf( __( 'Manage %s', 'wpcampus-network' ), 'WPCampus' ), 'WPCampus', 'manage_wpc_network', 'manage-wpc-network', array( $this, 'print_manage_network_page' ) );
+		add_menu_page(
+			sprintf( __( 'Manage %s', 'wpcampus-network' ), 'WPCampus' ),
+			'WPCampus',
+			'manage_wpc_network',
+			'manage-wpc-network',
+			array( $this, 'print_manage_network_page' )
+		);
 	}
 
 	/**
@@ -81,9 +88,9 @@ class WPCampus_Network_Admin {
 					add_query_arg(
 						array(
 							'page' => $page_slug,
-							//'wpc_action' => 'add_all_users_to_all_blogs',
+					        //'wpc_action' => 'add_all_users_to_all_blogs',
 						),
-						network_admin_url( 'admin.php' )
+				        network_admin_url( 'admin.php' )
 					),
 					'add_all_users_to_all_blogs',
 					'wpc_nonce'
@@ -162,4 +169,5 @@ class WPCampus_Network_Admin {
 		}
 	}
 }
+
 WPCampus_Network_Admin::register();
