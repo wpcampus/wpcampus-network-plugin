@@ -1,4 +1,4 @@
-$wpc-footer-font-family: 'Open Sans', sans-serif;
+@import "settings";
 
 $wpc-footer-bg: #fafafa;
 $wpc-footer-color: #444;
@@ -24,7 +24,7 @@ $wpc-footer-social-margin-bottom: 0.9rem;
 #wpc-network-footer {
 	background: $wpc-footer-bg;
 	color: $wpc-footer-color;
-	font-family: $wpc-footer-font-family;
+	font-family: $font-family;
 	font-size: $wpc-footer-font-size;
 	line-height: $wpc-footer-line-height;
 	text-align: center;
@@ -72,7 +72,7 @@ $wpc-footer-social-margin-bottom: 0.9rem;
 	.wpc-network-footer-menu {
 		display: inline-block;
 		clear: both;
-		margin: 0 0 0.9rem;
+		margin: 0 0 1rem;
 		border: 0;
 		padding: 0;
 		list-style: none;
@@ -80,8 +80,7 @@ $wpc-footer-social-margin-bottom: 0.9rem;
 		text-align: center;
 
 		li {
-			display: block;
-			float: left;
+			display: inline-block;
 			margin: 0;
 			border: 0;
 			padding: 0;
@@ -150,5 +149,10 @@ $wpc-footer-social-margin-bottom: 0.9rem;
 		color: #222;
 		font-weight: 600;
 		margin: 0 0 3px 0;
+	}
+
+	.wpc-container {
+		max-width: $container-max-width;
+		margin: 0 auto;
 	}
 }

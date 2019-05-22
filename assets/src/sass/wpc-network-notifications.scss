@@ -1,7 +1,4 @@
-$wpc-notification-font-family: 'Open Sans', sans-serif;
-
-$wpc-notification-bg: rgba(17,89,189,0.1);
-$wpc-container-max-width: 920px;
+@import "settings";
 
 $wpc-notification-font-size: 0.95rem;
 $wpc-notification-line-height: 1.6;
@@ -33,7 +30,7 @@ $wpc-notification-padding-left: $wpc-notification-info-icon-width + $wpc-notific
 
 	.wpc-notification-message {
 		min-height: $wpc-notification-info-icon-height + $wpc-notification-padding-vert;
-		font-family: $wpc-notification-font-family;
+		font-family: $font-family;
 		font-size: $wpc-notification-font-size;
 		line-height: $wpc-notification-line-height;
 		text-align: left;
@@ -64,12 +61,12 @@ $wpc-notification-padding-left: $wpc-notification-info-icon-width + $wpc-notific
 	}
 
 	.wpc-notification {
-		background: $wpc-notification-bg;
+		background: $wpc-light-blue;
 		padding: 0 $wpc-notification-padding-horiz;
 	}
 
 	.wpc-container {
-		max-width: $wpc-container-max-width;
+		max-width: $container-max-width;
 		margin: 0 auto;
 	}
 }

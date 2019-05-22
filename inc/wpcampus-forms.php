@@ -36,6 +36,9 @@ class WPCampus_Forms {
 		// Filter field values.
 		add_filter( 'gform_field_value', array( $this, 'filter_field_value' ), 10, 3 );
 
+		add_filter( 'gform_spinner_url', array( $this, 'custom_spinner_image' ), 10, 2 );
+		add_filter( 'gform_ajax_spinner_url', array( $this, 'custom_spinner_image' ), 10, 2 );
+
 	}
 
 	/**
@@ -46,6 +49,13 @@ class WPCampus_Forms {
 	 */
 	private function __clone() {}
 	private function __wakeup() {}
+
+	/**
+	 *
+	 */
+	public function custom_spinner_image() {
+		return wpcampus_network()->get_plugin_url() . 'assets/images/loading.gif';
+	}
 
 	/**
 	 *
@@ -83,6 +93,7 @@ class WPCampus_Forms {
 			case 'user_lastname':
 			case 'user_email':
 			case 'user_url':
+			case 'user_login':
 
 				// Get the current user.
 				$current_user = wp_get_current_user();
@@ -96,6 +107,39 @@ class WPCampus_Forms {
 			case 'userid':
 			case 'user_id':
 				return get_current_user_id();
+
+			case 'sponsor':
+
+				// Get the sponsor.
+				$sponsor = get_query_var( 'sponsor' );
+				if ( $sponsor > 0 ) {
+					return $sponsor;
+				}
+
+				break;
+
+			case 'session_id':
+
+				// Get the session.
+				$session = get_query_var( 'session' );
+				if ( ! $session ) {
+					return '';
+				}
+
+				// Get post object.
+				if ( is_numeric( $session ) ) {
+					return $session;
+				} else {
+
+					// Get the post so we can get the ID.
+					$session_post = wpcampus_network()->get_post_by_name( $session, 'schedule' );
+
+					if ( ! empty( $session_post->ID ) ) {
+						return $session_post->ID;
+					}
+				}
+
+				return '';
 
 			// Get user Twitter.
 			case 'user_twitter':

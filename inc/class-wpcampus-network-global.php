@@ -21,9 +21,18 @@ final class WPCampus_Network_Global {
 	 */
 	public static function register() {
 		$plugin = new self();
+		$helper = wpcampus_network();
 
 		// Load our text domain.
 		add_action( 'init', array( $plugin, 'textdomain' ) );
+
+		// Add headers to the login page.
+		add_action( 'login_init', array( $plugin, 'add_header_content_security_policy' ) );
+
+		// Add favicons.
+		add_action( 'wp_head', array( $plugin, 'add_favicons' ) );
+		add_action( 'admin_head', array( $plugin, 'add_favicons' ) );
+		add_action( 'login_head', array( $plugin, 'add_favicons' ) );
 
 		// Change the login logo URL.
 		add_filter( 'login_headerurl', array( $plugin, 'change_login_header_url' ) );
@@ -34,17 +43,25 @@ final class WPCampus_Network_Global {
 		// Set default user role to "member".
 		add_filter( 'pre_option_default_role', array( $plugin, 'set_default_user_role' ) );
 
-		// When users are registered, make sure they're added to every site on the network.
-		add_action( 'user_register', array( $plugin, 'assign_user_to_all_blogs' ) );
+		// Set default media sizes
+		add_filter( 'pre_option_thumbnail_size_w', array( $plugin, 'set_thumbnail_size' ) );
+		add_filter( 'pre_option_thumbnail_size_h', array( $plugin, 'set_thumbnail_size' ) );
+		add_filter( 'pre_option_medium_size_w', array( $plugin, 'set_medium_size_w' ) );
+		add_filter( 'pre_option_medium_size_h', array( $plugin, 'set_medium_size_h' ) );
+		add_filter( 'pre_option_large_size_w', array( $plugin, 'set_large_size_w' ) );
+		add_filter( 'pre_option_large_size_h', array( $plugin, 'set_large_size_h' ) );
 
-		// Enable to make sure all users are registered to all sites.
-		//add_action( 'init', array( $plugin, 'assign_all_users_to_all_blogs' ) );
+		// When users are registered, make sure they're added to every site on the network.
+		add_action( 'user_register', array( $plugin, 'process_user_registration' ) );
+
+		// Filter user capabilities.
+		//add_filter( 'user_has_cap', array( $plugin, 'filter_user_has_cap' ), 100, 4 );
 
 		// Hide Query Monitor if admin bar isn't showing.
 		add_filter( 'qm/process', array( $plugin, 'hide_query_monitor' ), 10, 2 );
 
 		// Mark posts as viewed.
-		add_action( 'wp', array( $plugin, 'mark_viewed' ) ) ;
+		add_action( 'wp', array( $plugin, 'mark_viewed' ) );
 
 		// Removes default REST API functionality.
 		add_action( 'rest_api_init', array( $plugin, 'init_rest_api' ) );
@@ -57,7 +74,7 @@ final class WPCampus_Network_Global {
 
 		// Enqueue front-end scripts and styles.
 		add_action( 'wp_enqueue_scripts', array( $plugin, 'enqueue_scripts_styles' ), 0 );
-		add_action( 'wp_print_footer_scripts', array( $plugin, 'add_mailchimp_popup_script' ) );
+		//add_action( 'wp_print_footer_scripts', array( $plugin, 'add_mailchimp_popup_script' ) );
 
 		// Customize the arguments for the multi author post author dropdown.
 		add_filter( 'my_multi_author_post_author_dropdown_args', array( $plugin, 'filter_multi_author_primary_dropdown_args' ), 10, 2 );
@@ -69,9 +86,50 @@ final class WPCampus_Network_Global {
 		add_filter( 'gfcpt_post_type_args', array( $plugin, 'filter_gfcpt_post_type_args' ), 10, 2 );
 		add_filter( 'gfcpt_tax_args', array( $plugin, 'filter_gfcpt_tax_args' ), 10, 2 );
 
+		// Tweak FooGallery CPT args.
+		add_filter( 'foogallery_gallery_posttype_register_args', array( $plugin, 'filter_foogallery_cpt_args' ) );
+
+		// Add content to top of login forms.
+		add_filter( 'login_form_top', array( $plugin, 'add_to_login_form_top' ), 1, 2 );
+
+		add_shortcode( 'wpc_speaker_app_deadline_time', array( $helper, 'print_speaker_app_deadline_time' ) );
+		add_shortcode( 'wpc_speaker_app_deadline_date', array( $helper, 'print_speaker_app_deadline_date' ) );
+
+		add_shortcode( 'wpc_print_code_of_conduct', array( $helper, 'get_code_of_conduct' ) );
+		add_shortcode( 'wpc_print_content', array( $plugin, 'get_content_for_shortcode' ) );
+
+		// Enable users to login via AJAX.
+		add_action( 'wp_ajax_wpc_ajax_login', array( $plugin, 'process_ajax_login' ) );
+		add_action( 'wp_ajax_nopriv_wpc_ajax_login', array( $plugin, 'process_ajax_login' ) );
+		add_action( 'wp_ajax_wpc_ajax_logout', array( $plugin, 'process_ajax_logout' ) );
+		add_action( 'wp_ajax_nopriv_wpc_ajax_logout', array( $plugin, 'process_ajax_logout' ) );
+
+		// Print our Javascript templates when needed.
+		add_action( 'wp_footer', array( $plugin, 'print_js_templates' ) );
+
 		// Disable cache for account pages.
 		if ( preg_match( '#^/my\-account/?#', $_SERVER['REQUEST_URI'] ) ) {
 			add_action( 'send_headers', array( $plugin, 'add_header_nocache' ), 15 );
+		}
+
+		// Don't cache specific pages.
+		$exclude_pages = array(
+			'wpcampus.org' => array(
+				'#^/donation-confirmation/?#',
+				'#^/donation-history/?#'
+			),
+			'shop.wpcampus.org' => array(
+				'#^/my\-account/?#'
+			),
+		);
+
+		// Loop through the patterns.
+		if ( array_key_exists( $_SERVER['HTTP_HOST'], $exclude_pages ) ) {
+			foreach ( $exclude_pages[ $_SERVER['HTTP_HOST'] ] as $page ) {
+				if ( preg_match( $page, $_SERVER['REQUEST_URI'] ) ) {
+					add_action( 'send_headers', array( $plugin, 'add_header_nocache' ), 15 );
+				}
+			}
 		}
 	}
 
@@ -80,7 +138,77 @@ final class WPCampus_Network_Global {
 	 * Load our text domain.
 	 */
 	public function textdomain() {
-		load_plugin_textdomain( 'wpcampus-network', false, wpcampus_network()->plugin_base . '/languages' );
+		load_plugin_textdomain( 'wpcampus-network', false, wpcampus_network()->get_plugin_basename() . '/languages' );
+	}
+
+	/**
+	 * Adds a content security policy that allows iframes on our other sites.
+	 */
+	public function add_header_content_security_policy() {
+		@header( "Content-Security-Policy: frame-ancestors 'self' wpcampus.org *.wpcampus.org;" );
+	}
+
+	/**
+	 * Processes the [wpc_print_content] shortcode.
+	 */
+	public function get_content_for_shortcode( $atts ) {
+		$atts = shortcode_atts( array(
+			'id' => 0,
+		), $atts, 'wpc_print_content' );
+
+		if ( empty( $atts['id'] ) ) {
+			return null;
+		}
+
+		$post_id = (int) $atts['id'];
+
+		if ( empty( $post_id ) ) {
+			return null;
+		}
+
+		$post = get_post( $post_id );
+
+		if ( empty( $post->post_content ) ) {
+			return null;
+		}
+
+		return $post->post_content;
+	}
+
+	/**
+	 * Add favicons.
+	 */
+	public function add_favicons() {
+
+		$favicons_folder = trailingslashit( wpcampus_network()->get_plugin_url() ) . 'assets/images/favicons/';
+
+		?>
+		<link rel="shortcut icon" href="<?php echo $favicons_folder; ?>wpcampus-favicon-60.png"/>
+		<?php
+
+		// Set the Apple image sizes.
+		$apple_image_sizes = array( 57, 60, 72, 76, 114, 120, 144, 152, 180 );
+		foreach ( $apple_image_sizes as $size ) :
+			?>
+			<link rel="apple-touch-icon" sizes="<?php echo "{$size}x{$size}"; ?>" href="<?php echo $favicons_folder; ?>wpcampus-favicon-<?php echo $size; ?>.png">
+			<?php
+		endforeach;
+
+		// Set the Android image sizes.
+		$android_image_sizes = array( 16, 32, 96, 192 );
+		foreach ( $android_image_sizes as $size ) :
+
+			?>
+			<link rel="icon" type="image/png" sizes="<?php echo "{$size}x{$size}"; ?>" href="<?php echo $favicons_folder; ?>wpcampus-favicon-<?php echo $size; ?>.png">
+			<?php
+
+		endforeach;
+
+		?>
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="<?php echo $favicons_folder; ?>wpcampus-favicon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+		<?php
 	}
 
 	/**
@@ -95,7 +223,20 @@ final class WPCampus_Network_Global {
 	 * Add login stylesheet.
 	 */
 	public function enqueue_login_styles() {
-		wp_enqueue_style( 'wpc-network-login', trailingslashit( wpcampus_network()->plugin_url . 'assets/build/css' ) . 'wpc-network-login.min.css', array(), null );
+		wp_enqueue_style( 'wpc-network-login', trailingslashit( wpcampus_network()->get_plugin_url() ) . 'assets/build/css/wpc-network-login.min.css', array(), null );
+	}
+
+	/**
+	 * Process when a user registers.
+	 *
+	 * We make sure they are added to every
+	 * site on the network.
+	 */
+	public function process_user_registration( $user_id ) {
+
+		// Assign to every blog on the network.
+		wpcampus_network()->assign_user_to_all_blogs( $user_id );
+
 	}
 
 	/**
@@ -109,59 +250,92 @@ final class WPCampus_Network_Global {
 	}
 
 	/**
-	 * Assigns all users to all blogs.
+	 * Sets the default thumbnail size.
 	 *
-	 * @TODO:
-	 * - Attach to a button on an admin page?
+	 * @param mixed - $default The default value to return if the option does not exist in the database.
+	 * @return int - the media size
 	 */
-	public function assign_all_users_to_all_blogs() {
-
-		$users = get_users( array( 'fields' => 'id' ) );
-		if ( empty( $users ) ) {
-			return;
-		}
-
-		foreach( $users as $user_id ) {
-			$this->assign_user_to_all_blogs( $user_id );
-		}
+	public function set_thumbnail_size( $default ) {
+		return 300;
 	}
 
 	/**
-	 * Makes sure a user is added to every site.
+	 * Sets the default medium size.
+	 *
+	 * @param mixed - $default The default value to return if the option does not exist in the database.
+	 * @return int - the media size
 	 */
-	public function assign_user_to_all_blogs( $user_id ) {
+	public function set_medium_size_w( $default ) {
+		return 800;
+	}
+	public function set_medium_size_h( $default ) {
+		return 1200;
+	}
 
-		$all_blogs = get_sites( array(
-			'public'   => 1,
-			'archived' => 0,
-			'spam'     => 0,
-			'deleted'  => 0,
-		));
+	/**
+	 * Sets the default thumbnail size.
+	 *
+	 * @param mixed - $default The default value to return if the option does not exist in the database.
+	 * @return int - the media size
+	 */
+	public function set_large_size_w( $default ) {
+		return 1200;
+	}
+	public function set_large_size_h( $default ) {
+		return 2000;
+	}
 
-		if ( empty( $all_blogs ) ) {
-			return;
+	/**
+	 * Filter user capabilities.
+	 *
+	 * @param   array - $allcaps - An array of all the user's capabilities.
+	 * @param   array - $caps - Actual capabilities for meta capability.
+	 * @param   array - $args - Optional parameters passed to has_cap(), typically object ID.
+	 * @param   WP_User - $user - The user object.
+	 * @return  array - the filtered capabilities.
+	 */
+	public function filter_user_has_cap( $allcaps, $caps, $args, $user ) {
+
+		if ( ! is_array( $args ) ) {
+			return $allcaps;
 		}
 
-		// Get user's existing blog info.
-		$user_existing_blogs    = get_blogs_of_user( $user_id );
-		$user_existing_blog_ids = ! empty( $user_existing_blogs ) ? wp_list_pluck( $user_existing_blogs, 'userblog_id' ) : array();
-
-		/*
-		 * Loops through each blog. Checks if user
-		 * is already a member of the blog. If so, skips.
-		 * If not, then adds user to the blog as a "member".
-		 */
-		foreach( $all_blogs as $this_blog ) {
-
-			// Don't need to worry about if user already member of blog.
-			if ( in_array( $this_blog->blog_id, $user_existing_blog_ids ) ) {
-				continue;
-			}
-
-			// Add as "member" role.
-			add_user_to_blog( $this_blog->blog_id, $user_id, 'member' );
-
+		$capability = array_shift( $args );
+		if ( 'edit_comment' != $capability ) {
+			return $allcaps;
 		}
+
+		$user_id = array_shift( $args );
+		if ( empty( $user_id ) ) {
+			return $allcaps;
+		}
+
+		$comment_id = array_shift( $args );
+		if ( empty( $comment_id ) ) {
+			return $allcaps;
+		}
+
+		// If the user can moderate comments, get out of here.
+
+		//$allcaps['edit_comment'] = false;
+		//return array();
+		unset( $allcaps['edit_post'] );
+		unset( $allcaps['edit_posts'] );
+		unset( $allcaps['edit_proposal'] );
+		unset( $allcaps['edit_proposals'] );
+		unset( $allcaps['edit_comment'] );
+		unset( $allcaps['moderate_comments'] );
+
+		/*echo "\n\ncapability: {$capability}";
+		echo "\n\nallcaps:<pre>";
+		print_r($allcaps);
+		echo "</pre>";
+		echo "\n\ncaps:<pre>";
+		print_r($caps);
+		echo "</pre>";
+		echo "\n\nuser ID: [{$user->ID}][{$user_id}]";*/
+
+		return $allcaps;
 	}
 
 	/**
@@ -183,7 +357,7 @@ final class WPCampus_Network_Global {
 		}
 
 		// If logged in, mark that the user has viewed the post.
-		$current_user_id = get_current_user_id();
+		$current_user_id = (int) get_current_user_id();
 		if ( $current_user_id > 0 ) {
 
 			$post_id  = get_the_ID();
@@ -234,7 +408,7 @@ final class WPCampus_Network_Global {
 		header( 'Access-Control-Allow-Credentials: true' );
 
 		// Disable the cache.
-		header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
+		$this->add_header_nocache();
 
 		return $value;
 	}
@@ -245,7 +419,7 @@ final class WPCampus_Network_Global {
 	 * @return  void
 	 */
 	function register_network_footer_menu() {
-		if ( wpcampus_network()->enable_network_footer ) {
+		if ( wpcampus_network()->is_enabled( 'footer' ) ) {
 			register_nav_menu( 'footer', __( 'Footer Menu', 'wpcampus-network' ) );
 		}
 	}
@@ -253,14 +427,14 @@ final class WPCampus_Network_Global {
 	/**
 	 * Enqueue our front-end scripts.
 	 *
-	 * @return  void
+	 * @return void
 	 */
 	public function enqueue_scripts_styles() {
 
 		// Define the directories.
-		$plugin_url = wpcampus_network()->plugin_url;
-		$css_dir = trailingslashit( $plugin_url . 'assets/build/css' );
-		$js_dir = trailingslashit( $plugin_url . 'assets/build/js' );
+		$plugin_url = trailingslashit( wpcampus_network()->get_plugin_url() );
+		$css_dir = $plugin_url . 'assets/build/css/';
+		$js_dir = $plugin_url . 'assets/build/js/';
 
 		// Setup the font weights we need.
 		$open_sans_weights = apply_filters( 'wpcampus_open_sans_font_weights', array() );
@@ -272,19 +446,19 @@ final class WPCampus_Network_Global {
 		}
 
 		// Make sure the weights we need for our components are there.
-		if ( wpcampus_network()->enable_network_banner ) {
+		if ( wpcampus_network()->is_enabled( 'banner' ) ) {
 			$open_sans_weights = array_merge( $open_sans_weights, array( 400, 600, 700 ) );
 		}
 
-		if ( wpcampus_network()->enable_network_notifications ) {
+		if ( wpcampus_network()->is_enabled( 'notifications' ) ) {
 			$open_sans_weights = array_merge( $open_sans_weights, array( 400 ) );
 		}
 
-		if ( wpcampus_network()->enable_network_footer ) {
+		if ( wpcampus_network()->is_enabled( 'footer' ) ) {
 			$open_sans_weights = array_merge( $open_sans_weights, array( 400, 600 ) );
 		}
 
-		if ( wpcampus_network()->enable_watch_videos ) {
+		if ( wpcampus_network()->is_enabled( 'videos' ) ) {
 			$open_sans_weights = array_merge( $open_sans_weights, array( 600 ) );
 		}
 
@@ -299,27 +473,50 @@ final class WPCampus_Network_Global {
 		wp_register_script( 'wpc-network-toggle-menu', $js_dir . 'wpc-network-toggle-menu.min.js', array( 'jquery', 'jquery-ui-core' ), null );
 
 		// Enqueue the network banner styles.
-		if ( wpcampus_network()->enable_network_banner ) {
+		if ( wpcampus_network()->is_enabled( 'banner' ) ) {
 			wp_enqueue_style( 'wpc-network-banner', $css_dir . 'wpc-network-banner.min.css', array( 'wpc-fonts-open-sans' ), null );
 			wp_enqueue_script( 'wpc-network-toggle-menu' );
 		}
 
 		// Enqueue the network notification assets.
-		if ( wpcampus_network()->enable_network_notifications ) {
+		if ( wpcampus_network()->is_enabled( 'notifications' ) ) {
 			wp_enqueue_style( 'wpc-network-notifications', $css_dir . 'wpc-network-notifications.min.css', array( 'wpc-fonts-open-sans' ), null );
 			wp_enqueue_script( 'wpc-network-notifications', $js_dir . 'wpc-network-notifications.min.js', array( 'jquery', 'mustache' ), null, true );
-			wp_localize_script( 'wpc-network-notifications', 'wpc_network', array(
-				'main_url' => wpcampus_network()->get_network_site_url(),
+			wp_localize_script( 'wpc-network-notifications', 'wpc_net_notifications', array(
+				'main_url' => wpcampus_get_network_site_url(),
 			));
 		}
 
+		// Enqueue the network Code of Conduct styles.
+		if ( wpcampus_network()->is_enabled( 'coc' ) ) {
+			wp_enqueue_style( 'wpc-network-coc', $css_dir . 'wpc-network-coc.min.css', array( 'wpc-fonts-open-sans' ), null );
+		}
+
 		// Enqueue the network footer styles.
-		if ( wpcampus_network()->enable_network_footer ) {
+		if ( wpcampus_network()->is_enabled( 'footer' ) ) {
 			wp_enqueue_style( 'wpc-network-footer', $css_dir . 'wpc-network-footer.min.css', array( 'wpc-fonts-open-sans' ), null );
 		}
 
+		// Enqueue the sessions assets.
+		if ( wpcampus_network()->is_enabled( 'sessions' ) ) {
+
+			// Get this site's timezone and offset.
+			$timezone = new DateTimeZone( get_option( 'timezone_string' ) ?: 'UTC' );
+			$current_time_offset = $timezone->getOffset( new DateTime() );
+
+			// Get the difference in hours.
+			$timezone_offset_hours = ( $current_time_offset / 60 ) / 60;
+
+			wp_enqueue_style( 'wpc-network-sessions', $css_dir . 'wpc-network-sessions.min.css', array(), null );
+			wp_enqueue_script( 'wpc-network-sessions', $js_dir . 'wpc-network-sessions.min.js', array( 'jquery', 'handlebars' ), null, true );
+			wp_localize_script( 'wpc-network-sessions', 'wpc_sessions', array(
+				'load_error_msg' => '<p>' . __( 'Oops. Looks like something went wrong. Please refresh the page and try again.', 'wpcampus-network' ) . '</p><p>' . sprintf( __( 'If the problem persists, please %1$slet us know%2$s.', 'wpcampus' ), '<a href="/contact/">', '</a>' ) . '</p>',
+				'tz_offset'      => $timezone_offset_hours,
+			));
+		}
+
 		// Enable the watch video assets.
-		if ( wpcampus_network()->enable_watch_videos ) {
+		if ( wpcampus_network()->is_enabled( 'videos' ) ) {
 
 			// Enqueue styles and scripts for the display.
 			wp_enqueue_style( 'magnific-popup', $css_dir . 'magnific-popup.min.css' );
@@ -327,10 +524,16 @@ final class WPCampus_Network_Global {
 
 			wp_enqueue_style( 'wpc-network-watch', $css_dir . 'wpc-network-watch.min.css', array( 'magnific-popup' ) );
 			wp_enqueue_script( 'wpc-network-watch', $js_dir . 'wpc-network-watch.min.js', array( 'jquery', 'handlebars', 'magnific-popup' ) );
-			wp_localize_script( 'wpc-network-watch', 'wpc_network', array(
-				'main_url' => wpcampus_network()->get_network_site_url(),
+			wp_localize_script( 'wpc-network-watch', 'wpc_net_watch', array(
+				'main_url'  => wpcampus_get_network_site_url(),
+				'no_videos' => __( 'There are no videos available.', 'wpcampus-network' ),
 			));
 		}
+
+		wpcampus_network()->enqueue_base_script();
+
+		//wpcampus_network()->enqueue_login_script();
+
 	}
 
 	/**
@@ -338,7 +541,7 @@ final class WPCampus_Network_Global {
 	 */
 	function add_mailchimp_popup_script() {
 
-		if ( ! wpcampus_network()->enable_mailchimp_popup ) {
+		if ( ! wpcampus_network()->is_enabled( 'mailchimp_popup' ) ) {
 			return;
 		}
 
@@ -448,10 +651,261 @@ final class WPCampus_Network_Global {
 	}
 
 	/**
+	 * Filter the arguments for the FooGallery galleries post type.
+	 *
+	 * @param   $args - array - the original post type arguments.
+	 * @return  array - the filtered arguments.
+	 */
+	public function filter_foogallery_cpt_args( $args ) {
+		$args['capability_type'] = array( 'gallery', 'galleries' );
+		return $args;
+	}
+
+	/**
 	 * Disables cache.
 	 */
 	public function add_header_nocache() {
 		header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
+	}
+
+	/**
+	 * Add content to top of login forms.
+	 *
+	 * @param   $content - string - the default content, which is blank.
+	 * @param   $args - array - the login form arguments.
+	 * @return  string - the returned content.
+	 */
+	public function add_to_login_form_top( $content, $args ) {
+		global $post;
+
+		$header = '';
+		$default_header = 'h2';
+
+		$title   = '';
+		if ( false !== $args['wpc_form_title'] ) {
+
+			if ( is_singular() && ! empty( $post->ID ) ) {
+				$header = get_post_meta( $post->ID, 'wpcampus_login_form_header', true );
+				$title  = get_post_meta( $post->ID, 'wpcampus_login_form_title', true );
+
+				if ( ! empty( $title ) ) {
+					$title = strip_tags( $title, '<em><strong>' );
+				}
+			}
+
+			if ( empty( $title ) ) {
+				$title = sprintf( __( 'Login to %s', 'wpcampus-network' ), 'WPCampus' );
+			}
+
+			if ( ! empty( $header ) ) {
+				$title = "<{$header}>" . $title . "</{$header}>";
+			} else {
+				$title = "<{$default_header}>" . $title . "</{$default_header}>";
+			}
+		}
+
+		$message = '';
+		if ( false !== $args['wpc_form_message'] ) {
+
+			if ( is_singular() && ! empty( $post->ID ) ) {
+				$message = get_post_meta( $post->ID, 'wpcampus_login_form_message', true );
+			}
+
+			// Add our login message.
+			$message .= '<p>Don\'t have a WPCampus user account? No problem. <a class="button inline royal-blue" href="https://wpcampus.org/get-involved/">Create an account</a></p>';
+
+		}
+
+		if ( true === $args['wpc_ajax'] ) {
+			wp_nonce_field( 'wpc_ajax_login', 'wpc_ajax_login_nonce' );
+		}
+
+		return $title . $message;
+	}
+
+	/**
+	 *
+	 */
+	public function process_ajax_login() {
+
+		check_ajax_referer( 'wpc_ajax_login', 'wpc_ajax_login_nonce' );
+
+		$info = array(
+			'user_login' => $_POST['log'],
+			'user_password' => $_POST['pwd'],
+			'remember' => $_POST['rememberme'],
+		);
+
+		$user_signon = wp_signon( $info, false );
+
+		if ( is_wp_error( $user_signon ) ) {
+			echo json_encode( array(
+				'loggedin' => false,
+				'message'  => $user_signon->get_error_message(),
+			));
+		} else {
+			echo json_encode( array(
+				'loggedin' => true,
+				'message'  => __( 'Login successful, redirecting...' ),
+			));
+		}
+
+		wp_die();
+	}
+
+	/**
+	 *
+	 */
+	public function process_ajax_logout() {
+
+		check_ajax_referer( 'wpc_ajax_logout', 'wpc_ajax_logout_nonce' );
+
+		//wp_logout();
+
+		$form_id = 9; //isset( $_GET['form_id'] ) ? absint( $_GET['form_id'] ) : 0;
+
+		gravity_form( $form_id ,true, false, false, false, true );
+
+		wp_die();
+
+	}
+
+	/**
+	 * Add JS templates to the footer when needed.
+	 */
+	public function print_js_templates() {
+
+		// Add the sessions template.
+		if ( wpcampus_network()->is_enabled( 'sessions' ) ) :
+
+			$events = array(
+				'wpcampus-2018' => 'WPCampus 2018',
+				'wpcampus-2017' => 'WPCampus 2017',
+				'wpcampus-2016' => 'WPCampus 2016',
+				'wpcampus-online-2018' => 'WPCampus Online 2018',
+				'wpcampus-online-2017' => 'WPCampus Online 2017',
+			);
+
+			$subjects = function_exists( 'wpcampus_get_sessions_subjects' ) ? wpcampus_get_sessions_subjects() : array();
+
+			//$plugin_url = wpcampus_network()->get_plugin_url();
+			//$images_dir = trailingslashit( $plugin_url ) . 'assets/images/';
+
+			/*
+			 * TODO:
+			 * - Add tracking for filters.
+			 * - Make filters bar fixed when scrolling.
+			 */
+
+			/*{{^session_video_url}}<br><span class="session-video">NO VIDEO</span>{{/session_video_url}}*/
+
+			?>
+			<script id="wpc-sessions-filters-template" type="text/x-handlebars-template">
+				<form class="wpcampus-sessions-filters-form">
+					<select class="wpcampus-sessions-filter wpcampus-sessions-filter-subjects" name="subjects" title="Filter sessions by subject">
+						<option value=""><?php _e( 'All subjects', 'wpcampus-network' ); ?></option>
+						<?php
+
+						foreach ( $subjects as $subject ) :
+							?>
+							<option value="<?php echo $subject->slug; ?>"{{{selected "<?php echo $subject->slug; ?>" subjects}}}><?php echo $subject->name; ?></option>
+							<?php
+						endforeach;
+
+						?>
+					</select>
+					<select class="wpcampus-sessions-filter" name="event" title="Filter sessions by event">
+						<option value=""><?php _e( 'All events', 'wpcampus-network' ); ?></option>
+						<?php
+
+						foreach ( $events as $slug => $event ) :
+							?>
+							<option value="<?php echo $slug; ?>"{{{selected "<?php echo $slug; ?>" event}}}><?php echo $event; ?></option>
+							<?php
+						endforeach;
+
+						?>
+					</select>
+					<input class="wpcampus-sessions-filter" type="search" name="search" placeholder="Search sessions" value="{{search}}" />
+					<select class="wpcampus-sessions-filter" name="orderby" title="Order sessions by date or title">
+						<option value="date"{{{selected "date" orderby}}}><?php _e( 'Date', 'wpcampus-network' ); ?></option>
+						<option value="title"{{{selected "title" orderby}}}><?php _e( 'Title', 'wpcampus-network' ); ?></option>
+					</select>
+					<input type="submit" class="wpcampus-sessions-update" value="<?php esc_attr_e( 'Update sessions', 'wpcampus-network' ); ?>" />
+				</form>
+			</script>
+			<script id="wpc-sessions-template" type="text/x-handlebars-template">
+				<div class="wpcampus-sessions-count"></div>
+				<div class="wpcampus-sessions-list">
+					{{#each .}}
+						<div class="wpcampus-session session-{{event_slug}} {{format_slug}}" data-ID="{{ID}}">
+							<div class="session-media">
+								<div class="event-thumbnail"></div>
+								<span class="event-name" data-event="{{event}}">{{session_event_name}}</span>
+							</div>
+							<div class="session-info-wrapper">
+								<div class="session-info">
+									<h2 class="session-title">{{title}}</h2>
+									<ul class="session-metas">
+										<li class="session-meta session-date">{{session_date}}</li>
+										<li class="session-meta session-event">{{event_name}}</li>
+										<li class="session-meta session-format">{{format_name}}</li>
+									</ul>
+									{{#if subjects}}
+										<ul class="session-subjects">
+											{{#each subjects}}<li class="session-subject {{slug}}">{{name}}</li>{{/each}}
+										</ul>
+									{{/if}}
+									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque laoreet pellentesque sem eget rhoncus. Praesent commodo nulla vel urna commodo, non commodo nunc egestas. Etiam iaculis placerat lacus vitae pharetra.</p>
+								</div>
+								{{#if speakers}}
+									<ul class="session-speakers">
+										{{#each speakers}}
+										<li class="speaker">
+											<a href="{{permalink}}">
+												{{#if avatar}}
+													<img class="speaker-avatar" src="{{avatar}}" alt="Avatar for {{display_name}}">
+												{{/if}}
+												<span class="speaker-name">{{display_name}}</span>
+											</a>
+										</li>
+										{{/each}}
+									</ul>
+								{{/if}}
+							</div>
+						</div>
+					{{/each}}
+				</div>
+			</script>
+			<?php
+
+		/*
+best_session
+:
+"0"
+content
+:
+{raw: "I believe people of any skill and access level can…shannon3/seo-resources">Elaine's GitHub repo</a>.", rendered: "<p>I believe people of any skill and access level …on3/seo-resources">Elaine's GitHub repo</a>.</p>↵"}
+excerpt
+:
+{raw: "", rendered: ""}
+session_slides_url
+:
+"https://prezi.com/iizl-7iw1zn_/doing-seo-is-like-baking-cookies/"
+session_video
+:
+""
+session_video_url
+:
+"https://mediasite.usfsm.edu/Mediasite/Play/a93c90cd3f874c28b56c54f5173dc35e1d"
+slug
+:
+"12-powerful-seo-hacks-for-your-higher-ed-wp-site"
+subjects
+:
+null*/
+		endif;
+
 	}
 }
 WPCampus_Network_Global::register();

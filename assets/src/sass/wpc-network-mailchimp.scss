@@ -1,102 +1,165 @@
-$wpc-royal-blue: #1159bd;
+@import "settings";
+
 $mc-signup-bp-width: 700px;
 $mc-signup-bp-open: "screen and (min-width: " + $mc-signup-bp-width + ");";
 
-#mc_embed_signup {
+.wpc-mc-signup {
+	clear: both;
 	background: rgba( $wpc-royal-blue, 0.1 );
 	color: #000;
 	margin: 2rem 0;
+	padding: 25px 25px 28px;
 
-	form.mc-embedded-subscribe-form {
-		padding: 25px 25px 28px;
-		margin: 0;
+	a {
+		color: inherit;
+	}
+
+	.wpc-mc-disclaimer {
+		font-style: italic;
+		margin: 1.5rem 0 0 0;
+	}
+
+	h2 {
+		font-weight: 600;
+		font-size: 1.3rem;
+		text-transform: uppercase;
+		margin: 0 0 0.5rem 0;
+	}
+
+	h3 {
+		clear: both;
+		font-weight: 600;
+		font-size: 1.2rem;
+		text-transform: uppercase;
+		margin: 0 0 0.5rem 0;
+		color: $wpc-royal-blue;
+	}
+
+	.indicates-required {
+		font-size: 0.9rem;
+		text-align: left;
+		margin: 0 0 1.5rem 0;
+	}
+
+	.asterisk {
+		color: #900;
+	}
+
+	.button.wpc-mc-button {
+		display: block;
+		width: 100%;
+		background: $wpc-royal-blue;
+		color: #fff;
+		text-align: center;
+		line-height: inherit;
+
+		&:focus,
+		&:hover {
+			background: $wpc-dark-blue;
+		}
+	}
+
+	p {
+		clear: both;
+		font-size: 0.9rem;
+		margin: 0.5rem 0 0 0;
+	}
+
+	.wpc-mc-signup-forms {
+		clear: both;
+
+		form {
+			display: block;
+			margin: 1.5rem 0 0 0;
+			padding: 0;
+
+			label {
+				display: block;
+				font-size: 0.9rem;
+				color: #000;
+				font-weight: bold;
+				margin: 0 0 0.5rem 0;
+			}
+
+			input[type="email"] {
+				display: block;
+				width: 100%;
+				background: #fff;
+			}
+
+			.mc-field-group {
+				clear: both;
+				padding: 0;
+			}
+
+			.button.wpc-mc-button {
+				font-size: 1.2rem;
+				padding: 10px 20px;
+				height: auto;
+				margin: 0.7rem 0 0 0;
+			}
+
+			& + form {
+				margin-top: 2.5rem;
+			}
+
+			&:first-child {
+				margin-top: 0;
+			}
+		}
+	}
+
+	@media #{$mc-signup-bp-open} {
 
 		h2 {
-			font-weight: 600;
-			font-size: 1.2rem;
-			text-transform: uppercase;
-			margin: 0 0 0.5rem 0;
+			float: left;
 		}
 
 		.indicates-required {
-			text-align: left;
+			float: right;
+			text-align: right;
+			margin-bottom: 0.5rem;
 		}
 
-		p {
-			clear: both;
-			margin: 0.75rem 0;
-		}
+		.wpc-mc-signup-forms {
+			display: flex;
 
-		label {
-			font-size: 0.9rem;
-		}
-
-		.asterisk {
-			color: #900;
-		}
-
-		.mc-field-group {
-			padding-bottom: 1rem;
-
-			&.email {
-				clear: left;
-				width: 100%;
-			}
-		}
-
-		.mc-field-group-row {
-			clear: both;
-
-			&.name {
-				margin-top: 1rem;
-			}
-		}
-
-		#mc-embedded-subscribe {
-			background: $wpc-royal-blue;
-			color: #fff;
-			font-size: 1.2rem;
-			padding: 10px 20px;
-			height: auto;
-			width: 100%;
-			margin: 0.7rem 0 0 0;
-
-			&:focus,
-			&:hover {
-				background: darken( $wpc-royal-blue, 10% );
-			}
-		}
-
-		@media #{$mc-signup-bp-open} {
-
-			h2 {
-				float: left;
-				margin-bottom: 1rem;
-			}
-
-			.indicates-required {
-				float: right;
-				text-align: right;
-				margin-top: 8px;
-			}
-
-			.mc-field-group-row {
-				display: flex;
+			form {
+				flex: 1;
+				padding: 0 1rem;
+				margin: 0 !important;
 
 				.mc-field-group {
-					width: 50%;
+					display: flex;
+					align-items: center;
+					width: auto;
+					margin: 1rem 0 0 0;
 
-					&.first-name {
-						padding-right: 10px;
+					label {
+						padding: 0;
+						margin: 0;
 					}
 
-					&.last-name {
-						padding-left: 10px;
+					input[type="email"] {
+						margin: 0;
+					}
+
+					.mc-field-email {
+						flex: 1;
+						padding: 0 0 0 15px;
 					}
 				}
 
-				&.name {
-					margin-top: 1rem;
+				.button.wpc-mc-button {
+					margin: 1rem 0 0 0;
+				}
+
+				&:first-child {
+					padding-left: 0;
+				}
+
+				&:last-child {
+					padding-right: 0;
 				}
 			}
 		}

@@ -1,5 +1,7 @@
+@import "settings";
+
 body {
-	background: #2e3641;
+	background: $wpc-dark-blue;
 }
 
 #login {
@@ -37,7 +39,7 @@ body {
 
 		.button-primary {
 			display: block;
-			background: #1159bd;
+			background: $wpc-royal-blue;
 			float: none;
 			width: 100%;
 			height: auto !important;
@@ -50,8 +52,9 @@ body {
 			text-transform: uppercase;
 			text-shadow: none;
 
-			&:hover {
-				background: #333;
+			&:hover,
+			&:focus {
+				background: $wpc-orange;
 			}
 		}
 	}
