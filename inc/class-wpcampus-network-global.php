@@ -105,6 +105,10 @@ final class WPCampus_Network_Global {
 		add_action( 'wp_ajax_wpc_ajax_logout', array( $plugin, 'process_ajax_logout' ) );
 		add_action( 'wp_ajax_nopriv_wpc_ajax_logout', array( $plugin, 'process_ajax_logout' ) );
 
+		// Get sessions data.
+		add_action( 'wp_ajax_wpcampus_get_sessions', array( $plugin, 'process_ajax_get_sessions' ) );
+		add_action( 'wp_ajax_nopriv_wpcampus_get_sessions', array( $plugin, 'process_ajax_get_sessions' ) );
+
 		// Print our Javascript templates when needed.
 		add_action( 'wp_footer', array( $plugin, 'print_js_templates' ) );
 
@@ -527,9 +531,14 @@ final class WPCampus_Network_Global {
 			// Get the difference in hours.
 			$timezone_offset_hours = ( $current_time_offset / 60 ) / 60;
 
-			wp_enqueue_style( 'wpc-network-sessions', $css_dir . 'wpc-network-sessions.min.css', array(), null );
-			wp_enqueue_script( 'wpc-network-sessions', $js_dir . 'wpc-network-sessions.min.js', array( 'jquery', 'handlebars' ), null, true );
+			$sessions_ver = '1.1';
+
+			wp_register_style( 'wpc-network-sessions-icons', $css_dir . 'conf-schedule-icons.min.css', array(), $sessions_ver );
+
+			wp_enqueue_style( 'wpc-network-sessions', $css_dir . 'wpc-network-sessions.min.css', array( 'wpc-network-sessions-icons' ), $sessions_ver );
+			wp_enqueue_script( 'wpc-network-sessions', $js_dir . 'wpc-network-sessions.min.js', array( 'jquery', 'handlebars' ), $sessions_ver, true );
 			wp_localize_script( 'wpc-network-sessions', 'wpc_sessions', array(
+				'ajaxurl'      => admin_url( 'admin-ajax.php' ),
 				'load_error_msg' => '<p>' . __( 'Oops. Looks like something went wrong. Please refresh the page and try again.', 'wpcampus-network' ) . '</p><p>' . sprintf( __( 'If the problem persists, please %1$slet us know%2$s.', 'wpcampus' ), '<a href="/contact/">', '</a>' ) . '</p>',
 				'tz_offset'      => $timezone_offset_hours,
 			));
@@ -802,6 +811,79 @@ final class WPCampus_Network_Global {
 	}
 
 	/**
+	 *
+	 */
+	public function process_ajax_get_sessions() {
+
+		$sessions = array();
+
+		$http_wpc_access = get_option( 'http_wpc_access' );
+		if ( ! empty( $http_wpc_access ) ) {
+
+			$url_args = [];
+
+			$filters = array(
+				'orderby'  => array( 'date', 'title' ),
+				'order'    => array( 'asc', 'desc' ),
+				'event'    => array(
+					'wpcampus-2018',
+					'wpcampus-2017',
+					'wpcampus-2016',
+					'wpcampus-online-2019',
+					'wpcampus-online-2018',
+					'wpcampus-online-2017'
+				),
+				'search'   => array(),
+				'subjects' => array(),
+			);
+
+			if ( ! empty( $_GET['filters'] ) ) {
+				foreach ( $filters as $filter => $options ) {
+					if ( ! empty( $_GET['filters'][ $filter ] ) ) {
+						$filter_val = strtolower( $_GET['filters'][ $filter ] );
+
+						// @TODO optimize?
+						if ( in_array( $filter, array( 'search', 'subjects' ) ) ) {
+							$url_args[ $filter ] = sanitize_text_field( $filter_val );
+						} else if ( in_array( $filter_val, $options ) ) {
+							$url_args[ $filter ] = $filter_val;
+						}
+					}
+				}
+			}
+
+			// Build query URL.
+			$url = get_bloginfo( 'url' ) . '/wp-json/wpcampus/data/sessions/';
+
+			if ( ! empty( $url_args ) ) {
+				$url = add_query_arg( $url_args, $url );
+			}
+
+			// Get our profiles.
+			$response = wp_safe_remote_get( $url, array(
+				'timeout' => 10,
+				'headers' => array(
+					'WPC-Access' => $http_wpc_access,
+				),
+			) );
+
+			if ( 200 == wp_remote_retrieve_response_code( $response ) ) {
+				$sessions = json_decode( wp_remote_retrieve_body( $response ) );
+			}
+		}
+
+		echo json_encode(
+			array(
+				'count'    => ! empty( $sessions ) ? count( $sessions ) : 0,
+				'sessions' => $sessions,
+			)
+		);
+
+		wp_die();
+
+	}
+
+	/**
 	 * Add JS templates to the footer when needed.
 	 */
 	public function print_js_templates() {
@@ -813,14 +895,15 @@ final class WPCampus_Network_Global {
 				'wpcampus-2018'        => 'WPCampus 2018',
 				'wpcampus-2017'        => 'WPCampus 2017',
 				'wpcampus-2016'        => 'WPCampus 2016',
+				'wpcampus-online-2019' => 'WPCampus Online 2019',
 				'wpcampus-online-2018' => 'WPCampus Online 2018',
 				'wpcampus-online-2017' => 'WPCampus Online 2017',
 			);
 
 			$subjects = function_exists( 'wpcampus_get_sessions_subjects' ) ? wpcampus_get_sessions_subjects() : array();
 
-			//$plugin_url = wpcampus_network()->get_plugin_url();
-			//$images_dir = trailingslashit( $plugin_url ) . 'assets/images/';
+			$plugin_url = wpcampus_network()->get_plugin_url();
+			$images_dir = trailingslashit( $plugin_url ) . 'assets/images/';
 
 			/*
 			 * TODO:
@@ -832,51 +915,64 @@ final class WPCampus_Network_Global {
 
 			?>
 			<script id="wpc-sessions-filters-template" type="text/x-handlebars-template">
-				<form class="wpcampus-sessions-filters-form">
-					<select class="wpcampus-sessions-filter wpcampus-sessions-filter-subjects" name="subjects" title="Filter sessions by subject">
-						<option value=""><?php _e( 'All subjects', 'wpcampus-network' ); ?></option>
-						<?php
-
-						foreach ( $subjects as $subject ) :
-							?>
-							<option value="<?php echo $subject->slug; ?>"{{{selected "<?php echo $subject->slug; ?>" subjects}}}><?php echo $subject->name; ?></option>
+				<form class="wpcampus-sessions-filters-form" aria-label="Filter the sessions by subject, event and keyword">
+					<div class="wpcampus-sessions-filter-field wpcampus-sessions-filter-field--subjects">
+						<label for="wpc-session-filter-subjects" aria-label="Filter sessions by subject">Subjects</label>
+						<select id="wpc-session-filter-subjects" class="wpcampus-sessions-filter wpcampus-sessions-filter--subjects" name="subjects" aria-controls="wpcampus-sessions">
+							<option value=""><?php _e( 'All subjects', 'wpcampus-network' ); ?></option>
 							<?php
-						endforeach;
 
-						?>
-					</select>
-					<select class="wpcampus-sessions-filter" name="event" title="Filter sessions by event">
-						<option value=""><?php _e( 'All events', 'wpcampus-network' ); ?></option>
-						<?php
+							foreach ( $subjects as $subject ) :
+								?>
+								<option value="<?php echo $subject->slug; ?>"{{{selected "<?php echo $subject->slug; ?>" subjects}}}><?php echo $subject->name; ?></option>
+								<?php
+							endforeach;
 
-						foreach ( $events as $slug => $event ) :
 							?>
-							<option value="<?php echo $slug; ?>"{{{selected "<?php echo $slug; ?>" event}}}><?php echo $event; ?></option>
+						</select>
+					</div>
+					<div class="wpcampus-sessions-filter-field wpcampus-sessions-filter-field--event">
+						<label for="wpc-session-filter-event" aria-label="Filter sessions by event">Events</label>
+						<select id="wpc-session-filter-event" class="wpcampus-sessions-filter wpcampus-sessions-filter--event" name="event" aria-controls="wpcampus-sessions">
+							<option value=""><?php _e( 'All events', 'wpcampus-network' ); ?></option>
 							<?php
-						endforeach;
 
-						?>
-					</select>
-					<input class="wpcampus-sessions-filter" type="search" name="search" placeholder="Search sessions" value="{{search}}" />
-					<select class="wpcampus-sessions-filter" name="orderby" title="Order sessions by date or title">
-						<option value="date"{{{selected "date" orderby}}}><?php _e( 'Date', 'wpcampus-network' ); ?></option>
-						<option value="title"{{{selected "title" orderby}}}><?php _e( 'Title', 'wpcampus-network' ); ?></option>
-					</select>
-					<input type="submit" class="wpcampus-sessions-update" value="<?php esc_attr_e( 'Update sessions', 'wpcampus-network' ); ?>" />
+							foreach ( $events as $slug => $event ) :
+								?>
+								<option value="<?php echo $slug; ?>"{{{selected "<?php echo $slug; ?>" event}}}><?php echo $event; ?></option>
+								<?php
+							endforeach;
+
+							?>
+						</select>
+					</div>
+					<div class="wpcampus-sessions-filter-field wpcampus-sessions-filter-field--orderby">
+						<label for="wpc-session-filter-orderby" aria-label="Order sessions by date or title">Order by</label>
+						<select id="wpc-session-filter-orderby" class="wpcampus-sessions-filter wpcampus-sessions-filter--orderby" name="orderby" aria-controls="wpcampus-sessions">
+							<option value="date,asc"{{{selected_orderby "date" "asc"}}}><?php _e( 'Date, ascending', 'wpcampus-network' ); ?></option>
+							<option value="date,desc"{{{selected_orderby "date" "desc"}}}><?php _e( 'Date, descending', 'wpcampus-network' ); ?></option>
+							<option value="title,asc"{{{selected_orderby "title" "asc"}}}><?php _e( 'Title, ascending', 'wpcampus-network' ); ?></option>
+							<option value="title,desc"{{{selected_orderby "title" "desc"}}}><?php _e( 'Title, descending', 'wpcampus-network' ); ?></option>
+						</select>
+					</div>
+					<div class="wpcampus-sessions-filter-field wpcampus-sessions-filter-field--search">
+						<label for="wpc-session-filter-search" aria-label="Search items by keyword">Search</label>
+						<input id="wpc-session-filter-search" class="wpcampus-sessions-filter wpcampus-sessions-filter--search wpcampus-sessions-filter--text" type="search" name="search" placeholder="Search items" value="{{search}}" aria-controls="wpcampus-sessions" />
+					</div>
+					<input id="wpc-session-filter-submit" type="submit" class="wpcampus-sessions-update" value="<?php esc_attr_e( 'Update items', 'wpcampus-network' ); ?>" aria-controls="wpcampus-sessions" />
 				</form>
 			</script>
 			<script id="wpc-sessions-template" type="text/x-handlebars-template">
-				<div class="wpcampus-sessions-count"></div>
+				<div class="wpcampus-sessions-count" aria-live="polite"></div>
 				<div class="wpcampus-sessions-list">
 					{{#each .}}
 						<div class="wpcampus-session session-{{event_slug}} {{format_slug}}" data-ID="{{ID}}">
-							<div class="session-media">
+							<div class="session-graphic">
 								<div class="event-thumbnail"></div>
-								<span class="event-name" data-event="{{event}}">{{session_event_name}}</span>
 							</div>
-							<div class="session-info-wrapper">
+							<div class="session-info-wrapper {{sessionInfoWrapperClasses}}">
 								<div class="session-info">
-									<h2 class="session-title">{{title}}</h2>
+									<h2 class="session-title">{{#if permalink}}<a href="{{permalink}}">{{title}}</a>{{else}}{{title}}{{/if}}</h2>
 									<ul class="session-metas">
 										<li class="session-meta session-date">{{session_date}}</li>
 										<li class="session-meta session-event">{{event_name}}</li>
@@ -887,17 +983,21 @@ final class WPCampus_Network_Global {
 											{{#each subjects}}<li class="session-subject {{slug}}">{{name}}</li>{{/each}}
 										</ul>
 									{{/if}}
-									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque laoreet pellentesque sem eget rhoncus. Praesent commodo nulla vel urna commodo, non commodo nunc egestas. Etiam iaculis placerat lacus vitae pharetra.</p>
+									<p>{{{excerpt.raw}}}</p>
 								</div>
+								{{sessionAssets}}
+								<div class="event-name" data-event="{{event}}" aria-hidden="true"><span>{{session_event_name}}</span></div>
 								{{#if speakers}}
 									<ul class="session-speakers">
 										{{#each speakers}}
-										<li class="speaker">
-											<a href="{{permalink}}">
+										<li class="session-speaker">
+											<a href="{{permalink}}" aria-label="More from the speaker, {{display_name}}">
 												{{#if avatar}}
-													<img class="speaker-avatar" src="{{avatar}}" alt="Avatar for {{display_name}}">
+													<img class="session-speaker__avatar" src="{{avatar}}" alt="Avatar for {{display_name}}">
+												{{else}}
+													<img class="session-speaker__avatar" src="<?php echo $images_dir; ?>avatar-default.png" alt="Avatar for {{display_name}}">
 												{{/if}}
-												<span class="speaker-name">{{display_name}}</span>
+												<span class="session-speaker__name">{{display_name}}</span>
 											</a>
 										</li>
 										{{/each}}

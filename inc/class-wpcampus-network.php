@@ -421,6 +421,7 @@ final class WPCampus_Network {
 					<ul class="wpc-menu">
 						<li><a href="https://wpcampus.org/about/" title="' . sprintf( __( 'About %s', 'wpcampus-network' ), 'WPCampus' ) . '">' . __( 'About', 'wpcampus-network' ) . '</a></li>
 						<li><a href="https://wpcampus.org/blog/">' . __( 'Blog', 'wpcampus-network' ) . '</a></li>
+						<li><a href="https://wpcampus.org/library/">' . __( 'Library', 'wpcampus-network' ) . '</a></li>
 						<li><a href="https://wpcampus.org/conferences/">' . __( 'Conferences', 'wpcampus-network' ) . '</a></li>
 						<li><a href="https://shop.wpcampus.org/">' . __( 'Shop', 'wpcampus-network' ) . '</a></li>
 						<li><a href="https://wpcampus.org/contact/">' . __( 'Contact', 'wpcampus-network' ) . '</a></li>
@@ -657,28 +658,44 @@ final class WPCampus_Network {
 				'wpcampus-2018',
 				'wpcampus-2017',
 				'wpcampus-2016',
+				'wpcampus-online-2019',
 				'wpcampus-online-2018',
-				'wpcampus-online-2017'
+				'wpcampus-online-2017',
 			),
 		);
 
 		foreach ( $filters as $filter => $options ) {
 			if ( ! empty( $_GET[ $filter ] ) ) {
+
 				$filter_val = strtolower( $_GET[ $filter ] );
+
 				if ( in_array( $filter_val, $options ) ) {
 					$args[ $filter ] = $filter_val;
 				}
 			}
 		}
 
+		if ( ! empty( $_GET['search'] ) ) {
+			$args['search'] = sanitize_text_field( $_GET['search'] );
+		}
+
+		if ( ! empty( $_GET['subjects'] ) ) {
+			$subjects = $_GET['subjects'];
+			if ( is_array( $subjects ) ) {
+				$subjects = implode( ',', $subjects );
+			}
+			$args['subjects'] = sanitize_text_field( $subjects );
+		}
+
 		// Create the string.
 		$data_str = '';
 		foreach ( $args as $key => $value ) {
-			$data_str .= ' data-' . $key . '="' . $value . '"';
+			$data_str .= ' data-' . $key . '="' . esc_attr( $value ) . '"';
 		}
 
 		?>
-		<div class="wpcampus-sessions-container loading"<?php echo $data_str; ?>>
+		<div id="wpcampus-sessions" role="region" aria-live="polite" class="wpcampus-sessions-container loading"<?php echo $data_str; ?>>
+			<div id="wpcampus-sessions-notification screen-reader-text" aria-live="assertive"></div>
 			<div class="wpcampus-sessions-filters"></div>
 			<div class="wpcampus-sessions"></div>
 			<div class="wpcampus-sessions-error">
@@ -1000,12 +1017,12 @@ final class WPCampus_Network {
 			return;
 		}
 
-		return '<div id="wpc-code-of-conduct">
+		return '<aside id="wpc-code-of-conduct">
 			<div class="wpc-container">
-				<div class="container-title">' . __( 'Our Code of Conduct', 'wpcampus-network' ) . '</div>
+				<h2 class="container-title">' . __( 'Our Code of Conduct', 'wpcampus-network' ) . '</h2>
 				<p>' . $this->get_code_of_conduct_message() . '</p>
 			</div>
-		</div>';
+		</aside>';
 	}
 
 	/**
