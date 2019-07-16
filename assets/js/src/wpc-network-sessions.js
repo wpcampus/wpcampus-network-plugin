@@ -71,10 +71,10 @@
 			var process_sessions = Handlebars.compile( sessions_template );
 
 			// Store the active element right before we re-load.
-			$sessionsCont.data('activeElement',document.activeElement);
+			$sessionsCont.data( 'activeElement',document.activeElement );
 
 			// Update the content.
-			$sessionsCont.find('.wpcampus-sessions').html( process_sessions( sessionsData.sessions ).trim() );
+			$sessionsCont.find( '.wpcampus-sessions' ).html( process_sessions( sessionsData.sessions ).trim() );
 
 			// Update the count.
 			$sessionsCont.set_sessions_count( sessionsData );
@@ -82,8 +82,8 @@
 			// Update filters.
 			$sessionsCont.update_sessions_filters();
 
-			$sessionsCont.removeClass('loading');
-			$sessionsCont.find('#wpcampus-sessions-notification').html();
+			$sessionsCont.removeClass( 'loading' );
+			$sessionsCont.find( '#wpcampus-sessions-notification' ).html();
 
 			dfd.resolve();
 		});
@@ -160,7 +160,7 @@
 		}
 
 		// Store new filter value.
-		if ( 'subjects' == filterName ) {
+		if ( $.inArray( filterName, ['subject','format'] ) >= 0 ) {
 
 			// Convert to array.
 			$sessionsCont.data( filterName,[ value ] );
@@ -262,7 +262,7 @@
 			message = 'There are ' + count + ' items.';
 		}
 
-		$sessionsCont.find('.wpcampus-sessions-count').html(message);
+		$sessionsCont.find('.wpcampus-sessions-count').html( message );
 	};
 
 	// Invoked by the sessions container.
@@ -342,6 +342,7 @@
 
 	function validate_wpcampus_sessions_filters(filters) {
 		var validatedFilters = {};
+
 		$.each(filters,function(filter,value) {
 			value = value.toLowerCase();
 			if ( is_valid_wpcampus_sessions_filter(filter,value) ) {
@@ -354,7 +355,7 @@
 	function is_valid_wpcampus_sessions_filter( filter, value ) {
 
 		// @TODO: HACK until fix
-		if ( $.inArray( filter, ['search','subjects'] ) >= 0 ) {
+		if ( $.inArray( filter, ['search','subject','format'] ) >= 0 ) {
 			return true;
 		}
 
@@ -377,37 +378,37 @@
 		return {
 			orderby: ['date','title'],
 			order: ['asc','desc'],
-			event: ['wpcampus-2018','wpcampus-2017','wpcampus-2016','wpcampus-online-2019','wpcampus-online-2018','wpcampus-online-2017']
+			event: ['wpcampus-2019','wpcampus-2018','wpcampus-2017','wpcampus-2016','wpcampus-online-2019','wpcampus-online-2018','wpcampus-online-2017']
 		};
 	}
 
 	Handlebars.registerHelper( 'sessionInfoWrapperClasses', function() {
 		var classes = [];
 		if ( this.session_slides_url || this.session_video_url ) {
-			classes.push('has-session-assets');
+			classes.push('has-session-sidebar');
 		}
 		return classes.join(' ');
 	});
 
-	Handlebars.registerHelper( 'sessionAssets', function() {
-		var assets = []
+	Handlebars.registerHelper( 'sessionSidebar', function() {
+		var assets = [];
 
 		if ( this.session_slides_url ) {
 			var label = '',
 				wrapperStart = '',
 				wrapperEnd = '';
 
-			/*if ( this.permalink ) {
-				label = 'View slides';
-				wrapperStart = '<a class="session-assets--asset" href="' + this.permalink + '#slides">';
+			//if ( this.permalink ) {
+				label = 'Slides';
+				wrapperStart = '<a class="session-sidebar__asset" href="' + this.session_slides_url + '#slides">';
 				wrapperEnd = '</a>';
-			} else {*/
-				label = 'Has slides';
-				wrapperStart = '<span class="session-assets--asset">';
+			/*} else {
+				label = 'Slides';
+				wrapperStart = '<span class="session-sidebar__asset">';
 				wrapperEnd = '</span>';
-			//}
+			}*/
 
-			assets.push( '<li>' + wrapperStart + '<i aria-hidden="true" class="conf-sch-icon conf-sch-icon-slides"></i> <span class="session-assets--label">' + label + wrapperEnd + '</span></li>' );
+			assets.push( '<li>' + wrapperStart + '<i aria-hidden="true" class="conf-sch-icon conf-sch-icon-slides"></i> <span class="session-sidebar__asset__label">' + label + wrapperEnd + '</span></li>' );
 		}
 
 		if ( this.session_video_url ) {
@@ -415,17 +416,17 @@
 				wrapperStart = '',
 				wrapperEnd = '';
 
-			/*if ( this.permalink ) {
-				label = 'Watch video';
-				wrapperStart = '<a class="session-assets--asset" href="' + this.permalink + '#video">';
+			if ( this.permalink ) {
+				label = 'Video';
+				wrapperStart = '<a class="session-sidebar__asset" href="' + this.permalink + '#video">';
 				wrapperEnd = '</a>';
-			} else {*/
-				label = 'Has video';
-				wrapperStart = '<span class="session-assets--asset">';
+			} else {
+				label = 'Video';
+				wrapperStart = '<span class="session-sidebar__asset">';
 				wrapperEnd = '</span>';
-			//}
+			}
 
-			assets.push( '<li>' + wrapperStart + '<i aria-hidden="true" class="conf-sch-icon conf-sch-icon-video"></i> <span class="session-assets--label">' + label + wrapperEnd + '</span></li>' );
+			assets.push( '<li>' + wrapperStart + '<i aria-hidden="true" class="conf-sch-icon conf-sch-icon-video"></i> <span class="session-sidebar__asset__label">' + label + wrapperEnd + '</span></li>' );
 		}
 
 		if ( ! assets.length ) {
@@ -434,7 +435,7 @@
 
 		var assetsString = assets.join( '' );
 
-		return new Handlebars.SafeString( '<div class="session-assets"><ul>' + assetsString + '</ul></div>' );
+		return new Handlebars.SafeString( '<div class="session-sidebar"><ul>' + assetsString + '</ul></div>' );
     });
 
 	Handlebars.registerHelper( 'selected_orderby', function( orderBy, order ) {

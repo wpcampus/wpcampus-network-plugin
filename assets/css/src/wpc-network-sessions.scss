@@ -68,17 +68,9 @@ $filter-height: 40px;
 
 		.wpcampus-sessions-filter-field {
 
-			&--subjects {
-				grid-column: 1 / span 2;
-			}
-
-			&--event {
-				grid-column: 1 / 1;
-			}
-
 			&--search {
-				grid-column-start: 1;
-				grid-column-end: 3;
+				grid-row: 3;
+				grid-column: 1 / span 2;
 			}
 		}
 
@@ -95,20 +87,20 @@ $filter-height: 40px;
 
 	.wpcampus-sessions {
 
+		a {
+			color: inherit;
+
+			&:hover,
+			&:focus {
+				color: $wpc-royal-blue;
+			}
+		}
+
 		.session-title {
 			font-size: 1.4em;
 			line-height: 1.5;
 			font-weight: 600;
 			margin: 0 0 0.5em;
-
-			a {
-				color: inherit;
-
-				&:hover,
-				&:focus {
-					color: $wpc-royal-blue;
-				}
-			}
 		}
 
 		.session-metas,
@@ -153,7 +145,7 @@ $filter-height: 40px;
 			}
 		}
 
-		.session-assets {
+		.session-sidebar {
 			grid-column: 1 / span 2;
 
 			ul, li {
@@ -167,19 +159,20 @@ $filter-height: 40px;
 				background: $wpc-light-blue;
 				text-align: center;
 
-				.session-assets--asset {
+				.session-sidebar__asset {
 					display: block;
 					padding: 0.5em;
 				}
 
-				a.session-assets--asset {
+				a.session-sidebar__asset {
+					color: $wpc-royal-blue;
 					text-decoration: none;
 
 					i.conf-sch-icon {
 						text-decoration: none;
 					}
 
-					.session-assets--label {
+					&__label {
 						text-decoration: underline;
 					}
 
@@ -200,7 +193,7 @@ $filter-height: 40px;
 
 		.session-speakers {
 			display: grid;
-			grid-row-gap: 0.5em;
+			grid-row-gap: 0.3em;
 			justify-items: stretch;
 			align-items: stretch;
 			list-style: none;
@@ -300,11 +293,21 @@ $filter-height: 40px;
 					grid-column: 1 / span 2;
 				}
 
+				.session-notification {
+					grid-column: 1/span 2;
+					background: $wpc-royal-blue;
+					color: #fff;
+					padding: 0.65em 0.8em;
+					text-transform: uppercase;
+					font-size: 0.95em;
+					line-height: 1;
+				}
+
 				.session-graphic {
 					display: none;
 				}
 
-				&.session-wpcampus-2016 {
+				/*&--event-wpcampus-2016 {
 
 					.event-name {
 						background: $wpc-dark-blue;
@@ -312,15 +315,15 @@ $filter-height: 40px;
 					}
 				}
 
-				&.session-wpcampus-2017 {
+				&--event-wpcampus-2017 {
 
-					/*.event-name {
+					.event-name {
 						background: #700;
 						color: #fff;
-					}*/
+					}
 				}
 
-				&.session-wpcampus-2018 {
+				&--event-wpcampus-2018 {
 
 					.event-name {
 						background: $wpc-dark-blue;
@@ -328,14 +331,18 @@ $filter-height: 40px;
 					}
 				}
 
-				&.session-wpcampus-online-2017,
-				&.session-wpcampus-online-2018,
-				&.session-wpcampus-online-2019 {
+				&--event-wpcampus-online-2017,
+				&--event-wpcampus-online-2018,
+				&--event-wpcampus-online-2019 {
 
 					.event-name {
 						background: $wpc-dark-blue;
 						color: #fff;
 					}
+				}*/
+
+				&--future {
+					border-bottom: 2px solid $wpc-royal-blue;
 				}
 
 				&:first-child,
@@ -427,8 +434,8 @@ $filter-height: 40px;
 
 			.wpcampus-sessions-filter-field {
 
-				&--subjects,
-				&--event {
+				&--search {
+					grid-row: unset;
 					grid-column: unset;
 				}
 			}
@@ -486,32 +493,39 @@ $filter-height: 40px;
 						grid-row: 2 / span 1;
 					}
 
-					&.session-wpcampus-2016 {
+					&--event-wpcampus-2016 {
 
-						.event-thumbnail {
+						.session-graphic .event-thumbnail {
 							background-image: url('../images/sessions/wpcampus-2016.png');
 						}
 					}
 
-					&.session-wpcampus-2017 {
+					&--event-wpcampus-2017 {
 
-						.event-thumbnail {
+						.session-graphic .event-thumbnail {
 							background-image: url('../images/sessions/wpcampus-2017.png');
 						}
 					}
 
-					&.session-wpcampus-2018 {
+					&--event-wpcampus-2018 {
 
-						.event-thumbnail {
+						.session-graphic .event-thumbnail {
 							background-image: url('../images/sessions/wpcampus-2018.png');
 						}
 					}
 
-					&.session-wpcampus-online-2017,
-					&.session-wpcampus-online-2018,
-					&.session-wpcampus-online-2019 {
+					&--event-wpcampus-2019 {
 
-						.event-thumbnail {
+						.session-graphic .event-thumbnail {
+							background-image: url('../images/sessions/wpcampus-2019.png');
+						}
+					}
+
+					&--event-wpcampus-online-2017,
+					&--event-wpcampus-online-2018,
+					&--event-wpcampus-online-2019 {
+
+						.session-graphic .event-thumbnail {
 							background-image: url('../images/sessions/wpcampus-2018-online.png');
 						}
 					}
@@ -530,7 +544,7 @@ $filter-height: 40px;
 
 					.session-info-wrapper {
 
-						.session-assets {
+						.session-sidebar {
 
 							ul {
 								grid-template-columns: 1fr 1fr;
@@ -554,8 +568,8 @@ $filter-height: 40px;
 
 					.session-speakers {
 						grid-template-columns: 1fr 1fr;
-						grid-column-gap: 0.75em;
-						grid-row-gap: 0.75em;
+						grid-column-gap: 0.5em;
+						grid-row-gap: 0.5em;
 
 						.session-speaker {
 
@@ -568,11 +582,11 @@ $filter-height: 40px;
 					}
 
 					.session-info-wrapper {
-						grid-template-columns: auto 20%;
+						grid-template-columns: auto 17%;
 						grid-column-gap: 1em;
-						grid-row-gap: 0.6em;
+						grid-row-gap: 0.5em;
 
-						.session-assets {
+						.session-sidebar {
 							background: $wpc-light-blue;
 							grid-column: unset;
 
@@ -586,7 +600,7 @@ $filter-height: 40px;
 							}
 						}
 
-						&.has-session-assets {
+						&.has-session-sidebar {
 
 							.session-info {
 								grid-column: 1 / 1;

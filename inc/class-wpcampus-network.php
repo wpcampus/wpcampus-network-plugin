@@ -487,11 +487,21 @@ final class WPCampus_Network {
 	 * @return string
 	 */
 	public function get_callout() {
+		return '';
 		ob_start();
-		$this->print_callout();
-		$this->print_audit_callout();
-
+		//$this->print_livestream_callout();
+		//$this->print_audit_callout();
 		return ob_get_clean();
+	}
+
+	/**
+	 * Print the network callout.
+	 *
+	 * @return void
+	 */
+	public function print_callout() {
+		//$this->print_livestream_callout();
+		//$this->print_audit_callout();
 	}
 
 	/**
@@ -521,11 +531,9 @@ final class WPCampus_Network {
 	}
 
 	/**
-	 * Print the network callout.
 	 *
-	 * @return void
 	 */
-	public function print_callout() {
+	public function print_register_callout() {
 		?>
 		<div class="panel callout light-royal-blue light-blue center">
 			<h2>Register for WPCampus 2019</h2>
@@ -533,7 +541,19 @@ final class WPCampus_Network {
 			<a class="button primary expand bigger" style="text-decoration:underline;" href="https://2019.wpcampus.org/tickets/"><strong>Attend WPCampus 2019</strong></a>
 		</div>
 		<?php
-		$this->print_audit_callout();
+	}
+
+	/**
+	 *
+	 */
+	public function print_livestream_callout() {
+		?>
+		<div class="panel callout light-royal-blue light-blue center">
+			<h2>Join WPCampus 2019 on the live stream</h2>
+			<p>WPCampus 2019 will be live streamed for free, no registration necessary. Simply visit our website July 26-27 for 2 days of sessions focused on accessibility and WordPress in higher education.</p>
+			<a class="button primary expand bigger" style="text-decoration:underline;" href="https://2019.wpcampus.org/watch/"><strong>Watch WPCampus 2019</strong></a>
+		</div>
+		<?php
 	}
 
 	/**
@@ -613,9 +633,9 @@ final class WPCampus_Network {
 							<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL1">
 						</div>
 					</div>
-					<div id="mce-responses" class="clear">
-						<div class="response" id="mce-error-response" style="display:none"></div>
-						<div class="response" id="mce-success-response" style="display:none"></div>
+					<div id="mce-responses1" class="clear">
+						<div class="response" id="mce-error-response1" style="display:none"></div>
+						<div class="response" id="mce-success-response1" style="display:none"></div>
 					</div><!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
 					<div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_6d71860d429d3461309568b92_05f39a2a20" tabindex="-1" value=""></div>
 					<div class="clear"><input type="submit" value="<?php esc_attr_e( 'Subscribe to newsletter', 'wpcampus-network' ); ?>" name="subscribe" class="wpc-mc-button button"></div>
@@ -629,9 +649,9 @@ final class WPCampus_Network {
 							<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL2">
 						</div>
 					</div>
-					<div id="mce-responses" class="clear">
-						<div class="response" id="mce-error-response" style="display:none"></div>
-						<div class="response" id="mce-success-response" style="display:none"></div>
+					<div id="mce-responses2" class="clear">
+						<div class="response" id="mce-error-response2" style="display:none"></div>
+						<div class="response" id="mce-success-response2" style="display:none"></div>
 					</div><!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
 					<div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_6d71860d429d3461309568b92_20487ce102" tabindex="-1" value=""></div>
 					<div class="clear"><input type="submit" value="Subscribe to blog updates" name="subscribe" class="wpc-mc-button button"></div>
@@ -655,6 +675,7 @@ final class WPCampus_Network {
 			'orderby' => array( 'date', 'title' ),
 			'order'   => array( 'asc', 'desc' ),
 			'event'   => array(
+				'wpcampus-2019',
 				'wpcampus-2018',
 				'wpcampus-2017',
 				'wpcampus-2016',
@@ -679,12 +700,20 @@ final class WPCampus_Network {
 			$args['search'] = sanitize_text_field( $_GET['search'] );
 		}
 
-		if ( ! empty( $_GET['subjects'] ) ) {
-			$subjects = $_GET['subjects'];
+		if ( ! empty( $_GET['subject'] ) ) {
+			$subjects = $_GET['subject'];
 			if ( is_array( $subjects ) ) {
 				$subjects = implode( ',', $subjects );
 			}
-			$args['subjects'] = sanitize_text_field( $subjects );
+			$args['subject'] = sanitize_text_field( $subjects );
+		}
+
+		if ( ! empty( $_GET['format'] ) ) {
+			$formats = $_GET['format'];
+			if ( is_array( $formats ) ) {
+				$formats = implode( ',', $formats );
+			}
+			$args['format'] = sanitize_text_field( $formats );
 		}
 
 		// Create the string.
@@ -1126,6 +1155,14 @@ final class WPCampus_Network {
 			</body>
 		</html>
 		<?php
+	}
+
+	/**
+	 *
+	 */
+	public function get_comment_user_id( $comment_id ) {
+		global $wpdb;
+		return (int) $wpdb->get_var( $wpdb->prepare( " SELECT user_id FROM {$wpdb->comments} WHERE comment_ID = %d", $comment_id ) );
 	}
 
 	/**
