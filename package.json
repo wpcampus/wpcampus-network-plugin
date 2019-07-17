@@ -7,9 +7,7 @@
     "url": "git+https://github.com/wpcampus/wpcampus-network-plugin.git"
   },
   "scripts": {
-    "install": "composer install",
-    "postinstall": "gulp",
-    "test": "composer sniff"
+    "postinstall": "gulp"
   },
   "author": "WPCampus",
   "license": "GPL-2.0",
@@ -17,17 +15,19 @@
     "url": "https://github.com/wpcampus/wpcampus-network-plugin/issues"
   },
   "homepage": "https://github.com/wpcampus/wpcampus-network-plugin#readme",
+  "browserslist": [
+    "last 2 versions"
+  ],
   "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-autoprefixer": "^3.1.0",
-    "gulp-clean-css": "^3.10.0",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^6.1.0",
+    "gulp-clean-css": "^4.2.0",
     "gulp-merge-media-queries": "^0.2.1",
-    "gulp-minify": "0.0.15",
+    "gulp-minify": "^3.1.0",
     "gulp-notify": "^3.2.0",
     "gulp-rename": "^1.4.0",
-    "gulp-sass": "^3.2.1",
-    "gulp-shell": "^0.6.3",
+    "gulp-sass": "^4.0.2",
     "handlebars": "^4.1.2",
-    "mustache": "^2.3.2"
+    "mustache": "^3.0.1"
   }
 }
