@@ -12,6 +12,13 @@
  */
 final class WPCampus_Network_Global {
 
+    /**
+     * Will hold the main "helper" class.
+     *
+     * @var WPCampus_QA
+     */
+    private $helper;
+
 	/**
 	 * We don't need to instantiate this class.
 	 */
@@ -22,7 +29,8 @@ final class WPCampus_Network_Global {
 	 */
 	public static function register() {
 		$plugin = new self();
-		$helper = wpcampus_network();
+
+		$plugin->helper = wpcampus_network();
 
 		// Load our text domain.
 		add_action( 'init', array( $plugin, 'textdomain' ) );
@@ -93,10 +101,10 @@ final class WPCampus_Network_Global {
 		// Add content to top of login forms.
 		add_filter( 'login_form_top', array( $plugin, 'add_to_login_form_top' ), 1, 2 );
 
-		add_shortcode( 'wpc_speaker_app_deadline_time', array( $helper, 'print_speaker_app_deadline_time' ) );
-		add_shortcode( 'wpc_speaker_app_deadline_date', array( $helper, 'print_speaker_app_deadline_date' ) );
+		add_shortcode( 'wpc_speaker_app_deadline_time', array( $plugin->helper, 'print_speaker_app_deadline_time' ) );
+		add_shortcode( 'wpc_speaker_app_deadline_date', array( $plugin->helper, 'print_speaker_app_deadline_date' ) );
 
-		add_shortcode( 'wpc_print_code_of_conduct', array( $helper, 'get_code_of_conduct' ) );
+		add_shortcode( 'wpc_print_code_of_conduct', array( $plugin->helper, 'get_code_of_conduct' ) );
 		add_shortcode( 'wpc_print_content', array( $plugin, 'get_content_for_shortcode' ) );
 
 		// Enable users to login via AJAX.
@@ -148,7 +156,7 @@ final class WPCampus_Network_Global {
 	 * Load our text domain.
 	 */
 	public function textdomain() {
-		load_plugin_textdomain( 'wpcampus-network', false, wpcampus_network()->get_plugin_basename() . '/languages' );
+		load_plugin_textdomain( 'wpcampus-network', false, $this->helper->get_plugin_basename() . '/languages' );
 	}
 
 	/**
@@ -194,7 +202,7 @@ final class WPCampus_Network_Global {
 	 */
 	public function add_favicons() {
 
-		$favicons_folder = trailingslashit( wpcampus_network()->get_plugin_url() ) . 'assets/images/favicons/';
+		$favicons_folder = trailingslashit( $this->helper->get_plugin_url() ) . 'assets/images/favicons/';
 
 		?>
 		<link rel="shortcut icon" href="<?php echo $favicons_folder; ?>wpcampus-favicon-60.png"/>
@@ -237,7 +245,7 @@ final class WPCampus_Network_Global {
 	 */
 	public function filter_comment_author_link( $return, $author, $comment_id ) {
 
-		$user_id = wpcampus_network()->get_comment_user_id( $comment_id );
+		$user_id = $this->helper->get_comment_user_id( $comment_id );
 
 		if ( empty( $user_id ) ) {
 			return $author;
@@ -264,7 +272,7 @@ final class WPCampus_Network_Global {
 	 * Add login stylesheet.
 	 */
 	public function enqueue_login_styles() {
-		wp_enqueue_style( 'wpc-network-login', trailingslashit( wpcampus_network()->get_plugin_url() ) . 'assets/css/wpc-network-login.min.css', array(), null );
+		wp_enqueue_style( 'wpc-network-login', trailingslashit( $this->helper->get_plugin_url() ) . 'assets/css/wpc-network-login.min.css', array(), null );
 	}
 
 	/**
@@ -276,7 +284,7 @@ final class WPCampus_Network_Global {
 	public function process_user_registration( $user_id ) {
 
 		// Assign to every blog on the network.
-		wpcampus_network()->assign_user_to_all_blogs( $user_id );
+		$this->helper->assign_user_to_all_blogs( $user_id );
 
 	}
 
@@ -475,7 +483,7 @@ final class WPCampus_Network_Global {
 	 * @return  void
 	 */
 	function register_network_footer_menu() {
-		if ( wpcampus_network()->is_enabled( 'footer' ) ) {
+		if ( $this->helper->is_enabled( 'footer' ) ) {
 			register_nav_menu( 'footer', __( 'Footer Menu', 'wpcampus-network' ) );
 		}
 	}
@@ -488,7 +496,7 @@ final class WPCampus_Network_Global {
 	public function enqueue_scripts_styles() {
 
 		// Define the directories.
-		$plugin_url = trailingslashit( wpcampus_network()->get_plugin_url() );
+		$plugin_url = trailingslashit( $this->helper->get_plugin_url() );
 		$css_dir    = $plugin_url . 'assets/css/';
 		$js_dir     = $plugin_url . 'assets/js/';
 
@@ -502,19 +510,19 @@ final class WPCampus_Network_Global {
 		}
 
 		// Make sure the weights we need for our components are there.
-		if ( wpcampus_network()->is_enabled( 'banner' ) ) {
+		if ( $this->helper->is_enabled( 'banner' ) ) {
 			$open_sans_weights = array_merge( $open_sans_weights, array( 400, 600, 700 ) );
 		}
 
-		if ( wpcampus_network()->is_enabled( 'notifications' ) ) {
+		if ( $this->helper->is_enabled( 'notifications' ) ) {
 			$open_sans_weights = array_merge( $open_sans_weights, array( 400 ) );
 		}
 
-		if ( wpcampus_network()->is_enabled( 'footer' ) ) {
+		if ( $this->helper->is_enabled( 'footer' ) ) {
 			$open_sans_weights = array_merge( $open_sans_weights, array( 400, 600 ) );
 		}
 
-		if ( wpcampus_network()->is_enabled( 'videos' ) ) {
+		if ( $this->helper->is_enabled( 'videos' ) ) {
 			$open_sans_weights = array_merge( $open_sans_weights, array( 600 ) );
 		}
 
@@ -529,13 +537,13 @@ final class WPCampus_Network_Global {
 		wp_register_script( 'wpc-network-toggle-menu', $js_dir . 'wpc-network-toggle-menu.min.js', array( 'jquery', 'jquery-ui-core' ), null );
 
 		// Enqueue the network banner styles.
-		if ( wpcampus_network()->is_enabled( 'banner' ) ) {
+		if ( $this->helper->is_enabled( 'banner' ) ) {
 			wp_enqueue_style( 'wpc-network-banner', $css_dir . 'wpc-network-banner.min.css', array( 'wpc-fonts-open-sans' ), null );
 			wp_enqueue_script( 'wpc-network-toggle-menu' );
 		}
 
 		// Enqueue the network notification assets.
-		if ( wpcampus_network()->is_enabled( 'notifications' ) ) {
+		if ( $this->helper->is_enabled( 'notifications' ) ) {
 			wp_enqueue_style( 'wpc-network-notifications', $css_dir . 'wpc-network-notifications.min.css', array( 'wpc-fonts-open-sans' ), null );
 			wp_enqueue_script( 'wpc-network-notifications', $js_dir . 'wpc-network-notifications.min.js', array( 'jquery', 'mustache' ), null, true );
 			wp_localize_script( 'wpc-network-notifications', 'wpc_net_notifications', array(
@@ -544,17 +552,17 @@ final class WPCampus_Network_Global {
 		}
 
 		// Enqueue the network Code of Conduct styles.
-		if ( wpcampus_network()->is_enabled( 'coc' ) ) {
+		if ( $this->helper->is_enabled( 'coc' ) ) {
 			wp_enqueue_style( 'wpc-network-coc', $css_dir . 'wpc-network-coc.min.css', array( 'wpc-fonts-open-sans' ), null );
 		}
 
 		// Enqueue the network footer styles.
-		if ( wpcampus_network()->is_enabled( 'footer' ) ) {
+		if ( $this->helper->is_enabled( 'footer' ) ) {
 			wp_enqueue_style( 'wpc-network-footer', $css_dir . 'wpc-network-footer.min.css', array( 'wpc-fonts-open-sans' ), null );
 		}
 
 		// Enqueue the sessions assets.
-		if ( wpcampus_network()->is_enabled( 'sessions' ) ) {
+		if ( $this->helper->is_enabled( 'sessions' ) ) {
 
 			// Get this site's timezone and offset.
 			$timezone = new DateTimeZone( get_option( 'timezone_string' ) ?: 'UTC' );
@@ -585,7 +593,7 @@ final class WPCampus_Network_Global {
 		}
 
 		// Enable the watch video assets.
-		if ( wpcampus_network()->is_enabled( 'videos' ) ) {
+		if ( $this->helper->is_enabled( 'videos' ) ) {
 
 			// Enqueue styles and scripts for the display.
 			wp_enqueue_style( 'magnific-popup', $css_dir . 'magnific-popup.min.css' );
@@ -599,9 +607,9 @@ final class WPCampus_Network_Global {
 			));
 		}
 
-		wpcampus_network()->enqueue_base_script();
+		$this->helper->enqueue_base_script();
 
-		//wpcampus_network()->enqueue_login_script();
+		//$this->helper->enqueue_login_script();
 
 	}
 
@@ -610,7 +618,7 @@ final class WPCampus_Network_Global {
 	 */
 	function add_mailchimp_popup_script() {
 
-		if ( ! wpcampus_network()->is_enabled( 'mailchimp_popup' ) ) {
+		if ( ! $this->helper->is_enabled( 'mailchimp_popup' ) ) {
 			return;
 		}
 
@@ -931,7 +939,7 @@ final class WPCampus_Network_Global {
 	public function print_js_templates() {
 
 		// Add the sessions template.
-		if ( wpcampus_network()->is_enabled( 'sessions' ) ) :
+		if ( $this->helper->is_enabled( 'sessions' ) ) :
 
 			$formats = array();
 
@@ -957,7 +965,7 @@ final class WPCampus_Network_Global {
 
 			$subjects = function_exists( 'wpcampus_get_sessions_subjects' ) ? wpcampus_get_sessions_subjects() : array();
 
-			$plugin_url = wpcampus_network()->get_plugin_url();
+			$plugin_url = $this->helper->get_plugin_url();
 			$images_dir = trailingslashit( $plugin_url ) . 'assets/images/';
 
 			/*
