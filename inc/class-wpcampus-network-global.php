@@ -13,6 +13,13 @@
 final class WPCampus_Network_Global {
 
     /**
+     * Whether or not debug is enabled.
+     *
+     * @var bool
+     */
+    private $debug = false;
+
+    /**
      * Will hold the main "helper" class.
      *
      * @var WPCampus_QA
@@ -31,6 +38,11 @@ final class WPCampus_Network_Global {
 		$plugin = new self();
 
 		$plugin->helper = wpcampus_network();
+
+        if ( ( defined( 'WPCAMPUS_DEV' ) && WPCAMPUS_DEV )
+            || ( ! empty( $_ENV['PANTHEON_ENVIRONMENT'] ) && 'dev' == $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
+            $plugin->debug = true;
+        }
 
 		// Load our text domain.
 		add_action( 'init', array( $plugin, 'textdomain' ) );
@@ -533,8 +545,10 @@ final class WPCampus_Network_Global {
 		wp_register_script( 'handlebars', $js_dir . 'handlebars.min.js', array(), null, true );
 		wp_register_script( 'mustache', $js_dir . 'mustache.min.js', array(), null, true );
 
+        $toggle_menu_js = $this->debug ? 'src/wpc-network-toggle-menu.js' : 'wpc-network-toggle-menu.min.js';
+
 		// Keep this one outside logic so I can register as a dependency in scripts outside the plugin.
-		wp_register_script( 'wpc-network-toggle-menu', $js_dir . 'wpc-network-toggle-menu.min.js', array( 'jquery', 'jquery-ui-core' ), null );
+		wp_register_script( 'wpc-network-toggle-menu', $js_dir . $toggle_menu_js, array( 'jquery', 'jquery-ui-core' ), null );
 
 		// Enqueue the network banner styles.
 		if ( $this->helper->is_enabled( 'banner' ) ) {
@@ -545,7 +559,10 @@ final class WPCampus_Network_Global {
 		// Enqueue the network notification assets.
 		if ( $this->helper->is_enabled( 'notifications' ) ) {
 			wp_enqueue_style( 'wpc-network-notifications', $css_dir . 'wpc-network-notifications.min.css', array( 'wpc-fonts-open-sans' ), null );
-			wp_enqueue_script( 'wpc-network-notifications', $js_dir . 'wpc-network-notifications.min.js', array( 'jquery', 'mustache' ), null, true );
+
+            $notifications_js = $this->debug ? 'src/wpc-network-notifications.js' : 'wpc-network-notifications.min.js';
+
+			wp_enqueue_script( 'wpc-network-notifications', $js_dir . $notifications_js, array( 'jquery', 'mustache' ), null, true );
 			wp_localize_script( 'wpc-network-notifications', 'wpc_net_notifications', array(
 				'main_url' => wpcampus_get_network_site_url(),
 			));
@@ -573,18 +590,13 @@ final class WPCampus_Network_Global {
 
 			$sessions_ver = '1.1';
 
-			$debug = false;
-
-			if ( $debug ) {
-				$sessions_js_path = $js_dir . 'src/wpc-network-sessions.js';
-			} else {
-				$sessions_js_path = $js_dir . 'wpc-network-sessions.min.js';
-			}
+            $sessions_js = $this->debug ? 'src/wpc-network-sessions.js' : 'wpc-network-sessions.min.js';
 
 			wp_register_style( 'wpc-network-sessions-icons', $css_dir . 'conf-schedule-icons.min.css', array(), $sessions_ver );
 
 			wp_enqueue_style( 'wpc-network-sessions', $css_dir . 'wpc-network-sessions.min.css', array( 'wpc-network-sessions-icons' ), $sessions_ver );
-			wp_enqueue_script( 'wpc-network-sessions', $sessions_js_path, array( 'jquery', 'handlebars' ), $sessions_ver, true );
+
+			wp_enqueue_script( 'wpc-network-sessions', $js_dir . $sessions_js, array( 'jquery', 'handlebars' ), $sessions_ver, true );
 			wp_localize_script( 'wpc-network-sessions', 'wpc_sessions', array(
 				'ajaxurl'      => admin_url( 'admin-ajax.php' ),
 				'load_error_msg' => '<p>' . __( 'Oops. Looks like something went wrong. Please refresh the page and try again.', 'wpcampus-network' ) . '</p><p>' . sprintf( __( 'If the problem persists, please %1$slet us know%2$s.', 'wpcampus' ), '<a href="/contact/">', '</a>' ) . '</p>',
@@ -600,7 +612,10 @@ final class WPCampus_Network_Global {
 			wp_enqueue_script( 'magnific-popup', $js_dir . 'jquery.magnific-popup.min.js', array( 'jquery' ) );
 
 			wp_enqueue_style( 'wpc-network-watch', $css_dir . 'wpc-network-watch.min.css', array( 'magnific-popup' ) );
-			wp_enqueue_script( 'wpc-network-watch', $js_dir . 'wpc-network-watch.min.js', array( 'jquery', 'handlebars', 'magnific-popup' ) );
+
+            $watch_js = $this->debug ? 'src/wpc-network-watch.js' : 'wpc-network-watch.min.js';
+
+			wp_enqueue_script( 'wpc-network-watch', $js_dir . $watch_js, array( 'jquery', 'handlebars', 'magnific-popup' ) );
 			wp_localize_script( 'wpc-network-watch', 'wpc_net_watch', array(
 				'main_url'  => wpcampus_get_network_site_url(),
 				'no_videos' => __( 'There are no videos available.', 'wpcampus-network' ),
