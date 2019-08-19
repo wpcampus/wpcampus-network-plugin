@@ -5,10 +5,90 @@ $mc-signup-bp-open: "screen and (min-width: " + $mc-signup-bp-width + ");";
 
 .wpc-mc-signup {
 	clear: both;
-	background: rgba( $wpc-royal-blue, 0.1 );
+	background: $wpc-light-blue;
+	color: #000;
+	margin: 0;
+	padding: 1.75em;
+
+	a {
+		color: inherit;
+	}
+
+	.wpc-mc-disclaimer {
+		font-style: italic;
+		margin: 0;
+		padding: 1em 0 0 0;
+		border-top: 1px solid rgba( $wpc-royal-blue, 0.2 );
+	}
+
+	h2 {
+		font-weight: 600;
+		font-size: 1.3rem;
+		text-transform: uppercase;
+		margin: 0 0 1em 0;
+	}
+
+	h3 {
+		clear: both;
+		font-weight: 600;
+		font-size: 1.2rem;
+		text-transform: none;
+		margin: 0 0 0.5rem 0;
+		color: $wpc-royal-blue;
+	}
+
+	.button.wpc-mc-button {
+		display: block;
+		width: 100%;
+		background: $wpc-royal-blue;
+		color: #fff;
+		text-align: center;
+		font-size: 1.2rem;
+		line-height: inherit;
+
+		&:focus,
+		&:hover {
+			background: $wpc-dark-blue;
+		}
+	}
+
+	@media #{$mc-signup-bp-open} {
+
+		.wpc-mc-cols {
+			display: grid;
+			grid-template-columns: auto auto;
+			grid-template-rows: auto auto;
+			grid-column-gap: 1.5em;
+
+			.wpc-mc-text {
+				grid-column: 2 / span 1;
+				grid-row: 1 / span 1;
+
+				&:first-child {
+					grid-column: 1 / span 1;
+					grid-row: 1 / span 1;
+				}
+			}
+
+			.button.wpc-mc-button {
+				grid-column: 1 / span 1;
+				grid-row: 2 / span 1;
+
+				&:last-child {
+					grid-column: 2 / span 1;
+					grid-row: 2 / span 1;
+				}
+			}
+		}
+	}
+}
+
+.wpc-mc-signup-forms {
+	clear: both;
+	background: $wpc-light-blue;
 	color: #000;
 	margin: 2rem 0;
-	padding: 25px 25px 28px;
+	padding: 1.75em;
 
 	a {
 		color: inherit;

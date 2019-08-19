@@ -616,11 +616,39 @@ final class WPCampus_Network {
 	 * @return string
 	 */
 	public function print_mailchimp_signup() {
+
+	    ?>
+        <link href="<?php echo trailingslashit( $this->get_plugin_url() . 'assets/css' ); ?>wpc-network-mailchimp.min.css?ver=<?php echo $css_ver; ?>" rel="stylesheet" type="text/css">
+        <aside class="wpc-mc-signup" aria-label="<?php esc_attr_e( 'Signup for newsletters', 'wpcampus-network' ); ?>">
+            <div class="row">
+                <h2><?php printf( __( 'Subscribe to %s updates', 'wpcampus-network' ), 'WPCampus' ); ?></h2>
+
+                <div class="wpc-mc-cols">
+                    <div class="wpc-mc-text">
+                        <h3><?php printf( __( 'The %s newsletter', 'wpcampus-network' ), 'WPCampus' ); ?></h3>
+                        <p>This newsletter is sent out manually and includes broad updates about our community and conferences.</p>
+                    </div>
+                    <a class="button wpc-mc-button" href="http://eepurl.com/dukZvP"><?php _e( 'Subscribe to our newsletter', 'wpcampus-network' ); ?></a>
+
+                    <div class="wpc-mc-text">
+                        <h3><?php printf( __( '%s blog updates', 'wpcampus-network' ), 'WPCampus' ); ?></h3>
+                        <p>This mailing list sends an automated email that lets you know when we post to the WPCampus blog.</p>
+                    </div>
+                    <a class="button wpc-mc-button" href="http://eepurl.com/dOd-Q9"><?php _e( 'Subscribe to blog updates', 'wpcampus-network' ); ?></a>
+                </div>
+
+                <p class="wpc-mc-disclaimer">You can unsubscribe at any time by clicking the link in the footer of our emails. We use <a href="https://mailchimp.com/">Mailchimp</a> as our marketing platform. By subscribing, you acknowledge that your information will be transferred to Mailchimp for processing. <a href="https://mailchimp.com/legal/" target="_blank">Learn more about Mailchimp's privacy practices.</a></p>
+            </div>
+        </aside>
+        <?php
+
+	    return;
+
 		$css_ver = 3;
 		?>
 		<link href="//cdn-images.mailchimp.com/embedcode/classic-10_7.css" rel="stylesheet" type="text/css">
 		<link href="<?php echo trailingslashit( $this->get_plugin_url() . 'assets/css' ); ?>wpc-network-mailchimp.min.css?ver=<?php echo $css_ver; ?>" rel="stylesheet" type="text/css">
-		<div class="wpc-mc-signup">
+		<aside class="wpc-mc-signup-forms" aria-label="<?php esc_attr_e( 'Signup for newsletters', 'wpcampus-network' ); ?>">
 			<h2><?php printf( __( 'Subscribe to %s updates', 'wpcampus-network' ), 'WPCampus' ); ?></h2>
 			<div class="indicates-required"><span class="asterisk">*</span> indicates required</div>
 			<div class="wpc-mc-signup-forms">
@@ -657,8 +685,8 @@ final class WPCampus_Network {
 					<div class="clear"><input type="submit" value="Subscribe to blog updates" name="subscribe" class="wpc-mc-button button"></div>
 				</form>
 			</div>
-			<p class="wpc-mc-disclaimer">You can unsubscribe at any time by clicking the link in the footer of our emails. We use <a href="https://mailchimp.com/">Mailchimp</a> as our marketing platform. By clicking to subscribe, you acknowledge that your information will be transferred to Mailchimp for processing. <a href="https://mailchimp.com/legal/" target="_blank">Learn more about Mailchimp's privacy practices.</a></p>
-		</div>
+			<p class="wpc-mc-disclaimer">You can unsubscribe at any time by clicking the link in the footer of our emails. We use <a href="https://mailchimp.com/">Mailchimp</a> as our marketing platform. By subscribing, you acknowledge that your information will be transferred to Mailchimp for processing. <a href="https://mailchimp.com/legal/" target="_blank">Learn more about Mailchimp's privacy practices.</a></p>
+		</aside>
 		<?php
 		//<script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script><script type='text/javascript'>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';fnames[0]='EMAIL';ftypes[0]='email';fnames[6]='MMERGE6';ftypes[6]='radio';fnames[3]='MMERGE3';ftypes[3]='text';fnames[5]='MMERGE5';ftypes[5]='radio';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
 
