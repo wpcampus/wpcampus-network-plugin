@@ -391,7 +391,7 @@ final class WPCampus_Network {
 		}
 
 		// Add the banner.
-		$banner .= '<div id="wpc-network-banner" role="navigation">
+		$banner .= '<nav id="wpc-network-banner" aria-label="' . __( 'Network-wide', 'wpcampus-network' ) . '">
 			<div class="wpc-container">
 				<div class="wpc-logo">
 					<a href="https://wpcampus.org">
@@ -414,7 +414,7 @@ final class WPCampus_Network {
 						</svg>
 					</a>
 				</div>
-				<div class="wpc-menu-container" role="navigation">
+				<div class="wpc-menu-container">
 					<button class="wpc-toggle-menu" data-toggle="wpc-network-banner" aria-label="' . __( 'Toggle menu', 'wpcampus-network' ) . '">
 						<div class="wpc-toggle-bar"></div>
 					</button>
@@ -429,7 +429,7 @@ final class WPCampus_Network {
 					</ul>' . $this->get_social_media_icons() .
 		           '</div>
 			</div>
-		</div>';
+		</nav>';
 
 		return $banner;
 	}
