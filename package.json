@@ -6,9 +6,6 @@
     "type": "git",
     "url": "git+https://github.com/wpcampus/wpcampus-network-plugin.git"
   },
-  "scripts": {
-    "postinstall": "gulp"
-  },
   "author": "WPCampus",
   "license": "GPL-2.0",
   "bugs": {
