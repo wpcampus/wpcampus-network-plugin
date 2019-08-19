@@ -993,7 +993,7 @@ final class WPCampus_Network {
 			),
 		);
 
-		$icons = '<nav><ul class="social-media-icons">';
+		$icons = '<nav class="social-media-icons" aria-label="' . __( 'Social media', 'wpcampus-network' ) . '"><ul>';
 
 		foreach ( $social as $key => $info ) {
 			$filename = "{$images_dir}{$key}.php";
