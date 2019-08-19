@@ -620,7 +620,7 @@ final class WPCampus_Network {
 	    ?>
         <link href="<?php echo trailingslashit( $this->get_plugin_url() . 'assets/css' ); ?>wpc-network-mailchimp.min.css?ver=<?php echo $css_ver; ?>" rel="stylesheet" type="text/css">
         <aside class="wpc-mc-signup" aria-label="<?php esc_attr_e( 'Signup for newsletters', 'wpcampus-network' ); ?>">
-            <div class="row">
+            <div class="wpc-container">
                 <h2><?php printf( __( 'Subscribe to %s updates', 'wpcampus-network' ), 'WPCampus' ); ?></h2>
 
                 <div class="wpc-mc-cols">
