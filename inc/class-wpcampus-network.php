@@ -617,6 +617,8 @@ final class WPCampus_Network {
 	 */
 	public function print_mailchimp_signup() {
 
+		$css_ver = 4;
+
 	    ?>
         <link href="<?php echo trailingslashit( $this->get_plugin_url() . 'assets/css' ); ?>wpc-network-mailchimp.min.css?ver=<?php echo $css_ver; ?>" rel="stylesheet" type="text/css">
         <aside class="wpc-mc-signup" aria-label="<?php esc_attr_e( 'Signup for newsletters', 'wpcampus-network' ); ?>">
@@ -643,8 +645,6 @@ final class WPCampus_Network {
         <?php
 
 	    return;
-
-		$css_ver = 3;
 		?>
 		<link href="//cdn-images.mailchimp.com/embedcode/classic-10_7.css" rel="stylesheet" type="text/css">
 		<link href="<?php echo trailingslashit( $this->get_plugin_url() . 'assets/css' ); ?>wpc-network-mailchimp.min.css?ver=<?php echo $css_ver; ?>" rel="stylesheet" type="text/css">

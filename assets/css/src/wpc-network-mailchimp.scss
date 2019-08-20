@@ -14,13 +14,6 @@ $mc-signup-bp-open: "screen and (min-width: " + $mc-signup-bp-width + ");";
 		color: inherit;
 	}
 
-	.wpc-mc-disclaimer {
-		font-style: italic;
-		margin: 0;
-		padding: 1em 0 0 0;
-		border-top: 1px solid rgba( $wpc-royal-blue, 0.2 );
-	}
-
 	h2 {
 		font-weight: 600;
 		font-size: 1.3rem;
@@ -33,24 +26,51 @@ $mc-signup-bp-open: "screen and (min-width: " + $mc-signup-bp-width + ");";
 		clear: both;
 		font-weight: 600;
 		font-size: 1.2rem;
+		line-height: 1.4;
 		text-transform: none;
 		margin: 0 0 0.5rem 0;
 		color: $wpc-royal-blue;
 	}
 
+	p {
+		line-height: 1.7;
+		margin: 0 0 1.4rem;
+	}
+
+	.wpc-mc-disclaimer {
+		font-style: italic;
+		margin: 1.25em 0 0 0;
+		padding: 1em 0 0 0;
+		border-top: 1px solid rgba( $wpc-royal-blue, 0.2 );
+	}
+
 	.button.wpc-mc-button {
 		display: block;
 		width: 100%;
+		height: auto;
 		background: $wpc-royal-blue;
 		color: #fff;
 		text-align: center;
 		font-size: 1.2rem;
-		line-height: inherit;
+		line-height: 1.2;
+		border-radius: 0;
+		padding: 1em;
+		margin: 0 0 1em;
+
+		*:last-child {
+			margin-bottom: 0;
+		}
 
 		&:focus,
 		&:hover {
 			background: $wpc-dark-blue;
 		}
+	}
+
+	.wpc-container {
+		max-width: $container-max-width;
+		margin: 0 auto;
+		position: relative;
 	}
 
 	@media #{$mc-signup-bp-open} {
@@ -74,6 +94,7 @@ $mc-signup-bp-open: "screen and (min-width: " + $mc-signup-bp-width + ");";
 			.button.wpc-mc-button {
 				grid-column: 1 / span 1;
 				grid-row: 2 / span 1;
+				margin: 0;
 
 				&:last-child {
 					grid-column: 2 / span 1;
