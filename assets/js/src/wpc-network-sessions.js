@@ -455,8 +455,8 @@
 	}
 
 	Handlebars.registerHelper( 'sessionInfoWrapperClasses', function() {
-		if ( this.session_slides_url || this.session_video_url ) {
 		let classes = [];
+		if ( this.session_slides_url || this.session_video_url || this.discussion ) {
 			classes.push('has-session-sidebar');
 		}
 		return classes.join(' ');
@@ -499,6 +499,12 @@
 			}
 
 			assets.push( '<li>' + wrapperStart + '<i aria-hidden="true" class="conf-sch-icon conf-sch-icon-video"></i> <span class="session-sidebar__asset__label">' + label + wrapperEnd + '</span></li>' );
+		}
+
+		if ( this.discussion ) {
+
+			assets.push( '<li><a class="session-sidebar__asset" href="' + this.permalink + '#discussion"><i aria-hidden="true" class="conf-sch-icon conf-sch-icon-chat"></i> <span class="session-sidebar__asset__label">Discussion</a></span></li>' );
+
 		}
 
 		if ( ! assets.length ) {
