@@ -471,9 +471,9 @@
 				wrapperEnd = '';*/
 
 			//if ( this.permalink ) {
-				let label = 'Slides';
-				wrapperStart = '<a class="session-sidebar__asset" href="' + this.session_slides_url + '#slides">';
-				wrapperEnd = '</a>';
+				let label = 'Slides',
+					wrapperStart = '<a class="session-sidebar__asset" href="' + this.session_slides_url + '#slides">',
+					wrapperEnd = '</a>';
 			/*} else {
 				label = 'Slides';
 				wrapperStart = '<span class="session-sidebar__asset">';
