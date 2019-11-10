@@ -456,7 +456,7 @@ final class WPCampus_Network {
 		}
 
 		// Build the notifications.
-		$notifications = '<aside role="complementary" aria-label="' . esc_attr__( 'Notifications', 'wpcampus-network' ) . '" id="wpc-notifications"></aside>
+		$notifications = '<aside id="wpc-notifications" aria-label="' . esc_attr__( 'Notifications', 'wpcampus-network' ) . '"></aside>
 		<script id="wpc-notification-template" type="x-tmpl-mustache">
 			{{#.}}
 				<div role="alert" class="wpc-notification">
