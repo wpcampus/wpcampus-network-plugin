@@ -588,7 +588,7 @@ final class WPCampus_Network_Global {
 			// Get the difference in hours.
 			$timezone_offset_hours = ( $current_time_offset / 60 ) / 60;
 
-			$sessions_ver = '1.2';
+			$sessions_ver = '1.4';
 
             $sessions_js = $this->debug ? 'src/wpc-network-sessions.js' : 'wpc-network-sessions.min.js';
 
@@ -1109,10 +1109,10 @@ final class WPCampus_Network_Global {
 											{{#each subjects}}<li class="session-subject {{slug}}">{{name}}</li>{{/each}}
 										</ul>
 									{{/if}}
-									<p>{{{excerpt.raw}}}</p>
+                                    <div class="session-description">
+									    <p>{{{excerpt.raw}}}</p>
+                                    </div>
 								</div>
-								{{sessionSidebar}}
-								<div class="event-name" data-event="{{event}}" aria-hidden="true"><span>{{session_event_name}}</span></div>
 								{{#if speakers}}
 									<ul class="session-speakers">
 										{{#each speakers}}
@@ -1129,6 +1129,8 @@ final class WPCampus_Network_Global {
 										{{/each}}
 									</ul>
 								{{/if}}
+                                {{sessionSidebar}}
+                                <div class="event-name" data-event="{{event}}" aria-hidden="true"><span>{{session_event_name}}</span></div>
 							</div>
 						</div>
 					{{/each}}

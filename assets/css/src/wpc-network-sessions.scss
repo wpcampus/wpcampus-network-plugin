@@ -293,7 +293,7 @@ $filter-height: 40px;
 
 			.session-info {
 				grid-column: 1 / span 2;
-				padding: 1rem 1rem 1rem 0.7rem;
+				padding: 1rem;
 				border-top: $container-border;
 				border-bottom: $container-border;
 
@@ -387,6 +387,44 @@ $filter-height: 40px;
 				&:first-child,
 				*:first-child {
 					margin-top: 0;
+				}
+			}
+		}
+
+		&--compact {
+
+			.session-speakers {
+
+				.session-speaker {
+
+					img {
+						width: 35px;
+					}
+
+					a {
+
+						.session-speaker__name {
+							padding-left: 0.5rem;
+						}
+					}
+				}
+			}
+
+			.session-info-wrapper {
+
+				.session-info {
+					border-left: $container-border;
+				}
+			}
+
+			.wpcampus-sessions-list {
+
+				.wpcampus-session {
+
+					.session-graphic,
+					.session-description {
+						display: none;
+					}
 				}
 			}
 		}
@@ -574,6 +612,21 @@ $filter-height: 40px;
 					}
 				}
 			}
+
+			&--compact {
+
+				.wpcampus-sessions-list {
+
+					.wpcampus-session {
+						display: block;
+						margin-top: 1.5em;
+
+						.session-graphic {
+							display: none;
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -647,6 +700,26 @@ $filter-height: 40px;
 
 							.session-info {
 								grid-column: 1 / 1;
+							}
+						}
+					}
+				}
+			}
+
+			&--compact {
+
+				.wpcampus-sessions-list {
+
+					.wpcampus-session {
+
+						.session-speakers {
+							grid-column: 1/span 1;
+						}
+
+						.session-info-wrapper {
+
+							.session-sidebar {
+								grid-row: 1 / span 2;
 							}
 						}
 					}
