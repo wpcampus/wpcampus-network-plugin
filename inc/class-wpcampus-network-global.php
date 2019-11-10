@@ -588,7 +588,7 @@ final class WPCampus_Network_Global {
 			// Get the difference in hours.
 			$timezone_offset_hours = ( $current_time_offset / 60 ) / 60;
 
-			$sessions_ver = '1.4';
+			$sessions_ver = '1.6';
 
             $sessions_js = $this->debug ? 'src/wpc-network-sessions.js' : 'wpc-network-sessions.min.js';
 

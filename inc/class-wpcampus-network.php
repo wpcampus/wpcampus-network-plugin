@@ -781,8 +781,7 @@ final class WPCampus_Network {
 		}
 
 		?>
-		<div id="wpcampus-sessions" role="region" aria-live="polite" class="wpcampus-sessions-container loading"<?php echo $data_str; ?>>
-			<div id="wpcampus-sessions-notification screen-reader-text" aria-live="assertive"></div>
+		<div id="wpcampus-sessions" role="region" class="wpcampus-sessions-container loading"<?php echo $data_str; ?>>
 			<div class="wpcampus-sessions-filters"></div>
 			<div class="wpcampus-sessions"></div>
 			<div class="wpcampus-sessions-error">

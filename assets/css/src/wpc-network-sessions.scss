@@ -63,13 +63,14 @@ $filter-height: 40px;
 
 		.wpcampus-sessions-update {
 			grid-column: 1 / span 2;
-			background: $wpc-light-blue;
-			border: 1px solid $wpc-light-blue;
+			background: $wpc-royal-blue;
+			color: #fff;
+			border: 0;
+			text-decoration: underline;
 
 			&:hover,
 			&:focus {
-				background: $wpc-royal-blue;
-				color: #fff;
+				background: $wpc-dark-blue;
 			}
 		}
 
@@ -211,8 +212,8 @@ $filter-height: 40px;
 						text-decoration: none;
 					}
 
-					&__label {
-						text-decoration: underline;
+					.session-sidebar__asset__label {
+						border-bottom: 1px solid $wpc-royal-blue;
 					}
 
 					&:hover,

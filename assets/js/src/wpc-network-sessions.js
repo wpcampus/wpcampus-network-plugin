@@ -31,7 +31,6 @@
 
 		// Let us know we're loading.
 		$sessionsCont.addClass('loading');
-		$sessionsCont.find('#wpcampus-sessions-notification').html( 'The library list is updating.' );
 
 		// Get the query arguments.
 		let stateFilters = $sessionsCont.get_sessions_data_state(),
@@ -83,7 +82,6 @@
 			$sessionsCont.update_sessions_filters();
 
 			$sessionsCont.removeClass( 'loading' );
-			$sessionsCont.find( '#wpcampus-sessions-notification' ).html();
 
 			dfd.resolve();
 		});
@@ -309,7 +307,7 @@
 	// Invoked by the sessions container.
 	$.fn.set_sessions_count = function( sessionsData ) {
 		let $sessionsCont = $(this),
-			message = '',
+			message = '<span class="screen-reader-text">The library has updated.</span>',
 			count = 0;
 
 		if ( undefined !== sessionsData.count ) {
@@ -317,11 +315,11 @@
 		}
 
 		if ( 1 === count ) {
-			message = 'There is 1 item.';
+			message += ' There is 1 item.';
 		} else if ( 0 === count ) {
-			message = 'There are no items that match your selection.';
+			message += ' There are no items that match your selection.';
 		} else {
-			message = 'There are ' + count + ' items.';
+			message += ' There are ' + count + ' items.';
 		}
 
 		$sessionsCont.find('.wpcampus-sessions-count').html( message );
