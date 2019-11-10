@@ -581,16 +581,29 @@ final class WPCampus_Network {
 				<a class="wpc-logo" href="' . $home_url . '"><img src="' . $images_dir . 'wpcampus-black-tagline.svg" alt="' . sprintf( __( '%1$s: Where %2$s Meets Higher Education', 'wpcampus-network' ), 'WPCampus', 'WordPress' ) . '" /></a><br />';
 
 		// Add the footer menu.
-		$footer .= wp_nav_menu(
-			array(
+		$footer_menu = wp_nav_menu(
+			[
 				'echo'           => false,
 				'theme_location' => 'footer',
 				'container'      => false,
-				'menu_id'        => 'wpc-network-footer-menu',
-				'menu_class'     => 'wpc-network-footer-menu',
+				'menu_id'        => false,
+				'menu_class'     => false,
 				'fallback_cb'    => false,
-			)
+			]
 		);
+
+		if ( empty( $footer_menu ) ) {
+		    $footer_menu = '<ul>
+                <li><a href="https://wpcampus.org/about/">About WPCampus</a></li>
+                <li><a href="https://wpcampus.org/code-of-conduct/">Code of Conduct</a></li>
+                <li><a href="https://wpcampus.org/diversity/">Diversity, Equity, and Inclusion</a></li>
+                <li><a href="https://wpcampus.org/contact/">Contact us</a></li>
+            </ul>';
+        }
+
+		if ( ! empty( $footer_menu ) ) {
+			$footer .= '<nav id="wpc-network-footer-menu" class="wpc-network-footer-menu" aria-label="' . esc_attr__( 'Footer', 'wpcampus-network' ) . '">' . $footer_menu . '</nav>';
+        }
 
 		$footer .= '<p class="message"><strong>' . sprintf( __( '%1$s is a community of networking, resources, and events for those using %2$s in the world of higher education.', 'wpcampus-network' ), 'WPCampus', 'WordPress' ) . '</strong><br />' . sprintf( __( 'If you are not a member of the %1$s community, we\'d love for you to %2$sget involved%3$s.', 'wpcampus-network' ), 'WPCampus', '<a href="' . $get_involved_url . '">', '</a>' ) . '</p>
 				<p class="disclaimer">' . sprintf( __( 'This site is powered by %1$s. You can view, and contribute to, the theme on %2$s.', 'wpcampus-network' ), '<a href="' . $wp_org_url . '">WordPress</a>', '<a href="' . $github_url . '">GitHub</a>' ) . '<br />' . sprintf( __( '%1$s, and our events, are not %2$s and are not affiliated with the %3$s Foundation.', 'wpcampus-network' ), 'WPCampus', 'WordCamps', 'WordPress' ) . '</p>' .

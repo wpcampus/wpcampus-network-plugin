@@ -70,33 +70,36 @@ $wpc-footer-social-margin-bottom: 0.9rem;
 	}
 
 	.wpc-network-footer-menu {
-		display: inline-block;
 		clear: both;
-		margin: 0 0 1rem;
-		border: 0;
-		padding: 0;
-		list-style: none;
 		overflow: visible;
 		text-align: center;
 
-		li {
+		ul {
 			display: inline-block;
-			margin: 0;
+			list-style: none;
+			margin: 0 0 1rem;
 			border: 0;
 			padding: 0;
-			list-style: none;
 
-			a {
-				color: inherit;
-			}
+			li {
+				display: inline-block;
+				margin: 0;
+				border: 0;
+				padding: 0;
+				list-style: none;
 
-			&:before {
-				content: '-';
-				padding: 0 5px;
-			}
+				a {
+					color: inherit;
+				}
 
-			&:first-child:before {
-				display: none;
+				&:before {
+					content: '-';
+					padding: 0 5px;
+				}
+
+				&:first-child:before {
+					display: none;
+				}
 			}
 		}
 	}
