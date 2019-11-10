@@ -588,7 +588,7 @@ final class WPCampus_Network_Global {
 			// Get the difference in hours.
 			$timezone_offset_hours = ( $current_time_offset / 60 ) / 60;
 
-			$sessions_ver = '1.1';
+			$sessions_ver = '1.2';
 
             $sessions_js = $this->debug ? 'src/wpc-network-sessions.js' : 'wpc-network-sessions.min.js';
 
@@ -885,34 +885,55 @@ final class WPCampus_Network_Global {
 
 			$url_args = [];
 
-			$filters = array(
-				'orderby'  => array( 'date', 'title' ),
-				'order'    => array( 'asc', 'desc' ),
-				'event'    => array(
-					'wpcampus-2019',
-					'wpcampus-2018',
-					'wpcampus-2017',
-					'wpcampus-2016',
-					'wpcampus-online-2019',
-					'wpcampus-online-2018',
-					'wpcampus-online-2017',
-				),
-				'search'  => array(),
-				'subject' => array(),
-				'format'  => array(),
-			);
+            $filters = array(
+                'assets'   => [ 'slides', 'video' ],
+                'orderby'  => [ 'date', 'title' ],
+                'order'    => [ 'asc', 'desc' ],
+                'event'    => [
+                    'wpcampus-2019',
+                    'wpcampus-2018',
+                    'wpcampus-2017',
+                    'wpcampus-2016',
+                    'wpcampus-online-2019',
+                    'wpcampus-online-2018',
+                    'wpcampus-online-2017',
+                ],
+                'search'  => [],
+                'subject' => [],
+                'format'  => [],
+            );
 
 			if ( ! empty( $_GET['filters'] ) ) {
-				foreach ( $filters as $filter => $options ) {
-					if ( ! empty( $_GET['filters'][ $filter ] ) ) {
-						$filter_val = strtolower( $_GET['filters'][ $filter ] );
 
-						// @TODO optimize?
-						if ( in_array( $filter, array( 'search', 'subject', 'format' ) ) ) {
-							$url_args[ $filter ] = sanitize_text_field( $filter_val );
-						} elseif ( in_array( $filter_val, $options ) ) {
-							$url_args[ $filter ] = $filter_val;
+				foreach ( $filters as $filter => $options ) {
+
+					if ( ! empty( $_GET['filters'][ $filter ] ) ) {
+
+						$filter_val = strtolower( str_replace( ' ', '', $_GET['filters'][ $filter ] ) );
+
+						$has_open_field = in_array( $filter, array( 'search', 'subject', 'format' ) );
+
+						if ( $has_open_field ) {
+							$filter_val = sanitize_text_field( $filter_val );
 						}
+
+						// Means it has a comma so convert to array.
+						if ( strpos( $filter_val, ',' ) !== false ) {
+							$filter_val = explode( ',', $filter_val );
+						} else if ( ! is_array( $filter_val ) ) {
+						    $filter_val = [ $filter_val ];
+                        }
+
+						$filtered_values = [];
+                        foreach ( $filter_val as $value ) {
+
+                            if ( $has_open_field || in_array( $value, $options ) ) {
+	                            $filtered_values[] = $value;
+                            }
+                        }
+
+                        // Convert back to CSVs.
+						$url_args[ $filter ] = implode( ',', $filtered_values );
 					}
 				}
 			}
@@ -995,7 +1016,7 @@ final class WPCampus_Network_Global {
 			<script id="wpc-sessions-filters-template" type="text/x-handlebars-template">
 				<form class="wpcampus-sessions-filters-form" aria-label="Filter items by subject, event and keyword">
 					<div class="wpcampus-sessions-filter-field wpcampus-sessions-filter-field--subjects">
-						<label for="wpc-session-filter-subjects" aria-label="Filter items by subject">Subjects</label>
+						<label for="wpc-session-filter-subjects" class="wpcampus-sessions-filter-field__label" aria-label="Filter items by subject">Subjects</label>
 						<select id="wpc-session-filter-subjects" class="wpcampus-sessions-filter wpcampus-sessions-filter--subjects" name="subject" aria-controls="wpcampus-sessions">
 							<option value=""><?php _e( 'All subjects', 'wpcampus-network' ); ?></option>
 							<?php
@@ -1010,7 +1031,7 @@ final class WPCampus_Network_Global {
 						</select>
 					</div>
 					<div class="wpcampus-sessions-filter-field wpcampus-sessions-filter-field--format">
-						<label for="wpc-session-filter-format" aria-label="Filter items by format">Formats</label>
+						<label for="wpc-session-filter-format" class="wpcampus-sessions-filter-field__label" aria-label="Filter items by format">Formats</label>
 						<select id="wpc-session-filter-format" class="wpcampus-sessions-filter wpcampus-sessions-filter--format" name="format" aria-controls="wpcampus-sessions">
 							<option value="">All formats</option>
 							<?php
@@ -1025,7 +1046,7 @@ final class WPCampus_Network_Global {
 						</select>
 					</div>
 					<div class="wpcampus-sessions-filter-field wpcampus-sessions-filter-field--event">
-						<label for="wpc-session-filter-event" aria-label="Filter items by event">Events</label>
+						<label for="wpc-session-filter-event" class="wpcampus-sessions-filter-field__label" aria-label="Filter items by event">Events</label>
 						<select id="wpc-session-filter-event" class="wpcampus-sessions-filter wpcampus-sessions-filter--event" name="event" aria-controls="wpcampus-sessions">
 							<option value=""><?php _e( 'All events', 'wpcampus-network' ); ?></option>
 							<?php
@@ -1040,11 +1061,11 @@ final class WPCampus_Network_Global {
 						</select>
 					</div>
 					<div class="wpcampus-sessions-filter-field wpcampus-sessions-filter-field--search">
-						<label for="wpc-session-filter-search" aria-label="Search items by keyword">Search</label>
+						<label for="wpc-session-filter-search" class="wpcampus-sessions-filter-field__label" aria-label="Search items by keyword">Search</label>
 						<input id="wpc-session-filter-search" class="wpcampus-sessions-filter wpcampus-sessions-filter--search wpcampus-sessions-filter--text" type="search" name="search" placeholder="Search sessions" value="{{search}}" aria-controls="wpcampus-sessions" />
 					</div>
 					<div class="wpcampus-sessions-filter-field wpcampus-sessions-filter-field--orderby">
-						<label for="wpc-session-filter-orderby" aria-label="Order items by date or title">Order by</label>
+						<label for="wpc-session-filter-orderby" class="wpcampus-sessions-filter-field__label" aria-label="Order items by date or title">Order by</label>
 						<select id="wpc-session-filter-orderby" class="wpcampus-sessions-filter wpcampus-sessions-filter--orderby" name="orderby" aria-controls="wpcampus-sessions">
 							<option value="date,asc"{{{selected_orderby "date" "asc"}}}><?php _e( 'Date, ascending', 'wpcampus-network' ); ?></option>
 							<option value="date,desc"{{{selected_orderby "date" "desc"}}}><?php _e( 'Date, descending', 'wpcampus-network' ); ?></option>
@@ -1052,6 +1073,15 @@ final class WPCampus_Network_Global {
 							<option value="title,desc"{{{selected_orderby "title" "desc"}}}><?php _e( 'Title, descending', 'wpcampus-network' ); ?></option>
 						</select>
 					</div>
+                    <div class="wpcampus-sessions-filter-field wpcampus-sessions-filter-field--assets">
+                        <fieldset>
+                            <legend class="wpcampus-sessions-filter-field__label" aria-label="Filter items by assets">Filter by assets</legend>
+                            <div class="wpcampus-sessions-filter-group wpcampus-sessions-filter-group--assets">
+                                <label for="wpc-session-filter-assets-slides"><input id="wpc-session-filter-assets-slides" type="checkbox" class="wpcampus-sessions-filter wpcampus-sessions-filter--assets" name="assets[]" value="slides"{{{checked_assets "slides"}}}> Has slides</label>
+                                <label for="wpc-session-filter-assets-video"><input id="wpc-session-filter-assets-video" type="checkbox" class="wpcampus-sessions-filter wpcampus-sessions-filter--assets" name="assets[]" value="video"{{{checked_assets "video"}}}> Has video</label>
+                            </div>
+                        </fieldset>
+                    </div>
 					<input id="wpc-session-filter-submit" type="submit" class="wpcampus-sessions-update" value="<?php esc_attr_e( 'Update sessions', 'wpcampus-network' ); ?>" aria-controls="wpcampus-sessions" />
 				</form>
 			</script>

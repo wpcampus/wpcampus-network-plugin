@@ -26,7 +26,7 @@
 
 	// Invoked by the sessions container.
 	$.fn.render_wpc_sessions = function() {
-		var $sessionsCont = $(this),
+		let $sessionsCont = $(this),
 			dfd = $.Deferred();
 
 		// Let us know we're loading.
@@ -34,7 +34,7 @@
 		$sessionsCont.find('#wpcampus-sessions-notification').html( 'The library list is updating.' );
 
 		// Get the query arguments.
-		var stateFilters = $sessionsCont.get_sessions_data_state(),
+		let stateFilters = $sessionsCont.get_sessions_data_state(),
 			queryStr = get_wpcampus_sessions_query_str( stateFilters );
 
 		// Update the URL.
@@ -47,7 +47,7 @@
 			}
 		};
 
-		var sessionsData = undefined;
+		let sessionsData = undefined;
 
 		const getSessions = get_wpc_sessions( stateFilters );
 		getSessions.done(function( data ) {
@@ -65,13 +65,13 @@
 			}
 
 			// Take care of the sessions.
-			var sessions_template = $('#wpc-sessions-template').html();
+			let sessions_template = $('#wpc-sessions-template').html();
 
 			// Process the template.
-			var process_sessions = Handlebars.compile( sessions_template );
+			let process_sessions = Handlebars.compile( sessions_template );
 
 			// Store the active element right before we re-load.
-			$sessionsCont.data( 'activeElement',document.activeElement );
+			$sessionsCont.data( 'activeElement', document.activeElement );
 
 			// Update the content.
 			$sessionsCont.find( '.wpcampus-sessions' ).html( process_sessions( sessionsData.sessions ).trim() );
@@ -93,11 +93,11 @@
 
 	// Invoked by the sessions container.
 	$.fn.render_wpc_sessions_reset_focus = function() {
-		var $sessionsCont = $(this),
+		let $sessionsCont = $(this),
 			activeElement = document.activeElement,
 			render = $sessionsCont.render_wpc_sessions();
 		render.always(function() {
-			var currentActiveElement = $sessionsCont.data('activeElement');
+			let currentActiveElement = $sessionsCont.data('activeElement');
 			if ( currentActiveElement.id ) {
 				document.getElementById(currentActiveElement.id).focus();
 			} else if ( activeElement.id ) {
@@ -108,17 +108,17 @@
 
 	// Invoked by the sessions container.
 	$.fn.update_sessions_from_filters = function(filters) {
-		var $sessionsCont = $(this);
+		let $sessionsCont = $(this);
 
 		// Reset all data.
 		$sessionsCont.removeData();
 
-		// Validate filters
+		// Validate filters.
 		filters = validate_wpcampus_sessions_filters(filters);
 
 		// Update data.
 		$.each(filters,function(filter,value) {
-			$sessionsCont.data(filter,value);
+			$sessionsCont.update_sessions_data( filter, value, false, false );
 		});
 
 		// Update items.
@@ -127,47 +127,108 @@
 
 	// Invoked by the sessions container.
 	// Updates the session data but doesn't update the sessions. Returns true if valid.
-	$.fn.update_sessions_data = function( filterName, value ) {
-		var $sessionsCont = $(this);
+	// If remove is true, then we should remove the value from the data.
+	$.fn.update_sessions_data = function( filterName, value, remove, replace ) {
+		let $sessionsCont = $(this);
 
 		// Make sure we have filter info.
 		if ( filterName == '' || filterName === undefined || filterName === null ) {
 			return false;
 		}
 
+		// Remove array indicator from filter name.
+		filterName = filterName.replace( '[]', '' );
+
 		// You can have empty values.
 		if ( ! value ) {
 			value = null;
 		} else {
 
+			value = value.toLowerCase();
+
 			// Separate out orderby.
 			if ( 'orderby' == filterName ) {
-				var valueSplit = value.split(',');
+				let valueSplit = value.split(',');
 
 				// Set the new orderby value.
 				value = valueSplit.shift();
 
 				// Update the order.
-				$sessionsCont.update_sessions_data( 'order', valueSplit.shift() );
+				$sessionsCont.update_sessions_data( 'order', valueSplit.shift(), remove, replace );
 
 			}
 
 			// Make sure its a valid filter.
-			value = value.toLowerCase();
 			if ( ! is_valid_wpcampus_sessions_filter(filterName,value) ) {
 				return false;
 			}
 		}
 
-		// Store new filter value.
-		if ( $.inArray( filterName, ['subject','format'] ) >= 0 ) {
-
-			// Convert to array.
-			$sessionsCont.data( filterName,[ value ] );
-
-		} else {
-			$sessionsCont.data( filterName,value );
+		if ( !remove && !value) {
+			remove = true;
 		}
+
+		// Get existing data.
+		let existingFilter = $sessionsCont.data( filterName );
+
+		if ( undefined === existingFilter || !existingFilter ) {
+
+			if (remove) {
+				$sessionsCont.removeData( filterName );
+			} else {
+				$sessionsCont.data( filterName, value );
+			}
+
+			return true;
+		}
+
+		// The value is already defined.
+		if ( existingFilter === value ) {
+
+			if (remove) {
+				$sessionsCont.removeData( filterName );
+			}
+
+			return true;
+		}
+
+		if ( Array.isArray( existingFilter ) ) {
+
+			if (replace) {
+				existingFilter = [];
+			} else {
+
+				let findValue = existingFilter.indexOf(value);
+
+				if (findValue >= 0) {
+
+					if (!remove) {
+						return true;
+					}
+
+					existingFilter.splice(findValue, 1);
+				}
+			}
+		} else {
+
+			if (remove) {
+				$sessionsCont.removeData( filterName );
+				return true;
+			}
+
+			// Convert to array and add new value.
+			if (replace) {
+				existingFilter = [];
+			} else {
+				existingFilter = [ existingFilter ];
+			}
+		}
+
+		if (!remove) {
+			existingFilter.push( value );
+		}
+
+		$sessionsCont.data( filterName, existingFilter );
 
 		return true;
 	};
@@ -175,25 +236,27 @@
 	// Invoked by the sessions container.
 	// Updates the session data but doesn't update the sessions. Returns true if valid.
 	$.fn.update_sessions_data_from_filter = function($filter) {
-		var $sessionsCont = $(this),
+		let $sessionsCont = $(this),
 			filterName = $filter.attr('name'),
-			value = $filter.val().toLowerCase();
+			value = $filter.val().toLowerCase(),
+			remove = ( 'checkbox' === $filter.prop('type') && !$filter.prop('checked') ),
+			replace = ( 'checkbox' !== $filter.prop('type') );
 
-		return $sessionsCont.update_sessions_data( filterName, value );
+		return $sessionsCont.update_sessions_data( filterName, value, remove, replace );
 	};
 
 	// Invoked by the sessions container.
 	$.fn.update_sessions_filters = function() {
-		var $sessionsCont = $(this);
+		let $sessionsCont = $(this);
 
 		// Get filters info.
-		var filters = $sessionsCont.get_wpcampus_sessions_filters();
+		let filters = $sessionsCont.get_wpcampus_sessions_filters();
 
 		// Take care of the sessions.
-		var filters_template = $('#wpc-sessions-filters-template').html();
+		let filters_template = $('#wpc-sessions-filters-template').html();
 
 		// Process the template.
-		var process_filters = Handlebars.compile( filters_template );
+		let process_filters = Handlebars.compile( filters_template );
 
 		// Update the content.
 		$sessionsCont.find('.wpcampus-sessions-filters').html( process_filters( filters ).trim() );
@@ -202,7 +265,7 @@
 			e.preventDefault();
 
 			// Will be true if we can update items render.
-			var result = false;
+			let result = false;
 
 			$sessionsCont.find( 'input.wpcampus-sessions-filter, select.wpcampus-sessions-filter' ).each(function(){
 				result = $sessionsCont.update_sessions_data_from_filter($(this));
@@ -213,13 +276,12 @@
 			}
 		});
 
-		$sessionsCont.find('input.wpcampus-sessions-filter, select.wpcampus-sessions-filter').on('change',function(e){
+		/*$sessionsCont.find('input.wpcampus-sessions-filter, select.wpcampus-sessions-filter').on('change',function(e){
 			e.preventDefault();
-			var result = $sessionsCont.update_sessions_data_from_filter($(this));
-			if ( true === result ) {
+			if ( true === $sessionsCont.update_sessions_data_from_filter($(this)) ) {
 				$sessionsCont.render_wpc_sessions_reset_focus();
 			}
-		});
+		});*/
 	};
 
 	// Invoked by the sessions container.
@@ -229,7 +291,7 @@
 
 	// Invoked by the sessions container.
     $.fn.get_wpcampus_sessions_filters = function() {
-    	var data = $(this).data(),
+    	let data = $(this).data(),
     		defaults = get_default_wpcampus_sessions_filters();
 
     	// Set defaults.
@@ -246,7 +308,7 @@
 
 	// Invoked by the sessions container.
 	$.fn.set_sessions_count = function( sessionsData ) {
-		var $sessionsCont = $(this),
+		let $sessionsCont = $(this),
 			message = '',
 			count = 0;
 
@@ -273,7 +335,7 @@
 
 	// Invoked by the sessions container.
 	$.fn.get_sessions_data_state = function() {
-		var $sessionsCont = $(this),
+		let $sessionsCont = $(this),
 			stateFilters = {},
 			currentData = $sessionsCont.data();
 
@@ -294,7 +356,7 @@
 				value = value.split(',');
 			}
 
-			var filteredValues = [];
+			let filteredValues = [];
 
 			$.each( value, function(index,subvalue) {
 
@@ -316,7 +378,7 @@
 
 	// Create query string for GET request.
 	function get_wpcampus_sessions_query_str(filters) {
-		var queryStr = '',
+		let queryStr = '',
 			defaults = get_default_wpcampus_sessions_filters();
 
 		$.each(filters,function(filter,value) {
@@ -341,7 +403,7 @@
 	}
 
 	function validate_wpcampus_sessions_filters(filters) {
-		var validatedFilters = {};
+		let validatedFilters = {};
 
 		$.each(filters,function(filter,value) {
 			value = value.toLowerCase();
@@ -359,12 +421,21 @@
 			return true;
 		}
 
-		var validFilters = get_valid_wpcampus_sessions_filters(),
-			value = value.toLowerCase();
+		let validFilters = get_valid_wpcampus_sessions_filters();
+
+		// Remove array indicator from filter name.
+		filter = filter.replace( '[]', '' );
+
 		if ( ! validFilters.hasOwnProperty(filter) ) {
 			return false;
 		}
-		return ( $.inArray( value, validFilters[filter] ) >= 0 );
+
+		// Allows us to only check the filter.
+		if ( ! value ) {
+			return true;
+		}
+
+		return ( $.inArray( value.toLowerCase(), validFilters[filter] ) >= 0 );
 	}
 
 	function get_default_wpcampus_sessions_filters() {
@@ -376,6 +447,7 @@
 
 	function get_valid_wpcampus_sessions_filters() {
 		return {
+			assets: ['slides','video'],
 			orderby: ['date','title'],
 			order: ['asc','desc'],
 			event: ['wpcampus-2019','wpcampus-2018','wpcampus-2017','wpcampus-2016','wpcampus-online-2019','wpcampus-online-2018','wpcampus-online-2017']
@@ -383,23 +455,23 @@
 	}
 
 	Handlebars.registerHelper( 'sessionInfoWrapperClasses', function() {
-		var classes = [];
 		if ( this.session_slides_url || this.session_video_url ) {
+		let classes = [];
 			classes.push('has-session-sidebar');
 		}
 		return classes.join(' ');
 	});
 
 	Handlebars.registerHelper( 'sessionSidebar', function() {
-		var assets = [];
+		let assets = [];
 
 		if ( this.session_slides_url ) {
-			var label = '',
+			/*let label = '',
 				wrapperStart = '',
-				wrapperEnd = '';
+				wrapperEnd = '';*/
 
 			//if ( this.permalink ) {
-				label = 'Slides';
+				let label = 'Slides';
 				wrapperStart = '<a class="session-sidebar__asset" href="' + this.session_slides_url + '#slides">';
 				wrapperEnd = '</a>';
 			/*} else {
@@ -412,7 +484,7 @@
 		}
 
 		if ( this.session_video_url ) {
-			var label = '',
+			let label = '',
 				wrapperStart = '',
 				wrapperEnd = '';
 
@@ -433,13 +505,11 @@
 			return null;
 		}
 
-		var assetsString = assets.join( '' );
-
-		return new Handlebars.SafeString( '<div class="session-sidebar"><ul>' + assetsString + '</ul></div>' );
+		return new Handlebars.SafeString( '<div class="session-sidebar"><ul>' + assets.join( '' ) + '</ul></div>' );
     });
 
 	Handlebars.registerHelper( 'selected_orderby', function( orderBy, order ) {
-		var selected = ' selected="selected"';
+		let selected = ' selected="selected"';
 		if ( orderBy == this.orderby && order == this.order ) {
 			return selected;
 		} else if ( ! this.orderby && order == this.order && 'title' == orderBy ) {
@@ -454,19 +524,32 @@
 		return null;
 	});
 
+	Handlebars.registerHelper( 'checked_assets', function( assets ) {
+		if (!this.assets) {
+			return null;
+		}
+
+		let checked = ' checked="checked"';
+
+		if (this.assets.includes(assets)) {
+			return checked;
+		}
+
+		return null;
+	});
+
 	Handlebars.registerHelper( 'selected', function(value,selectedValue) {
 		return ( value == selectedValue ) ? ' selected="selected"' : null;
     });
 
 	// Prints session date in site time.
     Handlebars.registerHelper('session_date', function() {
-    	var origDate = this.post_date;
-
-    	if ( ! origDate ) {
+    	if ( ! this.post_date ) {
     		return null;
     	}
 
-    	var dateSplit = origDate.split(' '),
+    	let origDate = this.post_date,
+			dateSplit = origDate.split(' '),
     		newDate = dateSplit.join('T'),
     		dateString = '',
     		sessionDate = new Date( newDate ), //this.post_date_gmt

@@ -698,11 +698,12 @@ final class WPCampus_Network {
 	public function print_sessions() {
 
 		// Get filters.
-		$args    = array();
-		$filters = array(
-			'orderby' => array( 'date', 'title' ),
-			'order'   => array( 'asc', 'desc' ),
-			'event'   => array(
+		$args    = [];
+		$filters = [
+		    'assets'  => [ 'slides', 'video' ],
+            'orderby' => [ 'date', 'title' ],
+			'order'   => [ 'asc', 'desc' ],
+			'event'   => [
 				'wpcampus-2019',
 				'wpcampus-2018',
 				'wpcampus-2017',
@@ -710,16 +711,29 @@ final class WPCampus_Network {
 				'wpcampus-online-2019',
 				'wpcampus-online-2018',
 				'wpcampus-online-2017',
-			),
-		);
+			],
+		];
 
 		foreach ( $filters as $filter => $options ) {
 			if ( ! empty( $_GET[ $filter ] ) ) {
 
-				$filter_val = strtolower( $_GET[ $filter ] );
+				$filter_val = strtolower( str_replace( ' ', '', $_GET[ $filter ] ) );
 
-				if ( in_array( $filter_val, $options ) ) {
-					$args[ $filter ] = $filter_val;
+				if ( ! is_array( $filter_val ) ) {
+					$filter_val = explode( ',', $filter_val );
+				}
+
+				foreach ( $filter_val as $value ) {
+
+					if ( in_array( $value, $options ) ) {
+
+					    if ( ! is_array( $args[ $filter ] ) ) {
+						    $args[ $filter ] = [];
+                        }
+
+						$args[ $filter ][] = $value;
+
+					}
 				}
 			}
 		}
@@ -747,6 +761,9 @@ final class WPCampus_Network {
 		// Create the string.
 		$data_str = '';
 		foreach ( $args as $key => $value ) {
+		    if ( is_array( $value ) ) {
+			    $value = implode( ',', $value );
+            }
 			$data_str .= ' data-' . $key . '="' . esc_attr( $value ) . '"';
 		}
 

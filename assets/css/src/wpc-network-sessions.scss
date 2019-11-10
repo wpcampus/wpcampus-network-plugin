@@ -25,6 +25,19 @@ $filter-height: 40px;
 
 	.wpcampus-sessions-filters {
 
+		fieldset {
+			border: 0;
+			margin: 0;
+			padding: 0;
+
+			legend {
+				background: transparent;
+				border: 0;
+				margin: 0;
+				padding: 0;
+			}
+		}
+
 		select,
 		input[type="text"],
 		input[type="search"],
@@ -48,12 +61,6 @@ $filter-height: 40px;
 			min-height: $filter-height;
 		}
 
-		label {
-			display: block;
-			font-weight: bold;
-			margin: 0 0 0.5em 0;
-		}
-
 		.wpcampus-sessions-update {
 			grid-column: 1 / span 2;
 			background: $wpc-light-blue;
@@ -68,9 +75,41 @@ $filter-height: 40px;
 
 		.wpcampus-sessions-filter-field {
 
+			&--assets {
+				grid-column: 1 / span 2;
+			}
+
 			&--search {
 				grid-row: 3;
 				grid-column: 1 / span 2;
+			}
+
+			&__label {
+				display: block;
+				color: #222;
+				font-size: 0.9em;
+				font-weight: bold;
+				margin: 0 0 0.5em 0;
+			}
+		}
+
+		.wpcampus-sessions-filter-group {
+
+			&--assets {
+				display: grid;
+				grid-template-columns: auto auto;
+				align-items: center;
+				border: 1px solid #ccc;
+				min-height: 40px;
+				padding: 0.5em;
+
+				label {
+					margin: 0;
+				}
+
+				input {
+					margin: 0 0.25em 0;
+				}
 			}
 		}
 
@@ -428,11 +467,15 @@ $filter-height: 40px;
 		.wpcampus-sessions-filters {
 
 			.wpcampus-sessions-update {
-				grid-column: unset;
+				grid-column: 1 / span 3;
 				align-self: end;
 			}
 
 			.wpcampus-sessions-filter-field {
+
+				&--assets {
+					grid-column: unset;
+				}
 
 				&--search {
 					grid-row: unset;
@@ -442,7 +485,7 @@ $filter-height: 40px;
 
 			.wpcampus-sessions-filters-form {
 				grid-template-columns: auto auto auto;
-				grid-template-rows: auto auto;
+				grid-template-rows: auto auto auto;
 			}
 		}
 
