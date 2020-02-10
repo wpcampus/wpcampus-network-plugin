@@ -1186,7 +1186,7 @@ final class WPCampus_Network {
 		}
 
 		$args = shortcode_atts( array(
-			'format' => 'F j, Y',
+			'format' => 'l, F j, Y',
 		), $args, 'wpc_speaker_app_deadline_date' );
 
 		return $date->format( $args['format'] );
