@@ -1186,8 +1186,8 @@ final class WPCampus_Network_Global {
                         </div>
                     </fieldset>
                 </div>
-                <input id="wpc-session-filter-reset" type="submit" class="wpcampus-sessions-reset" aria-label="<?php esc_attr_e( 'Reset sessions to default filters', 'wpcampus-network' ); ?>" value="<?php esc_attr_e( 'Reset filters', 'wpcampus-network' ); ?>" aria-controls="wpcampus-sessions"/>
                 <input id="wpc-session-filter-submit" type="submit" class="wpcampus-sessions-update" value="<?php esc_attr_e( 'Update sessions', 'wpcampus-network' ); ?>" aria-controls="wpcampus-sessions"/>
+                <input id="wpc-session-filter-reset" type="submit" class="wpcampus-sessions-reset" aria-label="<?php esc_attr_e( 'Reset sessions to default filters', 'wpcampus-network' ); ?>" value="<?php esc_attr_e( 'Reset filters', 'wpcampus-network' ); ?>" aria-controls="wpcampus-sessions"/>
             </form>
 
 
