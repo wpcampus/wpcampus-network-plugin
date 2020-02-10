@@ -409,22 +409,20 @@ final class WPCampus_Network {
 			)
 		);
 
-		// Build the banner.
-		$banner = '';
-
-		// Add skip navigation.
-		if ( ! empty( $args['skip_nav_id'] ) ) {
-
-			// Make sure we have a valid ID.
-			$skip_nav_id = preg_replace( '/[^a-z0-9\-]/i', '', $args['skip_nav_id'] );
-			if ( ! empty( $skip_nav_id ) ) {
-				$banner .= sprintf( '<a href="#%s" class="wpc-skip-to-content">%s</a>', $skip_nav_id, $args['skip_nav_label'] );
-			}
-		}
-
 		// Add the banner.
-		$banner .= '<nav id="wpc-network-banner" aria-label="' . __( 'Network-wide', 'wpcampus-network' ) . '">
-			<div class="wpc-container">
+		$banner = '<nav id="wpc-network-banner" aria-label="' . __( 'Network-wide', 'wpcampus-network' ) . '">';
+
+            // Add skip navigation.
+            if ( ! empty( $args['skip_nav_id'] ) ) {
+
+                // Make sure we have a valid ID.
+                $skip_nav_id = preg_replace( '/[^a-z0-9\-]/i', '', $args['skip_nav_id'] );
+                if ( ! empty( $skip_nav_id ) ) {
+                    $banner .= sprintf( '<a href="#%s" class="wpc-skip-to-content">%s</a>', $skip_nav_id, $args['skip_nav_label'] );
+                }
+            }
+
+		    $banner .= '<div class="wpc-container">
 				<div class="wpc-logo">
 					<a href="https://wpcampus.org">
 						<?xml version="1.0" encoding="utf-8"?>
