@@ -882,6 +882,8 @@ final class WPCampus_Network_Global {
 			// Add our login message.
 			$message .= '<p>Don\'t have a WPCampus user account? <a class="button inline royal-blue" href="https://wpcampus.org/get-involved/">Create an account</a></p>';
 
+			$message = apply_filters( 'wpcampus_login_form_message', $message );
+
 		}
 
 		if ( ! empty( $args['wpc_ajax'] ) && true === $args['wpc_ajax'] ) {
