@@ -3,28 +3,24 @@
 /**
  * The class that sets up
  * global plugin functionality.
- *
  * This class is initiated on every page
  * load and does not have to be instantiated.
- *
  * @class       WPCampus_Network_Global
  * @package     WPCampus Network
  */
 final class WPCampus_Network_Global {
 
-    /**
-     * Whether or not debug is enabled.
-     *
-     * @var bool
-     */
-    private $debug = false;
+	/**
+	 * Whether or not debug is enabled.
+	 * @var bool
+	 */
+	private $debug = false;
 
-    /**
-     * Will hold the main "helper" class.
-     *
-     * @var WPCampus_QA
-     */
-    private $helper;
+	/**
+	 * Will hold the main "helper" class.
+	 * @var WPCampus_Network
+	 */
+	private $helper;
 
 	/**
 	 * We don't need to instantiate this class.
@@ -39,10 +35,10 @@ final class WPCampus_Network_Global {
 
 		$plugin->helper = wpcampus_network();
 
-        if ( ( defined( 'WPCAMPUS_DEV' ) && WPCAMPUS_DEV )
-            || ( ! empty( $_ENV['PANTHEON_ENVIRONMENT'] ) && 'dev' == $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
-            $plugin->debug = true;
-        }
+		if ( ( defined( 'WPCAMPUS_DEV' ) && WPCAMPUS_DEV )
+		     || ( ! empty( $_ENV['PANTHEON_ENVIRONMENT'] ) && 'dev' == $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
+			$plugin->debug = true;
+		}
 
 		// Load our text domain.
 		add_action( 'init', array( $plugin, 'textdomain' ) );
@@ -225,7 +221,7 @@ final class WPCampus_Network_Global {
 		foreach ( $apple_image_sizes as $size ) :
 			?>
 			<link rel="apple-touch-icon" sizes="<?php echo "{$size}x{$size}"; ?>" href="<?php echo $favicons_folder; ?>wpcampus-favicon-<?php echo $size; ?>.png">
-			<?php
+		<?php
 		endforeach;
 
 		// Set the Android image sizes.
@@ -234,7 +230,7 @@ final class WPCampus_Network_Global {
 
 			?>
 			<link rel="icon" type="image/png" sizes="<?php echo "{$size}x{$size}"; ?>" href="<?php echo $favicons_folder; ?>wpcampus-favicon-<?php echo $size; ?>.png">
-			<?php
+		<?php
 
 		endforeach;
 
@@ -247,12 +243,10 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Filter comment URLs to only use author URLs.
-	 *
 	 * @param string $return     The HTML-formatted comment author link.
 	 *                           Empty for an invalid URL.
 	 * @param string $author     The comment author's username.
 	 * @param int    $comment_ID The comment ID.
-	 *
 	 * @return string
 	 */
 	public function filter_comment_author_link( $return, $author, $comment_id ) {
@@ -289,7 +283,6 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Process when a user registers.
-	 *
 	 * We make sure they are added to every
 	 * site on the network.
 	 */
@@ -302,9 +295,7 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Set the default user role to "member".
-	 *
 	 * @param $default_role
-	 *
 	 * @return string
 	 */
 	public function set_default_user_role( $default_role ) {
@@ -313,9 +304,7 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Sets the default thumbnail size.
-	 *
 	 * @param mixed - $default The default value to return if the option does not exist in the database.
-	 *
 	 * @return int - the media size
 	 */
 	public function set_thumbnail_size( $default ) {
@@ -324,9 +313,7 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Sets the default medium size.
-	 *
 	 * @param mixed - $default The default value to return if the option does not exist in the database.
-	 *
 	 * @return int - the media size
 	 */
 	public function set_medium_size_w( $default ) {
@@ -339,9 +326,7 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Sets the default thumbnail size.
-	 *
 	 * @param mixed - $default The default value to return if the option does not exist in the database.
-	 *
 	 * @return int - the media size
 	 */
 	public function set_large_size_w( $default ) {
@@ -354,12 +339,10 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Filter user capabilities.
-	 *
-	 * @param   array - $allcaps - An array of all the user's capabilities.
-	 * @param   array - $caps - Actual capabilities for meta capability.
-	 * @param   array - $args - Optional parameters passed to has_cap(), typically object ID.
-	 * @param   WP_User - $user - The user object.
-	 *
+	 * @param array - $allcaps - An array of all the user's capabilities.
+	 * @param array - $caps - Actual capabilities for meta capability.
+	 * @param array - $args - Optional parameters passed to has_cap(), typically object ID.
+	 * @param WP_User - $user - The user object.
 	 * @return  array - the filtered capabilities.
 	 */
 	public function filter_user_has_cap( $allcaps, $caps, $args, $user ) {
@@ -428,14 +411,14 @@ final class WPCampus_Network_Global {
 		$current_user_id = (int) get_current_user_id();
 		if ( $current_user_id > 0 ) {
 
-			$post_id  = get_the_ID();
+			$post_id = get_the_ID();
 			$meta_key = "wpc_has_viewed_{$current_user_id}";
 
 			$has_viewed = $wpdb->get_var(
 				$wpdb->prepare(
 					"SELECT meta_value FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s",
 					$post_id,
-			        $meta_key
+					$meta_key
 				)
 			);
 
@@ -447,7 +430,6 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Fires when preparing to serve an API request.
-	 *
 	 * @param   $wp_rest_server - WP_REST_Server - Server object.
 	 */
 	public function init_rest_api( $wp_rest_server ) {
@@ -491,7 +473,6 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Register the network footer menu.
-	 *
 	 * @return  void
 	 */
 	function register_network_footer_menu() {
@@ -502,15 +483,14 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Enqueue our front-end scripts.
-	 *
 	 * @return void
 	 */
 	public function enqueue_scripts_styles() {
 
 		// Define the directories.
 		$plugin_url = trailingslashit( $this->helper->get_plugin_url() );
-		$css_dir    = $plugin_url . 'assets/css/';
-		$js_dir     = $plugin_url . 'assets/js/';
+		$css_dir = $plugin_url . 'assets/css/';
+		$js_dir = $plugin_url . 'assets/js/';
 
 		// Setup the font weights we need.
 		$open_sans_weights = apply_filters( 'wpcampus_open_sans_font_weights', array() );
@@ -545,7 +525,7 @@ final class WPCampus_Network_Global {
 		wp_register_script( 'handlebars', $js_dir . 'handlebars.min.js', array(), null, true );
 		wp_register_script( 'mustache', $js_dir . 'mustache.min.js', array(), null, true );
 
-        $toggle_menu_js = $this->debug ? 'src/wpc-network-toggle-menu.js' : 'wpc-network-toggle-menu.min.js';
+		$toggle_menu_js = $this->debug ? 'src/wpc-network-toggle-menu.js' : 'wpc-network-toggle-menu.min.js';
 
 		// Keep this one outside logic so I can register as a dependency in scripts outside the plugin.
 		wp_register_script( 'wpc-network-toggle-menu', $js_dir . $toggle_menu_js, array( 'jquery', 'jquery-ui-core' ), null );
@@ -560,12 +540,12 @@ final class WPCampus_Network_Global {
 		if ( $this->helper->is_enabled( 'notifications' ) ) {
 			wp_enqueue_style( 'wpc-network-notifications', $css_dir . 'wpc-network-notifications.min.css', array( 'wpc-fonts-open-sans' ), null );
 
-            $notifications_js = $this->debug ? 'src/wpc-network-notifications.js' : 'wpc-network-notifications.min.js';
+			$notifications_js = $this->debug ? 'src/wpc-network-notifications.js' : 'wpc-network-notifications.min.js';
 
 			wp_enqueue_script( 'wpc-network-notifications', $js_dir . $notifications_js, array( 'jquery', 'mustache' ), null, true );
 			wp_localize_script( 'wpc-network-notifications', 'wpc_net_notifications', array(
 				'main_url' => wpcampus_get_network_site_url(),
-			));
+			) );
 		}
 
 		// Enqueue the network Code of Conduct styles.
@@ -590,7 +570,7 @@ final class WPCampus_Network_Global {
 
 			$sessions_ver = '1.6';
 
-            $sessions_js = $this->debug ? 'src/wpc-network-sessions.js' : 'wpc-network-sessions.min.js';
+			$sessions_js = $this->debug ? 'src/wpc-network-sessions.js' : 'wpc-network-sessions.min.js';
 
 			wp_register_style( 'wpc-network-sessions-icons', $css_dir . 'conf-schedule-icons.min.css', array(), $sessions_ver );
 
@@ -598,10 +578,10 @@ final class WPCampus_Network_Global {
 
 			wp_enqueue_script( 'wpc-network-sessions', $js_dir . $sessions_js, array( 'jquery', 'handlebars' ), $sessions_ver, true );
 			wp_localize_script( 'wpc-network-sessions', 'wpc_sessions', array(
-				'ajaxurl'      => admin_url( 'admin-ajax.php' ),
+				'ajaxurl'        => admin_url( 'admin-ajax.php' ),
 				'load_error_msg' => '<p>' . __( 'Oops. Looks like something went wrong. Please refresh the page and try again.', 'wpcampus-network' ) . '</p><p>' . sprintf( __( 'If the problem persists, please %1$slet us know%2$s.', 'wpcampus' ), '<a href="/contact/">', '</a>' ) . '</p>',
 				'tz_offset'      => $timezone_offset_hours,
-			));
+			) );
 		}
 
 		// Enable the watch video assets.
@@ -613,13 +593,13 @@ final class WPCampus_Network_Global {
 
 			wp_enqueue_style( 'wpc-network-watch', $css_dir . 'wpc-network-watch.min.css', array( 'magnific-popup' ) );
 
-            $watch_js = $this->debug ? 'src/wpc-network-watch.js' : 'wpc-network-watch.min.js';
+			$watch_js = $this->debug ? 'src/wpc-network-watch.js' : 'wpc-network-watch.min.js';
 
 			wp_enqueue_script( 'wpc-network-watch', $js_dir . $watch_js, array( 'jquery', 'handlebars', 'magnific-popup' ) );
 			wp_localize_script( 'wpc-network-watch', 'wpc_net_watch', array(
 				'main_url'  => wpcampus_get_network_site_url(),
 				'no_videos' => __( 'There are no videos available.', 'wpcampus-network' ),
-			));
+			) );
 		}
 
 		$this->helper->enqueue_base_script();
@@ -640,12 +620,16 @@ final class WPCampus_Network_Global {
 		?>
 		<script type="text/javascript" src="//downloads.mailchimp.com/js/signup-forms/popup/embed.js" data-dojo-config="usePlainJson: true, isDebug: false"></script>
 		<script type="text/javascript">
-		function showMailingPopUp() {
-			require(["mojo/signup-forms/Loader"], function(L) { L.start({"baseUrl":"mc.us11.list-manage.com","uuid":"6d71860d429d3461309568b92","lid":"05f39a2a20"}) })
-			document.cookie = "MCEvilPopupClosed=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
-			document.cookie = "MCPopupClosed=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
-		}
-		document.querySelector('.wpc-subscribe-open').onclick = function() {showMailingPopUp()};
+			function showMailingPopUp() {
+				require( [ "mojo/signup-forms/Loader" ], function( L ) {
+					L.start( { "baseUrl": "mc.us11.list-manage.com", "uuid": "6d71860d429d3461309568b92", "lid": "05f39a2a20" } )
+				} )
+				document.cookie = "MCEvilPopupClosed=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+				document.cookie = "MCPopupClosed=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+			}
+			document.querySelector( '.wpc-subscribe-open' ).onclick = function() {
+				showMailingPopUp()
+			};
 		</script>
 		<?php
 	}
@@ -653,10 +637,8 @@ final class WPCampus_Network_Global {
 	/**
 	 * Customize the dropdown args for the multi author
 	 * post author dropdown so we can get all members.
-	 *
 	 * @param   $args - array - the default arguments.
 	 * @param   $post - object - the post object.
-	 *
 	 * @return  array - the filtered arguments.
 	 */
 	public function filter_multi_author_primary_dropdown_args( $args, $post ) {
@@ -671,20 +653,18 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Filters the returned oEmbed HTML.
-	 *
-	 * @param   string - $return - The returned oEmbed HTML.
-	 * @param   object - $data - A data object result from an oEmbed provider.
-	 * @param   string - $url - The URL of the content to be embedded.
-	 *
+	 * @param string - $return - The returned oEmbed HTML.
+	 * @param object - $data - A data object result from an oEmbed provider.
+	 * @param string - $url - The URL of the content to be embedded.
 	 * @return  string - the HTML.
 	 */
 	public function filter_oembed_dataparse( $return, $data, $url ) {
-
 		// Get title from embed data to start.
 		$title = ! empty( $data->title ) ? $data->title : '';
 
 		// If no embed title, search the return markup for a title attribute.
-		$preg_match     = '/title\=[\"|\\\']{1}([^\"\\\']*)[\"|\\\']{1}/i';
+		$preg_match = '/title\=[\"|\\\']{1}([^\"\\\']*)[\"|\\\']{1}/i';
+
 		$has_title_attr = preg_match( $preg_match, $return, $matches );
 		if ( $has_title_attr && ! empty( $matches[1] ) ) {
 			$title = $matches[1];
@@ -693,7 +673,6 @@ final class WPCampus_Network_Global {
 		// Add embed type as title prefix.
 		if ( $title && ! empty( $data->type ) ) {
 			switch ( $data->type ) {
-
 				// Capitalize first word.
 				case 'video':
 					$title = sprintf( __( '%s:', 'wpcampus-network' ), ucfirst( $data->type ) ) . ' ' . $title;
@@ -707,6 +686,7 @@ final class WPCampus_Network_Global {
 		 * If the title attribute already
 		 * exists, replace with new value.
 		 *
+
 		 * Otherwise, add the title attribute.
 		 */
 		if ( $has_title_attr ) {
@@ -721,10 +701,8 @@ final class WPCampus_Network_Global {
 	/**
 	 * Make sure we can use any post type in
 	 * the Gravity Forms custom post type extension.
-	 *
-	 * @param   $args - array - arguments passed to get_post_types().
+	 * @param   $args    - array - arguments passed to get_post_types().
 	 * @param   $form_id - int - the form ID.
-	 *
 	 * @return  array - the arguments we want to use.
 	 */
 	public function filter_gfcpt_post_type_args( $args, $form_id ) {
@@ -734,10 +712,8 @@ final class WPCampus_Network_Global {
 	/**
 	 * Make sure we can use any taxonomy in
 	 * the Gravity Forms custom post type extension.
-	 *
-	 * @param   $args - array - arguments passed to get_taxonomies().
+	 * @param   $args    - array - arguments passed to get_taxonomies().
 	 * @param   $form_id - int - the form ID.
-	 *
 	 * @return  array - the arguments we want to use.
 	 */
 	public function filter_gfcpt_tax_args( $args, $form_id ) {
@@ -748,9 +724,7 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Filter the arguments for the FooGallery galleries post type.
-	 *
 	 * @param   $args - array - the original post type arguments.
-	 *
 	 * @return  array - the filtered arguments.
 	 */
 	public function filter_foogallery_cpt_args( $args ) {
@@ -768,16 +742,14 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Add content to top of login forms.
-	 *
 	 * @param   $content - string - the default content, which is blank.
-	 * @param   $args - array - the login form arguments.
-	 *
+	 * @param   $args    - array - the login form arguments.
 	 * @return  string - the returned content.
 	 */
 	public function add_to_login_form_top( $content, $args ) {
 		global $post;
 
-		$header         = '';
+		$header = '';
 		$default_header = 'h2';
 
 		$title = '';
@@ -785,7 +757,7 @@ final class WPCampus_Network_Global {
 
 			if ( is_singular() && ! empty( $post->ID ) ) {
 				$header = get_post_meta( $post->ID, 'wpcampus_login_form_header', true );
-				$title  = get_post_meta( $post->ID, 'wpcampus_login_form_title', true );
+				$title = get_post_meta( $post->ID, 'wpcampus_login_form_title', true );
 
 				if ( ! empty( $title ) ) {
 					$title = strip_tags( $title, '<em><strong>' );
@@ -841,7 +813,7 @@ final class WPCampus_Network_Global {
 			echo json_encode(
 				array(
 					'loggedin' => false,
-				    'message'  => $user_signon->get_error_message(),
+					'message'  => $user_signon->get_error_message(),
 				)
 			);
 		} else {
