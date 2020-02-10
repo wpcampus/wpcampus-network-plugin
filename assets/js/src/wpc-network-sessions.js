@@ -259,6 +259,31 @@
 		// Update the content.
 		$sessionsCont.find('.wpcampus-sessions-filters').html( process_filters( filters ).trim() );
 
+		// Reset the filters.
+		$sessionsCont.find('#wpc-session-filter-reset').on('click',function(e){
+
+			// Will be true if we can update items render.
+			let result = false;
+
+			$sessionsCont.find( 'input.wpcampus-sessions-filter, select.wpcampus-sessions-filter' ).each(function(){
+
+				if ($(this).prop('checked')) {
+					$(this).removeAttr("checked");
+				} else if ($(this).hasClass('wpcampus-sessions-filter--select')) {
+					$(this).find("option:selected").removeAttr("selected");
+				} else {
+					$(this).val("");
+				}
+
+				result = $sessionsCont.update_sessions_data_from_filter($(this));
+
+			});
+
+			if ( true === result ) {
+				$sessionsCont.render_wpc_sessions_reset_focus();
+			}
+		});
+
 		$sessionsCont.find('.wpcampus-sessions-filters-form').on('submit',function(e){
 			e.preventDefault();
 
@@ -548,15 +573,15 @@
 
 	// Prints session date in site time.
     Handlebars.registerHelper('session_date', function() {
-    	if ( ! this.post_date ) {
+    	if ( ! this.event_date ) {
     		return null;
     	}
 
-    	let origDate = this.post_date,
+    	let origDate = this.event_date,
 			dateSplit = origDate.split(' '),
     		newDate = dateSplit.join('T'),
     		dateString = '',
-    		sessionDate = new Date( newDate ), //this.post_date_gmt
+    		sessionDate = new Date( newDate ), //this.event_date_gmt
     		month = sessionDate.getMonth(),
     		months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
@@ -576,9 +601,6 @@
 	});
 
     Handlebars.registerHelper( 'media_thumbnail', function(defaultThumb) {
-    	if (!this.session_video_url) {
-    		return defaultThumb;
-    	}
-    	return this.session_video_thumbnail ? this.session_video_thumbnail : defaultThumb;
+    	return defaultThumb;
 	});
 })(jQuery);
