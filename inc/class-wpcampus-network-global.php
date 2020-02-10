@@ -86,9 +86,10 @@ final class WPCampus_Network_Global {
 		// Removes default REST API functionality.
 		add_action( 'rest_api_init', array( $plugin, 'init_rest_api' ) );
 
-		// Add custom headers for the REST API.
-		add_filter( 'rest_pre_serve_request', array( $plugin, 'add_rest_headers' ) );
+		// Manage the REST API.
+		add_filter( 'rest_authentication_errors', [ $plugin, 'process_rest_authentication' ] );
 		add_filter( 'rest_user_query', [ $plugin, 'filter_rest_user_query' ], 10, 2 );
+		add_filter( 'rest_pre_serve_request', [ $plugin, 'add_rest_headers' ] );
 
 		// Register the network footer menu.
 		add_action( 'after_setup_theme', array( $plugin, 'register_network_footer_menu' ), 20 );
@@ -454,6 +455,39 @@ final class WPCampus_Network_Global {
 		// Remove the default headers so we can add our own.
 		remove_filter( 'rest_pre_serve_request', 'rest_send_cors_headers' );
 
+	}
+
+	/**
+	 * Restrict access to specific routes.
+	 *
+	 * @param $access
+	 *
+	 * @return WP_Error
+	 */
+	public function process_rest_authentication( $access ) {
+
+		$current_route = $this->helper->get_current_rest_route();
+
+		// We're only restricting for the users endpoint and its children.
+		if ( substr( $current_route, 0, 12 ) !== '/wp/v2/users' ) {
+			return $access;
+		}
+
+		// @TODO check for specific permissions?
+		if ( current_user_can( 'manage_options' ) ) {
+			return $access;
+		}
+
+		$error_message = esc_html__( 'Only authenticated users can access this route.', 'wpcampus-network' );
+		$rest_required_code = rest_authorization_required_code();
+
+		if ( is_wp_error( $access ) ) {
+			$access->add( 'rest_cannot_access', $error_message, array( 'status' => $rest_required_code ) );
+
+			return $access;
+		}
+
+		return new WP_Error( 'rest_cannot_access', $error_message, array( 'status' => $rest_required_code ) );
 	}
 
 	/**
