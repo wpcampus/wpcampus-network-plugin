@@ -5,6 +5,7 @@
  * global plugin functionality.
  * This class is initiated on every page
  * load and does not have to be instantiated.
+ *
  * @class       WPCampus_Network_Global
  * @package     WPCampus Network
  */
@@ -12,12 +13,14 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Whether or not debug is enabled.
+	 *
 	 * @var bool
 	 */
 	private $debug = false;
 
 	/**
 	 * Will hold the main "helper" class.
+	 *
 	 * @var WPCampus_Network
 	 */
 	private $helper;
@@ -243,10 +246,12 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Filter comment URLs to only use author URLs.
+	 *
 	 * @param string $return     The HTML-formatted comment author link.
 	 *                           Empty for an invalid URL.
 	 * @param string $author     The comment author's username.
 	 * @param int    $comment_ID The comment ID.
+	 *
 	 * @return string
 	 */
 	public function filter_comment_author_link( $return, $author, $comment_id ) {
@@ -295,7 +300,9 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Set the default user role to "member".
+	 *
 	 * @param $default_role
+	 *
 	 * @return string
 	 */
 	public function set_default_user_role( $default_role ) {
@@ -304,7 +311,9 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Sets the default thumbnail size.
+	 *
 	 * @param mixed - $default The default value to return if the option does not exist in the database.
+	 *
 	 * @return int - the media size
 	 */
 	public function set_thumbnail_size( $default ) {
@@ -313,7 +322,9 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Sets the default medium size.
+	 *
 	 * @param mixed - $default The default value to return if the option does not exist in the database.
+	 *
 	 * @return int - the media size
 	 */
 	public function set_medium_size_w( $default ) {
@@ -326,7 +337,9 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Sets the default thumbnail size.
+	 *
 	 * @param mixed - $default The default value to return if the option does not exist in the database.
+	 *
 	 * @return int - the media size
 	 */
 	public function set_large_size_w( $default ) {
@@ -339,10 +352,12 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Filter user capabilities.
+	 *
 	 * @param array - $allcaps - An array of all the user's capabilities.
 	 * @param array - $caps - Actual capabilities for meta capability.
 	 * @param array - $args - Optional parameters passed to has_cap(), typically object ID.
 	 * @param WP_User - $user - The user object.
+	 *
 	 * @return  array - the filtered capabilities.
 	 */
 	public function filter_user_has_cap( $allcaps, $caps, $args, $user ) {
@@ -430,6 +445,7 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Fires when preparing to serve an API request.
+	 *
 	 * @param   $wp_rest_server - WP_REST_Server - Server object.
 	 */
 	public function init_rest_api( $wp_rest_server ) {
@@ -450,15 +466,17 @@ final class WPCampus_Network_Global {
 	 * @return  bool - the filtered value
 	 */
 	public function add_rest_headers( $value ) {
-
-		// Only allow from WPCampus domains.
-		$origin = get_http_origin();
-		if ( $origin ) {
-
-			// Only allow from production or Pantheon domains.
-			if ( preg_match( '/([^\.]\.)?wpcampus\.org/i', $origin )
-			     || preg_match( '/([^\-\.]+\-)wpcampus\.pantheonsite\.io/i', $origin ) ) {
-				header( 'Access-Control-Allow-Origin: ' . esc_url_raw( $origin ) );
+		if ( preg_match( '/^\/wp\-json\/wpcampus\/data\/notifications/i', $_SERVER['REQUEST_URI'] ) ) {
+			header( 'Access-Control-Allow-Origin: *' );
+		} else {
+			// Only allow from WPCampus domains.
+			$origin = get_http_origin();
+			if ( $origin ) {
+				// Only allow from production or Pantheon domains.
+				if ( preg_match( '/([^\.]\.)?wpcampus\.org/i', $origin )
+				     || preg_match( '/([^\-\.]+\-)wpcampus\.pantheonsite\.io/i', $origin ) ) {
+					header( 'Access-Control-Allow-Origin: ' . esc_url_raw( $origin ) );
+				}
 			}
 		}
 
@@ -473,6 +491,7 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Register the network footer menu.
+	 *
 	 * @return  void
 	 */
 	function register_network_footer_menu() {
@@ -483,6 +502,7 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Enqueue our front-end scripts.
+	 *
 	 * @return void
 	 */
 	public function enqueue_scripts_styles() {
@@ -637,8 +657,10 @@ final class WPCampus_Network_Global {
 	/**
 	 * Customize the dropdown args for the multi author
 	 * post author dropdown so we can get all members.
+	 *
 	 * @param   $args - array - the default arguments.
 	 * @param   $post - object - the post object.
+	 *
 	 * @return  array - the filtered arguments.
 	 */
 	public function filter_multi_author_primary_dropdown_args( $args, $post ) {
@@ -653,9 +675,11 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Filters the returned oEmbed HTML.
+	 *
 	 * @param string - $return - The returned oEmbed HTML.
 	 * @param object - $data - A data object result from an oEmbed provider.
 	 * @param string - $url - The URL of the content to be embedded.
+	 *
 	 * @return  string - the HTML.
 	 */
 	public function filter_oembed_dataparse( $return, $data, $url ) {
@@ -701,8 +725,10 @@ final class WPCampus_Network_Global {
 	/**
 	 * Make sure we can use any post type in
 	 * the Gravity Forms custom post type extension.
+	 *
 	 * @param   $args    - array - arguments passed to get_post_types().
 	 * @param   $form_id - int - the form ID.
+	 *
 	 * @return  array - the arguments we want to use.
 	 */
 	public function filter_gfcpt_post_type_args( $args, $form_id ) {
@@ -712,8 +738,10 @@ final class WPCampus_Network_Global {
 	/**
 	 * Make sure we can use any taxonomy in
 	 * the Gravity Forms custom post type extension.
+	 *
 	 * @param   $args    - array - arguments passed to get_taxonomies().
 	 * @param   $form_id - int - the form ID.
+	 *
 	 * @return  array - the arguments we want to use.
 	 */
 	public function filter_gfcpt_tax_args( $args, $form_id ) {
@@ -724,7 +752,9 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Filter the arguments for the FooGallery galleries post type.
+	 *
 	 * @param   $args - array - the original post type arguments.
+	 *
 	 * @return  array - the filtered arguments.
 	 */
 	public function filter_foogallery_cpt_args( $args ) {
@@ -742,8 +772,10 @@ final class WPCampus_Network_Global {
 
 	/**
 	 * Add content to top of login forms.
+	 *
 	 * @param   $content - string - the default content, which is blank.
 	 * @param   $args    - array - the login form arguments.
+	 *
 	 * @return  string - the returned content.
 	 */
 	public function add_to_login_form_top( $content, $args ) {
@@ -1092,6 +1124,7 @@ final class WPCampus_Network_Global {
             </form>
 
 
+
 		</script>
 		<script id="wpc-sessions-template" type="text/x-handlebars-template">
             <div class="wpcampus-sessions-count" aria-live="polite"></div>
@@ -1154,6 +1187,7 @@ final class WPCampus_Network_Global {
                 </div>
                 {{/each}}
             </div>
+
 
 		</script>
 		<?php
