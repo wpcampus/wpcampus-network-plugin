@@ -480,8 +480,9 @@ final class WPCampus_Network_Global {
 			}
 		}
 
+		// Only allow GET requests.
 		header( 'Access-Control-Allow-Methods: GET' );
-		header( 'Access-Control-Allow-Credentials: true' );
+		//header( 'Access-Control-Allow-Credentials: true' );
 
 		// Disable the cache.
 		$this->add_header_nocache();
