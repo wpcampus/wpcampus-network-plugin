@@ -33,7 +33,7 @@ final class WPCampus_Network {
 	 *
 	 */
 	private $speaker_app_deadline_dt,
-		$speaker_app_deadline_default_dt ='5/3/2019 23:59:59';
+		$speaker_app_deadline_default_dt ='3/10/2020 23:59:59';
 
 	/**
 	 * List of components to enable and disable.
