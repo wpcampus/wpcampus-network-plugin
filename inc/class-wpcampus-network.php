@@ -1028,7 +1028,11 @@ final class WPCampus_Network {
 	 *
 	 * @return string|HTML - the markup.
 	 */
-	public function get_social_media_icons() {
+	public function get_social_media_icons( $args = [] ) {
+
+	    $defaults = [];
+
+		$args = wp_parse_args( $args, $defaults );
 
 		$images_dir = $this->get_plugin_dir() . 'assets/images/';
 		$social = array(
@@ -1078,8 +1082,8 @@ final class WPCampus_Network {
 	 *
 	 * @return void
 	 */
-	public function print_social_media_icons() {
-		echo $this->get_social_media_icons();
+	public function print_social_media_icons( $args = [] ) {
+		echo $this->get_social_media_icons( $args );
 	}
 
 	/**

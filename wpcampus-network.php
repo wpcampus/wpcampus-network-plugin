@@ -169,8 +169,8 @@ function wpcampus_print_watch_videos( $html_id, $args = array() ) {
 /**
  * Interact with social media.
  */
-function wpcampus_print_social_media_icons() {
-	wpcampus_network()->print_social_media_icons();
+function wpcampus_print_social_media_icons( $args = [] ) {
+	wpcampus_network()->print_social_media_icons( $args );
 }
 
 /**
