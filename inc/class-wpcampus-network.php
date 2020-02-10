@@ -29,6 +29,8 @@ final class WPCampus_Network {
 		$plugin_basename,
 		$network_site_url;
 
+	private $site_timezone;
+
 	/**
 	 *
 	 */
@@ -141,6 +143,26 @@ final class WPCampus_Network {
 		$this->plugin_basename = 'wpcampus-network-plugin/wpcampus-network.php';
 
 		return $this->plugin_basename;
+	}
+
+	/**
+	 * Get the site's timezone abbreviation.
+	 */
+	public function get_site_timezone() {
+
+		// If already set, return.
+		if ( isset( $this->site_timezone ) ) {
+			return $this->site_timezone;
+		}
+
+		// Get from settings.
+		$timezone = get_option( 'timezone_string' );
+		if ( empty( $timezone ) ) {
+			$timezone = 'UTC';
+		}
+
+		// Get abbreviation.
+		return $this->site_timezone = new DateTimeZone( $timezone );
 	}
 
 	/**
