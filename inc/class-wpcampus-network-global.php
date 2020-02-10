@@ -88,6 +88,7 @@ final class WPCampus_Network_Global {
 
 		// Add custom headers for the REST API.
 		add_filter( 'rest_pre_serve_request', array( $plugin, 'add_rest_headers' ) );
+		add_filter( 'rest_user_query', [ $plugin, 'filter_rest_user_query' ], 10, 2 );
 
 		// Register the network footer menu.
 		add_action( 'after_setup_theme', array( $plugin, 'register_network_footer_menu' ), 20 );
@@ -456,8 +457,37 @@ final class WPCampus_Network_Global {
 	}
 
 	/**
-	 * Filters whether the request has already been served.
+	 * Filter the main user REST query.
 	 *
+	 * @param $prepared_args - array - Arguments for WP_User_Query.
+	 * @param $request       - WP_REST_Request - The current request.
+	 *
+	 * @return mixed
+	 */
+	public function filter_rest_user_query( $prepared_args, $request ) {
+
+		$prepared_args['number'] = - 1;
+
+		$post_types = get_post_types( [ 'show_in_rest' => true, 'public' => true ], 'names' );
+
+		$post_types_remove = [ 'attachment' ];
+
+		foreach ( $post_types_remove as $post_type ) {
+			if ( ! isset( $post_types[ $post_type ] ) ) {
+				continue;
+			}
+			unset( $post_types[ $post_type ] );
+		}
+
+		$post_types = apply_filters( 'wpcampus_rest_published_post_types', $post_types );
+
+		$prepared_args['has_published_posts'] = $post_types;
+
+		return $prepared_args;
+	}
+
+	/**
+	 * Filters whether the request has already been served.
 	 * We use this hook to add custom CORS headers
 	 * and to disable the cache.
 	 *
