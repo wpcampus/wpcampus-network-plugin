@@ -182,3 +182,7 @@ function wpcampus_get_login_form( $args = array() ) {
 function wpcampus_print_login_form( $args = array() ) {
 	wpcampus_network()->print_login_form( $args );
 }
+
+function wpcampus_get_current_rest_route() {
+	return wpcampus_network()->get_current_rest_route();
+}

@@ -165,6 +165,16 @@ final class WPCampus_Network {
 		return $this->site_timezone = new DateTimeZone( $timezone );
 	}
 
+	public function get_current_rest_route() {
+		$global_query = $GLOBALS['wp']->query_vars;
+		if ( empty( $global_query['rest_route'] ) ) {
+			return '';
+		}
+		$rest_route = $global_query['rest_route'];
+
+		return '/' == $rest_route ? $rest_route : untrailingslashit( $rest_route );
+	}
+
 	/**
 	 *
 	 */
