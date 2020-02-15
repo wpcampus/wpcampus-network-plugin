@@ -23,6 +23,7 @@ $plugin_dir = plugin_dir_path( __FILE__ );
 
 require_once $plugin_dir . 'inc/class-wpcampus-network.php';
 require_once $plugin_dir . 'inc/class-wpcampus-network-global.php';
+require_once $plugin_dir . 'inc/class-wpcampus-network-analytics.php';
 require_once $plugin_dir . 'inc/wpcampus-forms.php';
 
 if ( is_admin() ) {
