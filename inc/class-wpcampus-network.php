@@ -51,6 +51,13 @@ final class WPCampus_Network {
 	);
 
 	/**
+	 * Will hold the current server environment.
+	 *
+	 * @var string
+	 */
+	private $environment;
+
+	/**
 	 * Holds the class instance.
 	 *
 	 * @var WPCampus_Network
@@ -99,6 +106,19 @@ final class WPCampus_Network {
 	 * Start your engines.
 	 */
 	protected function __construct() { }
+
+	/**
+	 * Returns our current server environment.
+	 *
+	 * @return string
+	 */
+	public function get_environment() {
+		if ( isset( $this->environment ) ) {
+			return $this->environment;
+		}
+		$this->environment = ! empty( $_ENV['PANTHEON_ENVIRONMENT'] ) ? $_ENV['PANTHEON_ENVIRONMENT'] : '';
+		return $this->environment;
+	}
 
 	/**
 	 * Returns the absolute URL to
