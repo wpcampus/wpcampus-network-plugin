@@ -13,11 +13,9 @@ final class WPCampus_Network {
 	 * directory path, and plugin
 	 * basename for the plugin
 	 * directory.
-	 *
 	 * Plugin basename holds
 	 * the relative "path"
 	 * to the main plugin file.
-	 *
 	 * Network site URLs holds
 	 * the site url for the "main"
 	 * site on the network.
@@ -31,16 +29,13 @@ final class WPCampus_Network {
 
 	private $site_timezone;
 
-	/**
-	 *
-	 */
 	private $speaker_app_deadline_dt,
-		$speaker_app_deadline_default_dt ='3/10/2020 23:59:59';
+		$speaker_app_deadline_default_dt = '3/10/2020 23:59:59';
 
 	/**
 	 * List of components to enable and disable.
 	 */
-	private $components = array(
+	private $components = [
 		'banner'          => false,
 		'notifications'   => false,
 		'coc'             => false,
@@ -48,7 +43,7 @@ final class WPCampus_Network {
 		'mailchimp_popup' => false,
 		'sessions'        => false,
 		'videos'          => false,
-	);
+	];
 
 	/**
 	 * Will hold the current server environment.
@@ -71,7 +66,7 @@ final class WPCampus_Network {
 	 */
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {
-			$class_name     = __CLASS__;
+			$class_name = __CLASS__;
 			self::$instance = new $class_name;
 		}
 
@@ -100,7 +95,7 @@ final class WPCampus_Network {
 
 	public function __wakeup() { }
 
-	public function __call( $method = '', $args = array() ) { }
+	public function __call( $method = '', $args = [] ) { }
 
 	/**
 	 * Start your engines.
@@ -195,9 +190,6 @@ final class WPCampus_Network {
 		return '/' == $rest_route ? $rest_route : untrailingslashit( $rest_route );
 	}
 
-	/**
-	 *
-	 */
 	public function get_post_by_name( $name, $post_type = '' ) {
 		global $wpdb;
 		$query = $wpdb->prepare( "SELECT * FROM {$wpdb->posts} WHERE post_name = %s", $name );
@@ -225,7 +217,7 @@ final class WPCampus_Network {
 	/**
 	 * Enable and disable various network components.
 	 *
-	 * @param   string|array - $comp - list of components to enable
+	 * @param string|array - $comp - list of components to enable
 	 */
 	public function enable( $comp ) {
 		if ( ! is_array( $comp ) ) {
@@ -264,9 +256,6 @@ final class WPCampus_Network {
 		return ( true === $this->components[ $component ] );
 	}
 
-	/**
-	 *
-	 */
 	public function get_login_nonce_field() {
 		return wp_nonce_field( 'wpc_ajax_login', 'wpc_ajax_login_nonce', true, false );
 	}
@@ -280,31 +269,30 @@ final class WPCampus_Network {
 	 */
 	public function enqueue_base_script() {
 		$ver = '1.0';
-		wp_enqueue_script( 'wpc-network-base',
+		wp_enqueue_script(
+			'wpc-network-base',
 			trailingslashit( $this->get_plugin_url() ) . 'assets/js/wpc-network.min.js',
-			array(),
+			[],
 			null,
 			$ver
 		);
 	}
 
-	/**
-	 *
-	 */
 	public function enqueue_login_script() {
 
 		return;
 
 		// Enqueue login script.
 		$plugin_url = $this->get_plugin_url();
-		$js_dir     = trailingslashit( $plugin_url . 'assets/js' );
+		$js_dir = trailingslashit( $plugin_url . 'assets/js' );
 
-		wp_enqueue_script( 'wpc-ajax-login', $js_dir . 'wpc-network-login.min.js', array( 'jquery' ), null, true );
-		wp_localize_script( 'wpc-ajax-login',
+		wp_enqueue_script( 'wpc-ajax-login', $js_dir . 'wpc-network-login.min.js', [ 'jquery' ], null, true );
+		wp_localize_script(
+			'wpc-ajax-login',
 			'wpc_ajax_login',
-			array(
+			[
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
-			)
+			]
 		);
 	}
 
@@ -315,7 +303,7 @@ final class WPCampus_Network {
 	 */
 	public function assign_all_users_to_all_blogs() {
 
-		$users = get_users( array( 'fields' => 'id' ) );
+		$users = get_users( [ 'fields' => 'id' ] );
 		if ( empty( $users ) ) {
 			return;
 		}
@@ -335,12 +323,12 @@ final class WPCampus_Network {
 	public function assign_user_to_all_blogs( $user_id ) {
 
 		$all_blogs = get_sites(
-			array(
-                'public'   => 1,
-                'archived' => 0,
-                'spam'     => 0,
-                'deleted'  => 0,
-            )
+			[
+				'public'   => 1,
+				'archived' => 0,
+				'spam'     => 0,
+				'deleted'  => 0,
+			]
 		);
 
 		if ( empty( $all_blogs ) ) {
@@ -348,8 +336,8 @@ final class WPCampus_Network {
 		}
 
 		// Get user's existing blog info.
-		$user_existing_blogs    = get_blogs_of_user( $user_id );
-		$user_existing_blog_ids = ! empty( $user_existing_blogs ) ? wp_list_pluck( $user_existing_blogs, 'userblog_id' ) : array();
+		$user_existing_blogs = get_blogs_of_user( $user_id );
+		$user_existing_blog_ids = ! empty( $user_existing_blogs ) ? wp_list_pluck( $user_existing_blogs, 'userblog_id' ) : [];
 
 		/*
 		 * Loops through each blog. Checks if user
@@ -374,24 +362,24 @@ final class WPCampus_Network {
 	 *
 	 * @return string
 	 */
-	public function get_login_form( $args = array() ) {
+	public function get_login_form( $args = [] ) {
 
-		$defaults = array(
-			'redirect' => ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
-			'form_id' => 'loginform',
+		$defaults = [
+			'redirect'       => ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+			'form_id'        => 'loginform',
 			'label_username' => __( 'Username or Email Address' ),
 			'label_password' => __( 'Password' ),
 			'label_remember' => __( 'Remember Me' ),
-			'label_log_in' => __( 'Log In' ),
-			'id_username' => 'user_login',
-			'id_password' => 'user_pass',
-			'id_remember' => 'rememberme',
-			'id_submit' => 'wp-submit',
-			'remember' => true,
+			'label_log_in'   => __( 'Log In' ),
+			'id_username'    => 'user_login',
+			'id_password'    => 'user_pass',
+			'id_remember'    => 'rememberme',
+			'id_submit'      => 'wp-submit',
+			'remember'       => true,
 			'value_username' => '',
 			'value_remember' => false,
-			'wpc_ajax' => true,
-		);
+			'wpc_ajax'       => true,
+		];
 
 		$args = wp_parse_args( $args, $defaults );
 
@@ -404,7 +392,7 @@ final class WPCampus_Network {
 	/**
 	 * @param array $args
 	 */
-	public function print_login_form( $args = array() ) {
+	public function print_login_form( $args = [] ) {
 		echo $this->get_login_form( $args );
 	}
 
@@ -413,7 +401,7 @@ final class WPCampus_Network {
 	 *
 	 * @return string|HTML - the markup.
 	 */
-	public function get_network_banner( $args = array() ) {
+	public function get_network_banner( $args = [] ) {
 
 		// Make sure it's enabled.
 		if ( ! $this->is_enabled( 'banner' ) ) {
@@ -423,26 +411,26 @@ final class WPCampus_Network {
 		// Parse incoming $args with defaults.
 		$args = wp_parse_args(
 			$args,
-			array(
+			[
 				'skip_nav_id'    => '',
 				'skip_nav_label' => __( 'Skip to content', 'wpcampus-network' ),
-			)
+			]
 		);
 
 		// Add the banner.
 		$banner = '<nav id="wpc-network-banner" aria-label="' . __( 'Network-wide', 'wpcampus-network' ) . '">';
 
-            // Add skip navigation.
-            if ( ! empty( $args['skip_nav_id'] ) ) {
+		// Add skip navigation.
+		if ( ! empty( $args['skip_nav_id'] ) ) {
 
-                // Make sure we have a valid ID.
-                $skip_nav_id = preg_replace( '/[^a-z0-9\-]/i', '', $args['skip_nav_id'] );
-                if ( ! empty( $skip_nav_id ) ) {
-                    $banner .= sprintf( '<a href="#%s" class="wpc-skip-to-content">%s</a>', $skip_nav_id, $args['skip_nav_label'] );
-                }
-            }
+			// Make sure we have a valid ID.
+			$skip_nav_id = preg_replace( '/[^a-z0-9\-]/i', '', $args['skip_nav_id'] );
+			if ( ! empty( $skip_nav_id ) ) {
+				$banner .= sprintf( '<a href="#%s" class="wpc-skip-to-content">%s</a>', $skip_nav_id, $args['skip_nav_label'] );
+			}
+		}
 
-		    $banner .= '<div class="wpc-container">
+		$banner .= '<div class="wpc-container">
 				<div class="wpc-logo">
 					<a href="https://wpcampus.org">
 						<?xml version="1.0" encoding="utf-8"?>
@@ -489,7 +477,7 @@ final class WPCampus_Network {
 	 *
 	 * @return void
 	 */
-	public function print_network_banner( $args = array() ) {
+	public function print_network_banner( $args = [] ) {
 		echo $this->get_network_banner( $args );
 	}
 
@@ -554,9 +542,6 @@ final class WPCampus_Network {
 		//$this->print_audit_callout();
 	}
 
-	/**
-	 *
-	 */
 	public function print_audit_webinar_callout() {
 		?>
 		<div class="panel center">
@@ -567,9 +552,6 @@ final class WPCampus_Network {
 		<?php
 	}
 
-	/**
-	 *
-	 */
 	public function print_audit_callout() {
 		?>
 		<div class="panel center">
@@ -580,9 +562,6 @@ final class WPCampus_Network {
 		<?php
 	}
 
-	/**
-	 *
-	 */
 	public function print_register_callout() {
 		?>
 		<div class="panel callout light-royal-blue light-blue center">
@@ -593,9 +572,6 @@ final class WPCampus_Network {
 		<?php
 	}
 
-	/**
-	 *
-	 */
 	public function print_livestream_callout() {
 		?>
 		<div class="panel callout light-royal-blue light-blue center">
@@ -620,10 +596,10 @@ final class WPCampus_Network {
 
 		$images_dir = "{$this->get_plugin_url()}assets/images/";
 
-		$home_url         = 'https://wpcampus.org/';
+		$home_url = 'https://wpcampus.org/';
 		$get_involved_url = 'https://wpcampus.org/get-involved/';
-		$github_url       = 'https://github.com/wpcampus/wpcampus-wp-theme';
-		$wp_org_url       = 'https://wordpress.org/';
+		$github_url = 'https://github.com/wpcampus/wpcampus-wp-theme';
+		$wp_org_url = 'https://wordpress.org/';
 
 		// Build the footer.
 		$footer = '<footer id="wpc-network-footer">
@@ -643,17 +619,17 @@ final class WPCampus_Network {
 		);
 
 		if ( empty( $footer_menu ) ) {
-		    $footer_menu = '<ul>
+			$footer_menu = '<ul>
                 <li><a href="https://wpcampus.org/about/">About WPCampus</a></li>
                 <li><a href="https://wpcampus.org/code-of-conduct/">Code of Conduct</a></li>
                 <li><a href="https://wpcampus.org/diversity/">Diversity, Equity, and Inclusion</a></li>
                 <li><a href="https://wpcampus.org/contact/">Contact us</a></li>
             </ul>';
-        }
+		}
 
 		if ( ! empty( $footer_menu ) ) {
 			$footer .= '<nav id="wpc-network-footer-menu" class="wpc-network-footer-menu" aria-label="' . esc_attr__( 'Footer', 'wpcampus-network' ) . '">' . $footer_menu . '</nav>';
-        }
+		}
 
 		$footer .= '<p class="message"><strong>' . sprintf( __( '%1$s is a community of networking, resources, and events for those using %2$s in the world of higher education.', 'wpcampus-network' ), 'WPCampus', 'WordPress' ) . '</strong><br />' . sprintf( __( 'If you are not a member of the %1$s community, we\'d love for you to %2$sget involved%3$s.', 'wpcampus-network' ), 'WPCampus', '<a href="' . $get_involved_url . '">', '</a>' ) . '</p>
 				<p class="disclaimer">' . sprintf( __( 'This site is powered by %1$s. You can view, and contribute to, the theme on %2$s.', 'wpcampus-network' ), '<a href="' . $wp_org_url . '">WordPress</a>', '<a href="' . $github_url . '">GitHub</a>' ) . '<br />' . sprintf( __( '%1$s, and our events, are not %2$s and are not affiliated with the %3$s Foundation.', 'wpcampus-network' ), 'WPCampus', 'WordCamps', 'WordPress' ) . '</p>' .
@@ -682,32 +658,29 @@ final class WPCampus_Network {
 
 		$css_ver = 4;
 
-	    ?>
-        <link href="<?php echo trailingslashit( $this->get_plugin_url() . 'assets/css' ); ?>wpc-network-mailchimp.min.css?ver=<?php echo $css_ver; ?>" rel="stylesheet" type="text/css">
-        <aside class="wpc-mc-signup" aria-label="<?php esc_attr_e( 'Signup for newsletters', 'wpcampus-network' ); ?>">
-            <div class="wpc-container">
-                <h2><?php printf( __( 'Subscribe to %s updates', 'wpcampus-network' ), 'WPCampus' ); ?></h2>
+		?>
+		<link href="<?php echo trailingslashit( $this->get_plugin_url() . 'assets/css' ); ?>wpc-network-mailchimp.min.css?ver=<?php echo $css_ver; ?>" rel="stylesheet" type="text/css">
+		<aside class="wpc-mc-signup" aria-label="<?php esc_attr_e( 'Signup for newsletters', 'wpcampus-network' ); ?>">
+			<div class="wpc-container">
+				<h2><?php printf( __( 'Subscribe to %s updates', 'wpcampus-network' ), 'WPCampus' ); ?></h2>
+				<div class="wpc-mc-cols">
+					<div class="wpc-mc-text">
+						<h3><?php printf( __( 'The %s newsletter', 'wpcampus-network' ), 'WPCampus' ); ?></h3>
+						<p>This newsletter is sent out manually and includes broad updates about our community and conferences.</p>
+					</div>
+					<a class="button wpc-mc-button" href="http://eepurl.com/dukZvP"><?php _e( 'Subscribe to our newsletter', 'wpcampus-network' ); ?></a>
+					<div class="wpc-mc-text">
+						<h3><?php printf( __( '%s blog updates', 'wpcampus-network' ), 'WPCampus' ); ?></h3>
+						<p>This mailing list sends an automated email that lets you know when we post to the WPCampus blog.</p>
+					</div>
+					<a class="button wpc-mc-button" href="http://eepurl.com/dOd-Q9"><?php _e( 'Subscribe to blog updates', 'wpcampus-network' ); ?></a>
+				</div>
+				<p class="wpc-mc-disclaimer">You can unsubscribe at any time by clicking the link in the footer of our emails. We use <a href="https://mailchimp.com/">Mailchimp</a> as our marketing platform. By subscribing, you acknowledge that your information will be transferred to Mailchimp for processing. <a href="https://mailchimp.com/legal/" target="_blank">Learn more about Mailchimp's privacy practices.</a></p>
+			</div>
+		</aside>
+		<?php
 
-                <div class="wpc-mc-cols">
-                    <div class="wpc-mc-text">
-                        <h3><?php printf( __( 'The %s newsletter', 'wpcampus-network' ), 'WPCampus' ); ?></h3>
-                        <p>This newsletter is sent out manually and includes broad updates about our community and conferences.</p>
-                    </div>
-                    <a class="button wpc-mc-button" href="http://eepurl.com/dukZvP"><?php _e( 'Subscribe to our newsletter', 'wpcampus-network' ); ?></a>
-
-                    <div class="wpc-mc-text">
-                        <h3><?php printf( __( '%s blog updates', 'wpcampus-network' ), 'WPCampus' ); ?></h3>
-                        <p>This mailing list sends an automated email that lets you know when we post to the WPCampus blog.</p>
-                    </div>
-                    <a class="button wpc-mc-button" href="http://eepurl.com/dOd-Q9"><?php _e( 'Subscribe to blog updates', 'wpcampus-network' ); ?></a>
-                </div>
-
-                <p class="wpc-mc-disclaimer">You can unsubscribe at any time by clicking the link in the footer of our emails. We use <a href="https://mailchimp.com/">Mailchimp</a> as our marketing platform. By subscribing, you acknowledge that your information will be transferred to Mailchimp for processing. <a href="https://mailchimp.com/legal/" target="_blank">Learn more about Mailchimp's privacy practices.</a></p>
-            </div>
-        </aside>
-        <?php
-
-	    return;
+		return;
 		?>
 		<link href="//cdn-images.mailchimp.com/embedcode/classic-10_7.css" rel="stylesheet" type="text/css">
 		<link href="<?php echo trailingslashit( $this->get_plugin_url() . 'assets/css' ); ?>wpc-network-mailchimp.min.css?ver=<?php echo $css_ver; ?>" rel="stylesheet" type="text/css">
@@ -761,10 +734,10 @@ final class WPCampus_Network {
 	public function print_sessions() {
 
 		// Get filters.
-		$args    = [];
+		$args = [];
 		$filters = [
-		    'assets'  => [ 'slides', 'video' ],
-            'orderby' => [ 'date', 'title' ],
+			'assets'  => [ 'slides', 'video' ],
+			'orderby' => [ 'date', 'title' ],
 			'order'   => [ 'asc', 'desc' ],
 			'event'   => [
 				'wpcampus-2019',
@@ -790,9 +763,9 @@ final class WPCampus_Network {
 
 					if ( in_array( $value, $options ) ) {
 
-					    if ( ! is_array( $args[ $filter ] ) ) {
-						    $args[ $filter ] = [];
-                        }
+						if ( ! is_array( $args[ $filter ] ) ) {
+							$args[ $filter ] = [];
+						}
 
 						$args[ $filter ][] = $value;
 
@@ -824,9 +797,9 @@ final class WPCampus_Network {
 		// Create the string.
 		$data_str = '';
 		foreach ( $args as $key => $value ) {
-		    if ( is_array( $value ) ) {
-			    $value = implode( ',', $value );
-            }
+			if ( is_array( $value ) ) {
+				$value = implode( ',', $value );
+			}
 			$data_str .= ' data-' . $key . '="' . esc_attr( $value ) . '"';
 		}
 
@@ -849,15 +822,15 @@ final class WPCampus_Network {
 	 *
 	 * @return void
 	 */
-	public function print_watch_filters( $videos_id, $args = array() ) {
+	public function print_watch_filters( $videos_id, $args = [] ) {
 
 		$args = wp_parse_args(
 			$args,
-			array(
+			[
 				'playlist' => null,
 				'category' => null,
 				'search'   => null,
-			)
+			]
 		);
 
 		// Remove empty filters.
@@ -866,20 +839,20 @@ final class WPCampus_Network {
 		// Get the playlists.
 		$playlists = get_terms(
 			'playlist',
-			array(
+			[
 				'hide_empty' => true,
-			)
+			]
 		);
 
 		// Get the categories.
 		$categories = get_terms(
 			'category',
-		    array(
+			[
 				'hide_empty' => true,
-		    )
+			]
 		);
 
-		$filters_class = array( 'wpc-watch-filters' );
+		$filters_class = [ 'wpc-watch-filters' ];
 
 		if ( ! empty( $args ) ) {
 			$filters_class[] = 'has-filters';
@@ -897,7 +870,7 @@ final class WPCampus_Network {
 					foreach ( $playlists as $playlist ) :
 						?>
 						<option value="<?php echo $playlist->slug; ?>"<?php selected( ! empty( $args['playlist'] ) && $args['playlist'] == $playlist->slug ); ?>><?php echo $playlist->name; ?></option>
-						<?php
+					<?php
 					endforeach;
 
 					?>
@@ -909,7 +882,7 @@ final class WPCampus_Network {
 					foreach ( $categories as $cat ) :
 						?>
 						<option value="<?php echo $cat->slug; ?>"<?php selected( ! empty( $args['category'] ) && $args['category'] == $cat->slug ); ?>><?php echo $cat->name; ?></option>
-						<?php
+					<?php
 					endforeach;
 
 					?>
@@ -932,19 +905,18 @@ final class WPCampus_Network {
 							foreach ( $authors as $author ) :
 								?>
 								<option value="<?php echo $author->nicename; ?>"<?php selected( ! empty( $args['author'] ) && $args['author'] == $author->nicename ); ?>><?php echo $author->display_name; ?></option>
-								<?php
+							<?php
 							endforeach;
 
 							?>
 						</select>
-						<?php
+					<?php
 					endif;
 				endif;
 
 				?>
-				<input type="search" class="search-videos" name="search" value="<?php echo ! empty( $args['search'] ) ? esc_attr( $args['search'] ) : ''; ?>" placeholder="<?php esc_attr_e( 'Search videos', 'wpcampus-network' ); ?>" title="<?php esc_attr_e( 'Search videos', '' ); ?>" />
-				<span role="button" tabindex="0" class="button red expand clear" aria-label="<?php esc_attr_e( 'Clear filters', 'wpcampus-network' ); ?>"><?php _e( 'Clear', 'wpcampus-network' ); ?></span>
-				<input type="submit" class="update-videos" value="<?php esc_attr_e( 'Update', 'wpcampus-network' ); ?>" title="<?php esc_attr_e( 'Update videos', 'wpcampus-network' ); ?>" />
+				<input type="search" class="search-videos" name="search" value="<?php echo ! empty( $args['search'] ) ? esc_attr( $args['search'] ) : ''; ?>" placeholder="<?php esc_attr_e( 'Search videos', 'wpcampus-network' ); ?>" title="<?php esc_attr_e( 'Search videos', '' ); ?>"/> <span role="button" tabindex="0" class="button red expand clear" aria-label="<?php esc_attr_e( 'Clear filters', 'wpcampus-network' ); ?>"><?php _e( 'Clear', 'wpcampus-network' ); ?></span>
+				<input type="submit" class="update-videos" value="<?php esc_attr_e( 'Update', 'wpcampus-network' ); ?>" title="<?php esc_attr_e( 'Update videos', 'wpcampus-network' ); ?>"/>
 			</form>
 		</div>
 		<?php
@@ -958,25 +930,25 @@ final class WPCampus_Network {
 	 *
 	 * @return string - the markup.
 	 */
-	public function print_watch_videos( $html_id, $args = array() ) {
+	public function print_watch_videos( $html_id, $args = [] ) {
 
 		$args = wp_parse_args(
 			$args,
-			array(
+			[
 				'show_event'   => true,
 				'show_filters' => true,
 				'playlist'     => null,
 				'category'     => null,
 				'search'       => null,
-			)
+			]
 		);
 
 		// Remove empty filters.
 		$args = array_filter( $args );
 
-		$watch_attrs = array();
+		$watch_attrs = [];
 
-		foreach ( array( 'playlist', 'category', 'search' ) as $key ) {
+		foreach ( [ 'playlist', 'category', 'search' ] as $key ) {
 			if ( ! empty( $args[ $key ] ) ) {
 				$watch_attrs[ $key ] = $args[ $key ];
 			}
@@ -1010,15 +982,7 @@ final class WPCampus_Network {
 					<div class="video-info">
 						<div class="video-title"><a href="{{permalink}}">{{{post_title}}}</a></div>
 						<div class="video-meta">
-							<?php
-
-							if ( isset( $args['show_event'] ) && true == $args['show_event'] ) :
-								?>
-								{{{video_event}}}
-								<?php
-							endif;
-
-							?>
+							<?php echo ( isset( $args['show_event'] ) && true == $args['show_event'] ) ? '{{{video_event}}}' : ''; ?>
 							{{#if authors}}
 							<ul class="video-authors">
 								{{#each authors}}
@@ -1048,40 +1012,41 @@ final class WPCampus_Network {
 	 */
 	public function get_social_media_icons( $args = [] ) {
 
-	    $defaults = [];
+		$defaults = [];
 
 		$args = wp_parse_args( $args, $defaults );
 
 		$images_dir = $this->get_plugin_dir() . 'assets/images/';
-		$social = array(
-			'slack' => array(
+		$social = [
+			'slack'    => [
 				'title' => sprintf( __( 'Join %1$s on %2$s', 'wpcampus-network' ), 'WPCampus', 'Slack' ),
 				'href'  => 'https://wpcampus.org/get-involved/',
-			),
-			'twitter' => array(
+			],
+			'twitter'  => [
 				'title' => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus-network' ), 'WPCampus', 'Twitter' ),
 				'href'  => 'https://twitter.com/wpcampusorg',
-			),
-			'facebook' => array(
+			],
+			'facebook' => [
 				'title' => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus-network' ), 'WPCampus', 'Facebook' ),
 				'href'  => 'https://www.facebook.com/wpcampus',
-			),
-			'youtube' => array(
+			],
+			'youtube'  => [
 				'title' => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus-network' ), 'WPCampus', 'YouTube' ),
 				'href'  => 'https://www.youtube.com/wpcampusorg',
-			),
-			'github' => array(
+			],
+			'github'   => [
 				'title' => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus-network' ), 'WPCampus', 'GitHub' ),
 				'href'  => 'https://github.com/wpcampus/',
-			),
-		);
+			],
+		];
 
 		$icons = '<nav class="social-media-icons" aria-label="' . __( 'Social media', 'wpcampus-network' ) . '"><ul>';
 
 		foreach ( $social as $key => $info ) {
 			$filename = "{$images_dir}{$key}.php";
 			if ( file_exists( $filename ) ) {
-				$icons .= sprintf( '<li class="%1$s"><a href="%2$s" title="%3$s">%4$s</a></li>',
+				$icons .= sprintf(
+					'<li class="%1$s"><a href="%2$s" title="%3$s">%4$s</a></li>',
 					$key,
 					$info['href'],
 					$info['title'],
@@ -1109,9 +1074,9 @@ final class WPCampus_Network {
 	 */
 	public function get_code_of_conduct() {
 
-		$output      = null;
+		$output = null;
 		$request_url = 'https://wpcampus.org/wp-json/wp/v2/pages/8716';
-		$request     = wp_safe_remote_get( $request_url );
+		$request = wp_safe_remote_get( $request_url );
 
 		// Get the content.
 		if ( '200' == wp_remote_retrieve_response_code( $request ) ) {
@@ -1205,9 +1170,13 @@ final class WPCampus_Network {
 			return '';
 		}
 
-		$args = shortcode_atts( array(
-			'format' => 'l, F j, Y',
-		), $args, 'wpc_speaker_app_deadline_date' );
+		$args = shortcode_atts(
+			[
+				'format' => 'l, F j, Y',
+			],
+			$args,
+			'wpc_speaker_app_deadline_date'
+		);
 
 		return $date->format( $args['format'] );
 	}
@@ -1229,16 +1198,17 @@ final class WPCampus_Network {
 			return '12 midnight PDT';
 		}
 
-		$args = shortcode_atts( array(
-			'format' => 'g:i a',
-		), $args, 'wpc_speaker_app_deadline_time' );
+		$args = shortcode_atts(
+			[
+				'format' => 'g:i a',
+			],
+			$args,
+			'wpc_speaker_app_deadline_time'
+		);
 
 		return $date->format( $args['format'] );
 	}
 
-	/**
-	 *
-	 */
 	public function content_only() {
 		?>
 		<!DOCTYPE html>
@@ -1249,36 +1219,30 @@ final class WPCampus_Network {
 				<?php wp_head(); ?>
 			</head>
 			<body <?php body_class(); ?>>
-			<?php
+				<?php
 
-			if ( have_posts() ) :
-				while ( have_posts() ) :
-					the_post();
+				if ( have_posts() ) :
+					while ( have_posts() ) :
+						the_post();
 
-					the_content();
+						the_content();
 
-				endwhile;
-			endif;
+					endwhile;
+				endif;
 
-			wp_footer();
+				wp_footer();
 
-			?>
+				?>
 			</body>
 		</html>
 		<?php
 	}
 
-	/**
-	 *
-	 */
 	public function get_comment_user_id( $comment_id ) {
 		global $wpdb;
 		return (int) $wpdb->get_var( $wpdb->prepare( " SELECT user_id FROM {$wpdb->comments} WHERE comment_ID = %d", $comment_id ) );
 	}
 
-	/**
-	 *
-	 */
 	public function html_redirect( $url ) {
 		if ( empty( $url ) ) {
 			$url = 'https://wpcampus.org/';
@@ -1286,12 +1250,12 @@ final class WPCampus_Network {
 		?>
 		<!DOCTYPE html>
 		<html>
-		<head>
-			<script type="text/javascript">
-				window.top.location.href = '<?php echo $url; ?>';
-			</script>
-		</head>
-		<body></body>
+			<head>
+				<script type="text/javascript">
+					window.top.location.href = '<?php echo $url; ?>';
+				</script>
+			</head>
+			<body></body>
 		</html>
 		<?php
 		exit;
