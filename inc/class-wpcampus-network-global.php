@@ -71,6 +71,8 @@ final class WPCampus_Network_Global {
 		add_filter( 'pre_option_large_size_w', array( $plugin, 'set_large_size_w' ) );
 		add_filter( 'pre_option_large_size_h', array( $plugin, 'set_large_size_h' ) );
 
+		add_filter( 'upload_mimes', [ $plugin, 'filter_upload_mimes' ], 20, 2 );
+
 		// When users are registered, make sure they're added to every site on the network.
 		add_action( 'user_register', array( $plugin, 'process_user_registration' ) );
 
@@ -350,6 +352,28 @@ final class WPCampus_Network_Global {
 
 	public function set_large_size_h( $default ) {
 		return 2000;
+	}
+
+	/**
+	 * Manage file types allowed for upload.
+	 *
+	 * @param array $types Mime types keyed by the file extension regex corresponding to
+	 *                                those types. 'swf' and 'exe' removed from full list. 'htm|html' also
+	 *                                removed depending on '$user' capabilities.
+	 * @param int|WP_User|null $user User ID, User object or null if not provided (indicates current user).
+	 *
+	 * @return array
+	 */
+	public function filter_upload_mimes( $types, $user ): array {
+
+		if ( empty( $types ) || ! is_array( $types ) ) {
+			$types = [];
+		}
+
+		// Allow SVGs.
+		$types['svg'] = 'image/svg+xml';
+
+		return $types;
 	}
 
 	/**
