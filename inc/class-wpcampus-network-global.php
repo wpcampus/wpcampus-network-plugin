@@ -113,8 +113,9 @@ final class WPCampus_Network_Global {
 		// Tweak FooGallery CPT args.
 		add_filter( 'foogallery_gallery_posttype_register_args', array( $plugin, 'filter_foogallery_cpt_args' ) );
 
-		// Add content to top of login forms.
+		// Add content to login forms.
 		add_filter( 'login_form_top', array( $plugin, 'add_to_login_form_top' ), 1, 2 );
+		add_filter( 'login_form_bottom', array( $plugin, 'add_to_login_form_bottom' ), 1, 2 );
 
 		add_shortcode( 'wpc_speaker_app_deadline_time', array( $plugin->helper, 'print_speaker_app_deadline_time' ) );
 		add_shortcode( 'wpc_speaker_app_deadline_date', array( $plugin->helper, 'print_speaker_app_deadline_date' ) );
@@ -915,6 +916,21 @@ final class WPCampus_Network_Global {
 		}
 
 		return $title . $message;
+	}
+
+	/**
+	 * Add content to bottom of login forms.
+	 *
+	 * @param   $content - string - the default content, which is blank.
+	 * @param   $args    - array - the login form arguments.
+	 *
+	 * @return  string - the returned content.
+	 */
+	public function add_to_login_form_bottom( $content, $args ) {
+
+		$message = '<p><a href="' . esc_url( wp_lostpassword_url() ) . '">Lost your password?</a></p>';
+
+		return $content . $message;
 	}
 
 	/**
