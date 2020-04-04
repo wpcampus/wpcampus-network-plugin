@@ -187,3 +187,7 @@ function wpcampus_print_login_form( $args = array() ) {
 function wpcampus_get_current_rest_route() {
 	return wpcampus_network()->get_current_rest_route();
 }
+
+function wpcampus_add_header_nocache() {
+	return wpcampus_network()->add_header_nocache();
+}

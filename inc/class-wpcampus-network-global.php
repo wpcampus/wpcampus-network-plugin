@@ -145,7 +145,7 @@ final class WPCampus_Network_Global {
 
 		// Disable cache for account pages.
 		if ( preg_match( '#^/my\-account/?#', $_SERVER['REQUEST_URI'] ) ) {
-			add_action( 'send_headers', array( $plugin, 'add_header_nocache' ), 15 );
+			add_action( 'send_headers', 'wpcampus_add_header_nocache', 15 );
 		}
 
 		// Don't cache specific pages.
@@ -163,7 +163,7 @@ final class WPCampus_Network_Global {
 		if ( array_key_exists( $_SERVER['HTTP_HOST'], $exclude_pages ) ) {
 			foreach ( $exclude_pages[ $_SERVER['HTTP_HOST'] ] as $page ) {
 				if ( preg_match( $page, $_SERVER['REQUEST_URI'] ) ) {
-					add_action( 'send_headers', array( $plugin, 'add_header_nocache' ), 15 );
+					add_action( 'send_headers', 'wpcampus_add_header_nocache', 15 );
 				}
 			}
 		}
@@ -853,13 +853,6 @@ final class WPCampus_Network_Global {
 		$args['capability_type'] = array( 'gallery', 'galleries' );
 
 		return $args;
-	}
-
-	/**
-	 * Disables cache.
-	 */
-	public function add_header_nocache() {
-		header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
 	}
 
 	/**
