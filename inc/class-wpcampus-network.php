@@ -1139,6 +1139,71 @@ final class WPCampus_Network {
 		echo $this->get_code_of_conduct_container();
 	}
 
+	public function print_posts( $args ) {
+		$args = shortcode_atts(
+			[
+				'blog'    => 1,
+				'heading' => 'Latest from our blog',
+			],
+			$args,
+			'wpcampus_print_posts'
+		);
+
+		if ( ! empty( $args['blog'] ) && is_numeric( $args['blog'] ) ) {
+			$blog_id = intval( $args['blog'] );
+		} else {
+			$blog_id = 1;
+		}
+
+		$blog_url = get_site_url( $blog_id );
+
+		if ( empty( $blog_url ) ) {
+			$blog_id = 1;
+			$blog_url = get_site_url( $blog_id );
+		}
+
+		$response = wp_safe_remote_get( $blog_url . '/wp-json/wp/v2/posts' );
+
+		if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
+			$posts = [];
+		} else {
+			$posts = wp_remote_retrieve_body( $response );
+
+			if ( ! empty( $posts ) ) {
+				$posts = json_decode( $posts );
+			}
+		}
+
+		if ( empty( $posts ) ) {
+			$markup = '<p><em>There are no blog posts.</em></p>';
+		} else {
+
+			$markup = '';
+			$post_index = 0;
+			$post_max = 1;
+			foreach ( $posts as $post ) {
+
+				if ( $post_index >= $post_max ) {
+					continue;
+				}
+
+				$post_markup = '<h3><a href="' . esc_url( $post->link ) . '">' . $post->title->rendered . '</a></h3>';
+
+				$post_markup .= $post->excerpt->rendered;
+
+				$markup .= $post_markup;
+
+				$post_index ++;
+			}
+		}
+
+		if ( ! empty( $args['heading'] ) ) {
+			$markup = '<h2>' . $args['heading'] . '</h2>' . $markup;
+		}
+
+		return '<div class="wpcampus-blog-posts">' . $markup . '<a class="button center" href="' . $blog_url . '/blog">Visit the WPCampus blog</a></div>';
+	}
+
 	/**
 	 * Get the date/time for the speaker app deadline.
 	 *

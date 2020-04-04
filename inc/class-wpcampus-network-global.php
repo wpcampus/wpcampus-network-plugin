@@ -123,6 +123,8 @@ final class WPCampus_Network_Global {
 		add_shortcode( 'wpc_print_code_of_conduct', array( $plugin->helper, 'get_code_of_conduct' ) );
 		add_shortcode( 'wpc_print_content', array( $plugin, 'get_content_for_shortcode' ) );
 
+		add_shortcode( 'wpcampus_print_posts', [ $plugin->helper, 'print_posts' ] );
+
 		// Enable users to login via AJAX.
 		add_action( 'wp_ajax_wpc_ajax_login', array( $plugin, 'process_ajax_login' ) );
 		add_action( 'wp_ajax_nopriv_wpc_ajax_login', array( $plugin, 'process_ajax_login' ) );
