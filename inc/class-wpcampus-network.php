@@ -632,8 +632,8 @@ final class WPCampus_Network {
 		}
 
 		$footer .= '<p class="message"><strong>' . sprintf( __( '%1$s is a community of networking, resources, and events for those using %2$s in the world of higher education.', 'wpcampus-network' ), 'WPCampus', 'WordPress' ) . '</strong><br />' . sprintf( __( 'If you are not a member of the %1$s community, we\'d love for you to %2$sget involved%3$s.', 'wpcampus-network' ), 'WPCampus', '<a href="' . $get_involved_url . '">', '</a>' ) . '</p>
-				<p class="disclaimer">' . sprintf( __( 'This site is powered by %1$s. You can view, and contribute to, the theme on %2$s.', 'wpcampus-network' ), '<a href="' . $wp_org_url . '">WordPress</a>', '<a href="' . $github_url . '">GitHub</a>' ) . '<br />' . sprintf( __( '%1$s, and our events, are not %2$s and are not affiliated with the %3$s Foundation.', 'wpcampus-network' ), 'WPCampus', 'WordCamps', 'WordPress' ) . '</p>' .
 		           $this->get_social_media_icons() . '<p class="copyright">&copy; ' . date( 'Y' ) . ' <a href="' . $home_url . '">WPCampus</a></p>
+				<p class="disclaimer">' . sprintf( __( 'This site is powered by %1$s. You can view, and contribute to, the theme on %2$s.', 'wpcampus-network' ), '<a href="' . $wp_org_url . '">WordPress</a>', '<a href="' . $github_url . '">GitHub</a>' ) . '</p>' .
 			</div>
 		</footer>';
 
