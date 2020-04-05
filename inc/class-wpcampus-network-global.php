@@ -77,7 +77,7 @@ final class WPCampus_Network_Global {
 		add_action( 'user_register', array( $plugin, 'process_user_registration' ) );
 
 		// Filter user capabilities.
-		//add_filter( 'user_has_cap', array( $plugin, 'filter_user_has_cap' ), 100, 4 );
+		add_filter( 'user_has_cap', array( $plugin, 'filter_user_has_cap' ), 100, 4 );
 
 		// Hide Query Monitor if admin bar isn't showing.
 		add_filter( 'qm/process', array( $plugin, 'hide_query_monitor' ), 10, 2 );
