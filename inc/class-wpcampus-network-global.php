@@ -44,96 +44,96 @@ final class WPCampus_Network_Global {
 		}
 
 		// Load our text domain.
-		add_action( 'init', array( $plugin, 'textdomain' ) );
+		add_action( 'init', [ $plugin, 'textdomain' ] );
 
 		// Add headers to the login page.
-		add_action( 'login_init', array( $plugin, 'add_header_content_security_policy' ) );
+		add_action( 'login_init', [ $plugin, 'add_header_content_security_policy' ] );
 
 		// Add favicons.
-		add_action( 'wp_head', array( $plugin, 'add_favicons' ) );
-		add_action( 'admin_head', array( $plugin, 'add_favicons' ) );
-		add_action( 'login_head', array( $plugin, 'add_favicons' ) );
+		add_action( 'wp_head', [ $plugin, 'add_favicons' ] );
+		add_action( 'admin_head', [ $plugin, 'add_favicons' ] );
+		add_action( 'login_head', [ $plugin, 'add_favicons' ] );
 
 		// Change the login logo URL.
-		add_filter( 'login_headerurl', array( $plugin, 'change_login_header_url' ) );
+		add_filter( 'login_headerurl', [ $plugin, 'change_login_header_url' ] );
 
 		// Add login stylesheet.
-		add_action( 'login_head', array( $plugin, 'enqueue_login_styles' ) );
+		add_action( 'login_head', [ $plugin, 'enqueue_login_styles' ] );
 
 		// Set default user role to "member".
-		add_filter( 'pre_option_default_role', array( $plugin, 'set_default_user_role' ) );
+		add_filter( 'pre_option_default_role', [ $plugin, 'set_default_user_role' ] );
 
 		// Set default media sizes
-		add_filter( 'pre_option_thumbnail_size_w', array( $plugin, 'set_thumbnail_size' ) );
-		add_filter( 'pre_option_thumbnail_size_h', array( $plugin, 'set_thumbnail_size' ) );
-		add_filter( 'pre_option_medium_size_w', array( $plugin, 'set_medium_size_w' ) );
-		add_filter( 'pre_option_medium_size_h', array( $plugin, 'set_medium_size_h' ) );
-		add_filter( 'pre_option_large_size_w', array( $plugin, 'set_large_size_w' ) );
-		add_filter( 'pre_option_large_size_h', array( $plugin, 'set_large_size_h' ) );
+		add_filter( 'pre_option_thumbnail_size_w', [ $plugin, 'set_thumbnail_size' ] );
+		add_filter( 'pre_option_thumbnail_size_h', [ $plugin, 'set_thumbnail_size' ] );
+		add_filter( 'pre_option_medium_size_w', [ $plugin, 'set_medium_size_w' ] );
+		add_filter( 'pre_option_medium_size_h', [ $plugin, 'set_medium_size_h' ] );
+		add_filter( 'pre_option_large_size_w', [ $plugin, 'set_large_size_w' ] );
+		add_filter( 'pre_option_large_size_h', [ $plugin, 'set_large_size_h' ] );
 
 		add_filter( 'upload_mimes', [ $plugin, 'filter_upload_mimes' ], 20, 2 );
 
 		// When users are registered, make sure they're added to every site on the network.
-		add_action( 'user_register', array( $plugin, 'process_user_registration' ) );
+		add_action( 'user_register', [ $plugin, 'process_user_registration' ] );
 
 		// Filter user capabilities.
-		add_filter( 'user_has_cap', array( $plugin, 'filter_user_has_cap' ), 100, 4 );
+		add_filter( 'user_has_cap', [ $plugin, 'filter_user_has_cap' ], 100, 4 );
 
 		// Hide Query Monitor if admin bar isn't showing.
-		add_filter( 'qm/process', array( $plugin, 'hide_query_monitor' ), 10, 2 );
+		add_filter( 'qm/process', [ $plugin, 'hide_query_monitor' ], 10, 2 );
 
 		// Mark posts as viewed.
-		add_action( 'wp', array( $plugin, 'mark_viewed' ) );
+		add_action( 'wp', [ $plugin, 'mark_viewed' ] );
 
 		// Manage the REST API.
 		add_filter( 'rest_user_query', [ $plugin, 'filter_rest_user_query' ], 10, 2 );
 
 		// Register the network footer menu.
-		add_action( 'after_setup_theme', array( $plugin, 'register_network_footer_menu' ), 20 );
+		add_action( 'after_setup_theme', [ $plugin, 'register_network_footer_menu' ], 20 );
 
 		// Enqueue front-end scripts and styles.
-		add_action( 'wp_enqueue_scripts', array( $plugin, 'enqueue_scripts_styles' ), 0 );
+		add_action( 'wp_enqueue_scripts', [ $plugin, 'enqueue_scripts_styles' ], 0 );
 		//add_action( 'wp_print_footer_scripts', array( $plugin, 'add_mailchimp_popup_script' ) );
 
 		// Customize the arguments for the multi author post author dropdown.
-		add_filter( 'my_multi_author_post_author_dropdown_args', array( $plugin, 'filter_multi_author_primary_dropdown_args' ), 10, 2 );
+		add_filter( 'my_multi_author_post_author_dropdown_args', [ $plugin, 'filter_multi_author_primary_dropdown_args' ], 10, 2 );
 
 		// Adding titles to iframes for accessibility.
-		add_filter( 'oembed_dataparse', array( $plugin, 'filter_oembed_dataparse' ), 10, 3 );
+		add_filter( 'oembed_dataparse', [ $plugin, 'filter_oembed_dataparse' ], 10, 3 );
 
 		// Make sure we can use any post type and taxonomy in Gravity Forms.
-		add_filter( 'gfcpt_post_type_args', array( $plugin, 'filter_gfcpt_post_type_args' ), 10, 2 );
-		add_filter( 'gfcpt_tax_args', array( $plugin, 'filter_gfcpt_tax_args' ), 10, 2 );
+		add_filter( 'gfcpt_post_type_args', [ $plugin, 'filter_gfcpt_post_type_args' ], 10, 2 );
+		add_filter( 'gfcpt_tax_args', [ $plugin, 'filter_gfcpt_tax_args' ], 10, 2 );
 
 		// Tweak FooGallery CPT args.
-		add_filter( 'foogallery_gallery_posttype_register_args', array( $plugin, 'filter_foogallery_cpt_args' ) );
+		add_filter( 'foogallery_gallery_posttype_register_args', [ $plugin, 'filter_foogallery_cpt_args' ] );
 
 		// Add content to login forms.
-		add_filter( 'login_form_top', array( $plugin, 'add_to_login_form_top' ), 1, 2 );
-		add_filter( 'login_form_bottom', array( $plugin, 'add_to_login_form_bottom' ), 1, 2 );
+		add_filter( 'login_form_top', [ $plugin, 'add_to_login_form_top' ], 1, 2 );
+		add_filter( 'login_form_bottom', [ $plugin, 'add_to_login_form_bottom' ], 1, 2 );
 
-		add_shortcode( 'wpc_speaker_app_deadline_time', array( $plugin->helper, 'print_speaker_app_deadline_time' ) );
-		add_shortcode( 'wpc_speaker_app_deadline_date', array( $plugin->helper, 'print_speaker_app_deadline_date' ) );
+		add_shortcode( 'wpc_speaker_app_deadline_time', [ $plugin->helper, 'print_speaker_app_deadline_time' ] );
+		add_shortcode( 'wpc_speaker_app_deadline_date', [ $plugin->helper, 'print_speaker_app_deadline_date' ] );
 
-		add_shortcode( 'wpc_print_code_of_conduct', array( $plugin->helper, 'get_code_of_conduct' ) );
-		add_shortcode( 'wpc_print_content', array( $plugin, 'get_content_for_shortcode' ) );
+		add_shortcode( 'wpc_print_code_of_conduct', [ $plugin->helper, 'get_code_of_conduct' ] );
+		add_shortcode( 'wpc_print_content', [ $plugin, 'get_content_for_shortcode' ] );
 
 		add_shortcode( 'wpcampus_print_posts', [ $plugin->helper, 'print_posts' ] );
 
 		// Enable users to login via AJAX.
-		add_action( 'wp_ajax_wpc_ajax_login', array( $plugin, 'process_ajax_login' ) );
-		add_action( 'wp_ajax_nopriv_wpc_ajax_login', array( $plugin, 'process_ajax_login' ) );
-		add_action( 'wp_ajax_wpc_ajax_logout', array( $plugin, 'process_ajax_logout' ) );
-		add_action( 'wp_ajax_nopriv_wpc_ajax_logout', array( $plugin, 'process_ajax_logout' ) );
+		add_action( 'wp_ajax_wpc_ajax_login', [ $plugin, 'process_ajax_login' ] );
+		add_action( 'wp_ajax_nopriv_wpc_ajax_login', [ $plugin, 'process_ajax_login' ] );
+		add_action( 'wp_ajax_wpc_ajax_logout', [ $plugin, 'process_ajax_logout' ] );
+		add_action( 'wp_ajax_nopriv_wpc_ajax_logout', [ $plugin, 'process_ajax_logout' ] );
 
 		// Get sessions data.
-		add_action( 'wp_ajax_wpcampus_get_sessions', array( $plugin, 'process_ajax_get_sessions_public' ) );
-		add_action( 'wp_ajax_nopriv_wpcampus_get_sessions', array( $plugin, 'process_ajax_get_sessions_public' ) );
+		add_action( 'wp_ajax_wpcampus_get_sessions', [ $plugin, 'process_ajax_get_sessions_public' ] );
+		add_action( 'wp_ajax_nopriv_wpcampus_get_sessions', [ $plugin, 'process_ajax_get_sessions_public' ] );
 
 		add_filter( 'get_comment_author_link', [ $plugin, 'filter_comment_author_link' ], 100, 3 );
 
 		// Print our Javascript templates when needed.
-		add_action( 'wp_footer', array( $plugin, 'print_js_templates' ) );
+		add_action( 'wp_footer', [ $plugin, 'print_js_templates' ] );
 
 		// Stupid Gravity Slider Fields notices.
 		add_filter( 'gsf_show_notices', '__return_false' );
@@ -144,15 +144,15 @@ final class WPCampus_Network_Global {
 		}
 
 		// Don't cache specific pages.
-		$exclude_pages = array(
-			'wpcampus.org'      => array(
+		$exclude_pages = [
+			'wpcampus.org'      => [
 				'#^/donation-confirmation/?#',
 				'#^/donation-history/?#',
-			),
-			'shop.wpcampus.org' => array(
+			],
+			'shop.wpcampus.org' => [
 				'#^/my\-account/?#',
-			),
-		);
+			],
+		];
 
 		// Loop through the patterns.
 		if ( array_key_exists( $_SERVER['HTTP_HOST'], $exclude_pages ) ) {
@@ -184,9 +184,9 @@ final class WPCampus_Network_Global {
 	 */
 	public function get_content_for_shortcode( $atts ) {
 		$atts = shortcode_atts(
-			array(
+			[
 				'id' => 0,
-			),
+			],
 			$atts,
 			'wpc_print_content'
 		);
@@ -222,7 +222,7 @@ final class WPCampus_Network_Global {
 		<?php
 
 		// Set the Apple image sizes.
-		$apple_image_sizes = array( 57, 60, 72, 76, 114, 120, 144, 152, 180 );
+		$apple_image_sizes = [ 57, 60, 72, 76, 114, 120, 144, 152, 180 ];
 		foreach ( $apple_image_sizes as $size ) :
 			?>
 			<link rel="apple-touch-icon" sizes="<?php echo "{$size}x{$size}"; ?>" href="<?php echo $favicons_folder; ?>wpcampus-favicon-<?php echo $size; ?>.png">
@@ -230,7 +230,7 @@ final class WPCampus_Network_Global {
 		endforeach;
 
 		// Set the Android image sizes.
-		$android_image_sizes = array( 16, 32, 96, 192 );
+		$android_image_sizes = [ 16, 32, 96, 192 ];
 		foreach ( $android_image_sizes as $size ) :
 
 			?>
@@ -285,7 +285,7 @@ final class WPCampus_Network_Global {
 	 * Add login stylesheet.
 	 */
 	public function enqueue_login_styles() {
-		wp_enqueue_style( 'wpc-network-login', trailingslashit( $this->helper->get_plugin_url() ) . 'assets/css/wpc-network-login.min.css', array(), null );
+		wp_enqueue_style( 'wpc-network-login', trailingslashit( $this->helper->get_plugin_url() ) . 'assets/css/wpc-network-login.min.css', [], null );
 	}
 
 	/**
@@ -355,10 +355,10 @@ final class WPCampus_Network_Global {
 	/**
 	 * Manage file types allowed for upload.
 	 *
-	 * @param array $types Mime types keyed by the file extension regex corresponding to
+	 * @param array            $types Mime types keyed by the file extension regex corresponding to
 	 *                                those types. 'swf' and 'exe' removed from full list. 'htm|html' also
 	 *                                removed depending on '$user' capabilities.
-	 * @param int|WP_User|null $user User ID, User object or null if not provided (indicates current user).
+	 * @param int|WP_User|null $user  User ID, User object or null if not provided (indicates current user).
 	 *
 	 * @return array
 	 */
@@ -521,69 +521,69 @@ final class WPCampus_Network_Global {
 		$js_dir = $plugin_url . 'assets/js/';
 
 		// Setup the font weights we need.
-		$open_sans_weights = apply_filters( 'wpcampus_open_sans_font_weights', array() );
+		$open_sans_weights = apply_filters( 'wpcampus_open_sans_font_weights', [] );
 
 		if ( ! is_array( $open_sans_weights ) ) {
-			$open_sans_weights = array();
+			$open_sans_weights = [];
 		} else {
 			$open_sans_weights = array_filter( $open_sans_weights, 'intval' );
 		}
 
 		// Make sure the weights we need for our components are there.
 		if ( $this->helper->is_enabled( 'banner' ) ) {
-			$open_sans_weights = array_merge( $open_sans_weights, array( 400, 600, 700 ) );
+			$open_sans_weights = array_merge( $open_sans_weights, [ 400, 600, 700 ] );
 		}
 
 		if ( $this->helper->is_enabled( 'notifications' ) ) {
-			$open_sans_weights = array_merge( $open_sans_weights, array( 400 ) );
+			$open_sans_weights = array_merge( $open_sans_weights, [ 400 ] );
 		}
 
 		if ( $this->helper->is_enabled( 'footer' ) ) {
-			$open_sans_weights = array_merge( $open_sans_weights, array( 400, 600 ) );
+			$open_sans_weights = array_merge( $open_sans_weights, [ 400, 600 ] );
 		}
 
 		if ( $this->helper->is_enabled( 'videos' ) ) {
-			$open_sans_weights = array_merge( $open_sans_weights, array( 600 ) );
+			$open_sans_weights = array_merge( $open_sans_weights, [ 600 ] );
 		}
 
 		// Register our fonts.
 		wp_register_style( 'wpc-fonts-open-sans', 'https://fonts.googleapis.com/css?family=Open+Sans:' . implode( ',', array_unique( $open_sans_weights ) ) );
 
 		// Register assets needed below.
-		wp_register_script( 'handlebars', $js_dir . 'handlebars.min.js', array(), null, true );
-		wp_register_script( 'mustache', $js_dir . 'mustache.min.js', array(), null, true );
+		wp_register_script( 'handlebars', $js_dir . 'handlebars.min.js', [], null, true );
+		wp_register_script( 'mustache', $js_dir . 'mustache.min.js', [], null, true );
 
 		$toggle_menu_js = $this->debug ? 'src/wpc-network-toggle-menu.js' : 'wpc-network-toggle-menu.min.js';
 
 		// Keep this one outside logic so I can register as a dependency in scripts outside the plugin.
-		wp_register_script( 'wpc-network-toggle-menu', $js_dir . $toggle_menu_js, array( 'jquery', 'jquery-ui-core' ), null );
+		wp_register_script( 'wpc-network-toggle-menu', $js_dir . $toggle_menu_js, [ 'jquery', 'jquery-ui-core' ], null );
 
 		// Enqueue the network banner styles.
 		if ( $this->helper->is_enabled( 'banner' ) ) {
-			wp_enqueue_style( 'wpc-network-banner', $css_dir . 'wpc-network-banner.min.css', array( 'wpc-fonts-open-sans' ), null );
+			wp_enqueue_style( 'wpc-network-banner', $css_dir . 'wpc-network-banner.min.css', [ 'wpc-fonts-open-sans' ], null );
 			wp_enqueue_script( 'wpc-network-toggle-menu' );
 		}
 
 		// Enqueue the network notification assets.
 		if ( $this->helper->is_enabled( 'notifications' ) ) {
-			wp_enqueue_style( 'wpc-network-notifications', $css_dir . 'wpc-network-notifications.min.css', array( 'wpc-fonts-open-sans' ), null );
+			wp_enqueue_style( 'wpc-network-notifications', $css_dir . 'wpc-network-notifications.min.css', [ 'wpc-fonts-open-sans' ], null );
 
 			$notifications_js = $this->debug ? 'src/wpc-network-notifications.js' : 'wpc-network-notifications.min.js';
 
-			wp_enqueue_script( 'wpc-network-notifications', $js_dir . $notifications_js, array( 'jquery', 'mustache' ), null, true );
-			wp_localize_script( 'wpc-network-notifications', 'wpc_net_notifications', array(
+			wp_enqueue_script( 'wpc-network-notifications', $js_dir . $notifications_js, [ 'jquery', 'mustache' ], null, true );
+			wp_localize_script( 'wpc-network-notifications', 'wpc_net_notifications', [
 				'main_url' => wpcampus_get_network_site_url(),
-			) );
+			] );
 		}
 
 		// Enqueue the network Code of Conduct styles.
 		if ( $this->helper->is_enabled( 'coc' ) ) {
-			wp_enqueue_style( 'wpc-network-coc', $css_dir . 'wpc-network-coc.min.css', array( 'wpc-fonts-open-sans' ), null );
+			wp_enqueue_style( 'wpc-network-coc', $css_dir . 'wpc-network-coc.min.css', [ 'wpc-fonts-open-sans' ], null );
 		}
 
 		// Enqueue the network footer styles.
 		if ( $this->helper->is_enabled( 'footer' ) ) {
-			wp_enqueue_style( 'wpc-network-footer', $css_dir . 'wpc-network-footer.min.css', array( 'wpc-fonts-open-sans' ), null );
+			wp_enqueue_style( 'wpc-network-footer', $css_dir . 'wpc-network-footer.min.css', [ 'wpc-fonts-open-sans' ], null );
 		}
 
 		// Enqueue the sessions assets.
@@ -600,16 +600,16 @@ final class WPCampus_Network_Global {
 
 			$sessions_js = $this->debug ? 'src/wpc-network-sessions.js' : 'wpc-network-sessions.min.js';
 
-			wp_register_style( 'wpc-network-sessions-icons', $css_dir . 'conf-schedule-icons.min.css', array(), $sessions_ver );
+			wp_register_style( 'wpc-network-sessions-icons', $css_dir . 'conf-schedule-icons.min.css', [], $sessions_ver );
 
-			wp_enqueue_style( 'wpc-network-sessions', $css_dir . 'wpc-network-sessions.min.css', array( 'wpc-network-sessions-icons' ), $sessions_ver );
+			wp_enqueue_style( 'wpc-network-sessions', $css_dir . 'wpc-network-sessions.min.css', [ 'wpc-network-sessions-icons' ], $sessions_ver );
 
-			wp_enqueue_script( 'wpc-network-sessions', $js_dir . $sessions_js, array( 'jquery', 'handlebars' ), $sessions_ver, true );
-			wp_localize_script( 'wpc-network-sessions', 'wpc_sessions', array(
+			wp_enqueue_script( 'wpc-network-sessions', $js_dir . $sessions_js, [ 'jquery', 'handlebars' ], $sessions_ver, true );
+			wp_localize_script( 'wpc-network-sessions', 'wpc_sessions', [
 				'ajaxurl'        => admin_url( 'admin-ajax.php' ),
 				'load_error_msg' => '<p>' . __( 'Oops. Looks like something went wrong. Please refresh the page and try again.', 'wpcampus-network' ) . '</p><p>' . sprintf( __( 'If the problem persists, please %1$slet us know%2$s.', 'wpcampus' ), '<a href="/contact/">', '</a>' ) . '</p>',
 				'tz_offset'      => $timezone_offset_hours,
-			) );
+			] );
 		}
 
 		// Enable the watch video assets.
@@ -617,17 +617,17 @@ final class WPCampus_Network_Global {
 
 			// Enqueue styles and scripts for the display.
 			wp_enqueue_style( 'magnific-popup', $css_dir . 'magnific-popup.min.css' );
-			wp_enqueue_script( 'magnific-popup', $js_dir . 'jquery.magnific-popup.min.js', array( 'jquery' ) );
+			wp_enqueue_script( 'magnific-popup', $js_dir . 'jquery.magnific-popup.min.js', [ 'jquery' ] );
 
-			wp_enqueue_style( 'wpc-network-watch', $css_dir . 'wpc-network-watch.min.css', array( 'magnific-popup' ) );
+			wp_enqueue_style( 'wpc-network-watch', $css_dir . 'wpc-network-watch.min.css', [ 'magnific-popup' ] );
 
 			$watch_js = $this->debug ? 'src/wpc-network-watch.js' : 'wpc-network-watch.min.js';
 
-			wp_enqueue_script( 'wpc-network-watch', $js_dir . $watch_js, array( 'jquery', 'handlebars', 'magnific-popup' ) );
-			wp_localize_script( 'wpc-network-watch', 'wpc_net_watch', array(
+			wp_enqueue_script( 'wpc-network-watch', $js_dir . $watch_js, [ 'jquery', 'handlebars', 'magnific-popup' ] );
+			wp_localize_script( 'wpc-network-watch', 'wpc_net_watch', [
 				'main_url'  => wpcampus_get_network_site_url(),
 				'no_videos' => __( 'There are no videos available.', 'wpcampus-network' ),
-			) );
+			] );
 		}
 
 		$this->helper->enqueue_base_script();
@@ -740,7 +740,7 @@ final class WPCampus_Network_Global {
 	 * @return  array - the arguments we want to use.
 	 */
 	public function filter_gfcpt_post_type_args( $args, $form_id ) {
-		return array();
+		return [];
 	}
 
 	/**
@@ -753,9 +753,9 @@ final class WPCampus_Network_Global {
 	 * @return  array - the arguments we want to use.
 	 */
 	public function filter_gfcpt_tax_args( $args, $form_id ) {
-		return array(
+		return [
 			'_builtin' => false,
-		);
+		];
 	}
 
 	/**
@@ -766,7 +766,7 @@ final class WPCampus_Network_Global {
 	 * @return  array - the filtered arguments.
 	 */
 	public function filter_foogallery_cpt_args( $args ) {
-		$args['capability_type'] = array( 'gallery', 'galleries' );
+		$args['capability_type'] = [ 'gallery', 'galleries' ];
 
 		return $args;
 	}
@@ -851,27 +851,27 @@ final class WPCampus_Network_Global {
 
 		check_ajax_referer( 'wpc_ajax_login', 'wpc_ajax_login_nonce' );
 
-		$info = array(
+		$info = [
 			'user_login'    => $_POST['log'],
 			'user_password' => $_POST['pwd'],
 			'remember'      => $_POST['rememberme'],
-		);
+		];
 
 		$user_signon = wp_signon( $info, false );
 
 		if ( is_wp_error( $user_signon ) ) {
 			echo json_encode(
-				array(
+				[
 					'loggedin' => false,
 					'message'  => $user_signon->get_error_message(),
-				)
+				]
 			);
 		} else {
 			echo json_encode(
-				array(
+				[
 					'loggedin' => true,
 					'message'  => __( 'Login successful, redirecting...' ),
-				)
+				]
 			);
 		}
 
@@ -902,14 +902,14 @@ final class WPCampus_Network_Global {
 		$args = [];
 		$sessions = [];
 
-		$filters = array(
+		$filters = [
 			'assets'  => [ 'slides', 'video' ],
 			'orderby' => [ 'date', 'title' ],
 			'order'   => [ 'asc', 'desc' ],
 			'search'  => [],
 			'subject' => [],
 			'format'  => [],
-		);
+		];
 
 		$display_events = wpcampus_speakers()->get_sessions_display_event_terms();
 
@@ -940,7 +940,7 @@ final class WPCampus_Network_Global {
 				if ( ! empty( $_GET['filters'][ $filter ] ) ) {
 					$filter_val = strtolower( str_replace( ' ', '', $_GET['filters'][ $filter ] ) );
 
-					$has_open_field = in_array( $filter, array( 'search', 'subject', 'format' ) );
+					$has_open_field = in_array( $filter, [ 'search', 'subject', 'format' ] );
 
 					if ( $has_open_field ) {
 						$filter_val = sanitize_text_field( $filter_val );
@@ -981,9 +981,9 @@ final class WPCampus_Network_Global {
 		// Get our profiles.
 		$response = wp_safe_remote_get(
 			$url,
-			array(
+			[
 				'timeout' => 10,
-			)
+			]
 		);
 
 		if ( 200 == wp_remote_retrieve_response_code( $response ) ) {
@@ -991,10 +991,10 @@ final class WPCampus_Network_Global {
 		}
 
 		echo json_encode(
-			array(
+			[
 				'count'    => ! empty( $sessions ) ? count( $sessions ) : 0,
 				'sessions' => $sessions,
-			)
+			]
 		);
 
 		wp_die();
@@ -1010,7 +1010,7 @@ final class WPCampus_Network_Global {
 			return;
 		}
 
-		$formats = array();
+		$formats = [];
 
 		$format_terms = get_terms(
 			'session_format',
@@ -1025,7 +1025,7 @@ final class WPCampus_Network_Global {
 			}
 		}
 
-		$events = array(
+		$events = [
 			'wpcampus-2019'        => 'WPCampus 2019',
 			'wpcampus-2018'        => 'WPCampus 2018',
 			'wpcampus-2017'        => 'WPCampus 2017',
@@ -1033,9 +1033,9 @@ final class WPCampus_Network_Global {
 			'wpcampus-online-2019' => 'WPCampus Online 2019',
 			'wpcampus-online-2018' => 'WPCampus Online 2018',
 			'wpcampus-online-2017' => 'WPCampus Online 2017',
-		);
+		];
 
-		$subjects = function_exists( 'wpcampus_get_sessions_subjects' ) ? wpcampus_get_sessions_subjects() : array();
+		$subjects = function_exists( 'wpcampus_get_sessions_subjects' ) ? wpcampus_get_sessions_subjects() : [];
 
 		$plugin_url = $this->helper->get_plugin_url();
 		$images_dir = trailingslashit( $plugin_url ) . 'assets/images/';
