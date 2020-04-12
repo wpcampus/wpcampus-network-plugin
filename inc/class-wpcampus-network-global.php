@@ -86,7 +86,9 @@ final class WPCampus_Network_Global {
 		add_action( 'wp', [ $plugin, 'mark_viewed' ] );
 
 		// Manage the REST API.
+		add_action( 'rest_api_init', [ $plugin, 'register_rest_routes' ] );
 		add_filter( 'rest_user_query', [ $plugin, 'filter_rest_user_query' ], 10, 2 );
+		add_filter( 'rest_prepare_post', [ $plugin, 'filter_rest_prepare_post' ], 10, 3 );
 
 		// Register the network footer menu.
 		add_action( 'after_setup_theme', [ $plugin, 'register_network_footer_menu' ], 20 );
@@ -465,6 +467,101 @@ final class WPCampus_Network_Global {
 				add_post_meta( $post_id, $meta_key, time(), false );
 			}
 		}
+	}
+
+	/**
+	 * Register our custom REST routes.
+	 */
+	public function register_rest_routes() {
+
+		register_rest_route(
+			'wpcampus',
+			'/search/',
+			[
+				'methods'  => 'GET',
+				'callback' => [ $this, 'get_search_results' ],
+			]
+		);
+	}
+
+	/**
+	 * Prepare REST response for /wpcampus/search/ endpoint.
+	 *
+	 * @TODO add pagination?
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function get_search_results() {
+
+		$post_types = [ 'post', 'page' ];
+
+		$query_args = [
+			'post_type'           => $post_types,
+			'post_status'         => 'publish',
+			//'paged'               => (int) $request['page'],
+			'posts_per_page'      => - 1,
+			'ignore_sticky_posts' => true,
+			'orderby'             => 'post_modified',
+			'order'               => 'DESC',
+		];
+
+		if ( ! empty( $_GET['search'] ) ) {
+			$query_args['s'] = sanitize_text_field( $_GET['search'] );
+		}
+
+		$query = new WP_Query( $query_args );
+
+		$posts = $query->posts;
+
+		$clean_posts = [];
+
+		$blog_url = get_bloginfo( 'url' );
+
+		foreach ( $posts as $post ) {
+
+			if ( 'post' == $post->post_type ) {
+
+				$post_path = get_permalink( $post->ID );
+
+				// Remove protocol and host so its complete slug path.
+				if ( ! empty( $post_path ) ) {
+					$post_path = str_replace( $blog_url, '', $post_path );
+				}
+			} else {
+				$post_path = get_page_uri( $post );
+			}
+
+			$clean_posts[] = [
+				'ID'       => $post->ID,
+				'title'    => $post->post_title,
+				'type'     => $post->post_type,
+				'author'   => $post->post_author,
+				'parent'   => $post->post_parent,
+				'date'     => $post->post_date,
+				'modified' => $post->post_modified,
+				'slug'     => $post->post_name,
+				'path'     => $post_path,
+				'status'   => $post->post_status,
+				'excerpt'  => [
+					'basic'    => $post->post_excerpt,
+					'rendered' => wpautop( $post->post_excerpt ),
+				],
+				'content'  => [
+					'basic'    => $post->post_content,
+					'rendered' => wpautop( $post->post_content ),
+				],
+			];
+		}
+
+		//$found_ids = $query->query( $query_args );
+		//$total     = $query->found_posts;
+
+		/*return array(
+			self::RESULT_IDS   => $found_ids,
+			self::RESULT_TOTAL => $total,
+		);*/
+
+		return new WP_REST_Response( $clean_posts );
 	}
 
 	/**
