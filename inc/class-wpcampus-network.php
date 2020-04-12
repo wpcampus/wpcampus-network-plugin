@@ -469,7 +469,7 @@ final class WPCampus_Network {
 						<li><a href="https://wpcampus.org/library/">' . __( 'Library', 'wpcampus-network' ) . '</a></li>
 						<li><a href="https://wpcampus.org/conferences/">' . __( 'Conferences', 'wpcampus-network' ) . '</a></li>
 						<li><a href="https://shop.wpcampus.org/">' . __( 'Shop', 'wpcampus-network' ) . '</a></li>
-						<li><a href="https://wpcampus.org/contact/">' . __( 'Contact', 'wpcampus-network' ) . '</a></li>
+						<li><a href="https://wpcampus.org/about/contact/">' . __( 'Contact', 'wpcampus-network' ) . '</a></li>
 						<li class="highlight"><a href="https://wpcampus.org/get-involved/">' . __( 'Get Involved', 'wpcampus-network' ) . '</a></li>
 					</ul>' . $this->get_social_media_icons() .
 		           '</div>
@@ -630,7 +630,7 @@ final class WPCampus_Network {
                 <li><a href="https://wpcampus.org/about/">About WPCampus</a></li>
                 <li><a href="https://wpcampus.org/code-of-conduct/">Code of Conduct</a></li>
                 <li><a href="https://wpcampus.org/diversity/">Diversity, Equity, and Inclusion</a></li>
-                <li><a href="https://wpcampus.org/contact/">Contact us</a></li>
+                <li><a href="https://wpcampus.org/about/contact/">Contact us</a></li>
             </ul>';
 		}
 
