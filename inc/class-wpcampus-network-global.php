@@ -595,6 +595,38 @@ final class WPCampus_Network_Global {
 	}
 
 	/**
+	 * Filter the response for blog posts.
+	 *
+	 * @param $response - WP_REST_Response - The response object.
+	 * @param $post     - WP_Post - Post object.
+	 * @param $request  - WP_REST_Request - Request object.
+	 *
+	 * @return mixed
+	 */
+	public function filter_rest_prepare_post( $response, $post, $request ) {
+
+		if ( ! isset( $response->data['excerpt'] ) ) {
+			$response->data['excerpt'] = [];
+		}
+
+		if ( empty( $post->post_excerpt ) ) {
+			$post_excerpt = $post->post_content;
+		} else {
+			$post_excerpt = $post->post_excerpt;
+		}
+
+		// Remove any tags.
+		$post_excerpt = strip_tags( $post_excerpt );
+
+		// Trim the length.
+		$post_excerpt = wp_trim_words( $post_excerpt, 30, '...' );
+
+		$response->data['excerpt']['basic'] = $post_excerpt;
+
+		return $response;
+	}
+
+	/**
 	 * Register the network footer menu.
 	 *
 	 * @return  void
