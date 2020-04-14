@@ -25,15 +25,15 @@ class WPCampus_Network_Admin {
 	public static function register() {
 		$plugin = new self();
 
-		add_action( 'network_admin_menu', array( $plugin, 'add_network_admin_pages' ) );
+		add_action( 'network_admin_menu', [ $plugin, 'add_network_admin_pages' ] );
 
 		add_action( 'admin_menu', [ $plugin, 'add_admin_pages' ] );
 
-		add_action( 'admin_menu', array( $plugin, 'modify_admin_menu' ) );
-		add_action( 'edit_form_after_title', array( $plugin, 'print_meta_boxes_after_title' ), 0 );
+		add_action( 'admin_menu', [ $plugin, 'modify_admin_menu' ] );
+		add_action( 'edit_form_after_title', [ $plugin, 'print_meta_boxes_after_title' ], 0 );
 
-		add_action( 'load-comment.php', array( $plugin, 'manage_comments_page_access' ) );
-		add_action( 'load-edit-comments.php', array( $plugin, 'manage_comments_page_access' ) );
+		add_action( 'load-comment.php', [ $plugin, 'manage_comments_page_access' ] );
+		add_action( 'load-edit-comments.php', [ $plugin, 'manage_comments_page_access' ] );
 
 	}
 
@@ -48,7 +48,7 @@ class WPCampus_Network_Admin {
 			'WPCampus',
 			'manage_wpc_network',
 			'manage-wpc-network',
-			array( $this, 'print_manage_network_page' )
+			[ $this, 'print_manage_network_page' ]
 		);
 	}
 
@@ -142,23 +142,23 @@ class WPCampus_Network_Admin {
 			endif;
 
 			// Setup action links.
-			$actions = array();
+			$actions = [];
 
 			//if ( current_user_can( 'manage_wpc_network_users' ) ) {
-			$actions[] = array(
+			$actions[] = [
 				'href'  => wp_nonce_url(
 					add_query_arg(
-						array(
+						[
 							'page' => $page_slug,
 							//'wpc_action' => 'add_all_users_to_all_blogs',
-						),
+						],
 						network_admin_url( 'admin.php' )
 					),
 					'add_all_users_to_all_blogs',
 					'wpc_nonce'
 				),
 				'label' => __( 'Add all users to all blogs', 'wpcampus-network' ),
-			);
+			];
 			//}
 
 			if ( empty( $actions ) ) :
@@ -226,7 +226,7 @@ class WPCampus_Network_Admin {
 			wp_die(
 				__( 'You do not have permission to moderate comments.', 'wpcampus-network' ),
 				__( 'Moderating Comments', 'wpcampus-network' ),
-				array( 'back_link' => true )
+				[ 'back_link' => true ]
 			);
 		}
 	}
