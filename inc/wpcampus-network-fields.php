@@ -65,3 +65,57 @@ acf_add_local_field_group(
 		'description'           => '',
 	]
 );
+
+acf_add_local_field_group(
+	[
+		'key'                   => 'group_5e9624dd7b294',
+		'title'                 => 'WPCampus: Breacrumbs',
+		'fields'                => [
+			[
+				'key'               => 'field_5e9640bcb891a',
+				'label'             => 'Text',
+				'name'              => 'wpc_crumb_text',
+				'type'              => 'text',
+				'instructions'      => '',
+				'required'          => 0,
+				'conditional_logic' => 0,
+				'default_value'     => '',
+				'placeholder'       => 'Overwrite the text used for the crumb. Default is page title.',
+				'prepend'           => '',
+				'append'            => '',
+				'maxlength'         => '',
+			],
+			[
+				'key'               => 'field_5e964127b891b',
+				'label'             => 'ARIA label',
+				'name'              => 'wpc_crumb_aria_label',
+				'type'              => 'text',
+				'instructions'      => '',
+				'required'          => 0,
+				'conditional_logic' => 0,
+				'default_value'     => '',
+				'placeholder'       => 'If necessary, provide an ARIA label for the crumb link.',
+				'prepend'           => '',
+				'append'            => '',
+				'maxlength'         => '',
+			],
+		],
+		'location'              => [
+			[
+				[
+					'param'    => 'post_type',
+					'operator' => '==',
+					'value'    => 'page',
+				],
+			],
+		],
+		'menu_order'            => 0,
+		'position'              => 'normal',
+		'style'                 => 'default',
+		'label_placement'       => 'left',
+		'instruction_placement' => 'field',
+		'hide_on_screen'        => '',
+		'active'                => true,
+		'description'           => '',
+	]
+);
