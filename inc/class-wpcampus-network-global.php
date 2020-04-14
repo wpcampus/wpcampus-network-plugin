@@ -89,6 +89,7 @@ final class WPCampus_Network_Global {
 		add_action( 'rest_api_init', [ $plugin, 'register_rest_routes' ] );
 		add_filter( 'rest_user_query', [ $plugin, 'filter_rest_user_query' ], 10, 2 );
 		add_filter( 'rest_prepare_post', [ $plugin, 'filter_rest_prepare_post' ], 10, 3 );
+		add_filter( 'rest_prepare_page', [ $plugin, 'filter_rest_prepare_page' ], 10, 3 );
 
 		// Register the network footer menu.
 		add_action( 'after_setup_theme', [ $plugin, 'register_network_footer_menu' ], 20 );
@@ -622,6 +623,70 @@ final class WPCampus_Network_Global {
 		$post_excerpt = wp_trim_words( $post_excerpt, 30, '...' );
 
 		$response->data['excerpt']['basic'] = $post_excerpt;
+
+		return $response;
+	}
+
+	/**
+	 * Filter the response for pages.
+	 *
+	 * @param $response - WP_REST_Response - The response object.
+	 * @param $post     - WP_Post - Post object.
+	 * @param $request  - WP_REST_Request - Request object.
+	 *
+	 * @return mixed
+	 */
+	public function filter_rest_prepare_page( $response, $post, $request ) {
+
+		// Get the provided crumb text.
+		$crumb_text = get_post_meta( $post->ID, 'wpc_crumb_text', true );
+
+		// If no provided crumb text, get the page title.
+		if ( empty( $crumb_text ) ) {
+
+			if ( ! empty( $response->data['title']['rendered'] ) ) {
+				$crumb_text = $response->data['title']['rendered'];
+			} else if ( ! empty( $response->data['title'] ) && is_string( $response->data['title'] ) ) {
+				$crumb_text = $response->data['title'];
+			} else {
+				$crumb_text = '';
+			}
+		}
+
+		// Get the provided crumb ARIA label.
+		$crumb_aria = get_post_meta( $post->ID, 'wpc_crumb_aria_label', true );
+
+		// Get the page link.
+		if ( ! empty( $response->data['link'] ) ) {
+			$page_link = $response->data['link'];
+		} else if ( ! empty( $post->ID ) ) {
+			$page_link = get_permalink( $post->ID );
+		} else {
+			$page_link = '';
+		}
+
+		// Make sure the link is a string.
+		if ( empty( $page_link ) ) {
+			$page_link = '';
+		}
+
+		// Get the page path.
+		$page_path = get_page_uri( $post );
+		if ( ! empty( $page_path ) ) {
+			$page_path = '/' . trailingslashit( $page_path );
+		} else {
+			$page_path = '';
+		}
+
+		// Add crumbs to data.
+		$crumb = [
+			'aria_label' => $crumb_aria,
+			'text'       => $crumb_text,
+			'link'       => $page_link,
+			'path'       => $page_path,
+		];
+
+		$response->data['crumb'] = $crumb;
 
 		return $response;
 	}
