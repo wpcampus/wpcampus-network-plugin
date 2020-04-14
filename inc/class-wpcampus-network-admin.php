@@ -35,6 +35,9 @@ class WPCampus_Network_Admin {
 		add_action( 'load-comment.php', [ $plugin, 'manage_comments_page_access' ] );
 		add_action( 'load-edit-comments.php', [ $plugin, 'manage_comments_page_access' ] );
 
+		// Enable when we need redirects.
+		//add_action( 'admin_init', [ $plugin, 'download_redirects' ] );
+
 	}
 
 	/**
@@ -229,6 +232,62 @@ class WPCampus_Network_Admin {
 				[ 'back_link' => true ]
 			);
 		}
+	}
+
+	/**
+	 * Downloads a file of the site's redirects.
+	 */
+	public function download_redirects() {
+
+		return;
+
+		if ( ! function_exists( 'srm_get_redirects' ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$redirects = srm_get_redirects();
+
+		// Create temporary CSV file for the complete photo list.
+		$csv_profiles_filename = 'wpcampus-redirects.csv';
+		$csv_profiles_file_path = "/tmp/{$csv_profiles_filename}";
+		$csv_profiles_file = fopen( $csv_profiles_file_path, 'w' );
+
+		// Add headers.
+		$headers = [ 'ID', 'Regex', 'Redirect from', 'Redirect to', 'Status code' ];
+		fputcsv( $csv_profiles_file, $headers );
+
+		// Write image info to the file.
+		foreach ( $redirects as $redirect ) {
+
+			$redirect_add = [];
+
+			$redirect_add[] = $redirect['ID'];
+			$redirect_add[] = $redirect['enable_regex'];
+			$redirect_add[] = $redirect['redirect_from'];
+			$redirect_add[] = $redirect['redirect_to'];
+			$redirect_add[] = $redirect['status_code'];
+
+			fputcsv( $csv_profiles_file, $redirect_add );
+		}
+
+		// Close the file.
+		fclose( $csv_profiles_file );
+
+		// Output headers so that the file is downloaded rather than displayed.
+		header( 'Content-type: text/csv' );
+		header( "Content-disposition: attachment; filename = {$csv_profiles_filename}" );
+		header( 'Content-Length: ' . filesize( $csv_profiles_file_path ) );
+		header( 'Pragma: no-cache' );
+		header( 'Expires: 0' );
+
+		// Read the file.
+		readfile( $csv_profiles_file_path );
+
+		exit;
 	}
 }
 
