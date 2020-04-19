@@ -504,6 +504,18 @@ final class WPCampus_Network_Global {
 			'ignore_sticky_posts' => true,
 			'orderby'             => 'post_modified',
 			'order'               => 'DESC',
+			'meta_query'          => [
+				'relation' => 'OR',
+				[
+					'key'     => 'wpc_search_disable',
+					'compare' => 'NOT EXISTS',
+				],
+				[
+					'key'     => 'wpc_search_disable',
+					'value'   => '1',
+					'compare' => '!=',
+				],
+			],
 		];
 
 		if ( ! empty( $_GET['search'] ) ) {

@@ -68,6 +68,60 @@ acf_add_local_field_group(
 
 acf_add_local_field_group(
 	[
+		'key'                   => 'group_5b9e823419bec',
+		'title'                 => 'WPCampus: Search',
+		'fields'                => [
+			[
+				'key'               => 'field_5e9c5d761e71c',
+				'label'             => 'Remove from search',
+				'name'              => 'wpc_search_disable',
+				'type'              => 'true_false',
+				'instructions'      => '',
+				'required'          => 0,
+				'conditional_logic' => 0,
+				'message'           => 'Remove this content from search results',
+				'default_value'     => 0,
+				'ui'                => 1,
+				'ui_on_text'        => '',
+				'ui_off_text'       => '',
+			],
+		],
+		'location'              => [
+			[
+				[
+					'param'    => 'post_type',
+					'operator' => '==',
+					'value'    => 'post',
+				],
+			],
+			[
+				[
+					'param'    => 'post_type',
+					'operator' => '==',
+					'value'    => 'page',
+				],
+			],
+			[
+				[
+					'param'    => 'post_type',
+					'operator' => '==',
+					'value'    => 'podcast',
+				],
+			],
+		],
+		'menu_order'            => 0,
+		'position'              => 'normal',
+		'style'                 => 'default',
+		'label_placement'       => 'left',
+		'instruction_placement' => 'field',
+		'hide_on_screen'        => '',
+		'active'                => true,
+		'description'           => '',
+	]
+);
+
+acf_add_local_field_group(
+	[
 		'key'                   => 'group_5e9624dd7b294',
 		'title'                 => 'WPCampus: Breadcrumbs',
 		'fields'                => [
