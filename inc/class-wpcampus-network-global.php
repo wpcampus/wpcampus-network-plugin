@@ -530,6 +530,10 @@ final class WPCampus_Network_Global {
 				}
 			} else {
 				$post_path = get_page_uri( $post );
+
+				if ( ! empty( $post_path ) ) {
+					$post_path = '/' . trailingslashit( $post_path );
+				}
 			}
 
 			$clean_posts[] = [
