@@ -69,7 +69,7 @@ acf_add_local_field_group(
 acf_add_local_field_group(
 	[
 		'key'                   => 'group_5e9624dd7b294',
-		'title'                 => 'WPCampus: Breacrumbs',
+		'title'                 => 'WPCampus: Breadcrumbs',
 		'fields'                => [
 			[
 				'key'               => 'field_5e9640bcb891a',
