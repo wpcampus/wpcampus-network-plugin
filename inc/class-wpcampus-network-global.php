@@ -536,6 +536,8 @@ final class WPCampus_Network_Global {
 				}
 			}
 
+			$post_excerpt_basic = $this->get_excerpt_basic( $post );
+
 			$clean_posts[] = [
 				'ID'       => $post->ID,
 				'title'    => $post->post_title,
@@ -548,7 +550,7 @@ final class WPCampus_Network_Global {
 				'path'     => $post_path,
 				'status'   => $post->post_status,
 				'excerpt'  => [
-					'basic'    => $post->post_excerpt,
+					'basic'    => $post_excerpt_basic,
 					'rendered' => wpautop( $post->post_excerpt ),
 				],
 				'content'  => [
@@ -600,6 +602,28 @@ final class WPCampus_Network_Global {
 	}
 
 	/**
+	 * Returns a shortened, no tags post excerpt.
+	 *
+	 * @param $post
+	 *
+	 * @return mixed
+	 */
+	private function get_excerpt_basic( $post ) {
+
+		if ( ! empty( $post->post_excerpt ) ) {
+			$post_excerpt = $post->post_excerpt;
+		} else {
+			$post_excerpt = $post->post_content;
+		}
+
+		// Remove any tags.
+		$post_excerpt = strip_tags( $post_excerpt );
+
+		// Trim the length.
+		return wp_trim_words( $post_excerpt, 30, '...' );
+	}
+
+	/**
 	 * Filter the response for blog posts.
 	 *
 	 * @param $response - WP_REST_Response - The response object.
@@ -610,23 +634,15 @@ final class WPCampus_Network_Global {
 	 */
 	public function filter_rest_prepare_post( $response, $post, $request ) {
 
+		$post_excerpt_basic = $this->get_excerpt_basic( $post );
+
+		// Make sure we have an excerpt item.
 		if ( ! isset( $response->data['excerpt'] ) ) {
 			$response->data['excerpt'] = [];
 		}
 
-		if ( empty( $post->post_excerpt ) ) {
-			$post_excerpt = $post->post_content;
-		} else {
-			$post_excerpt = $post->post_excerpt;
-		}
-
-		// Remove any tags.
-		$post_excerpt = strip_tags( $post_excerpt );
-
-		// Trim the length.
-		$post_excerpt = wp_trim_words( $post_excerpt, 30, '...' );
-
-		$response->data['excerpt']['basic'] = $post_excerpt;
+		// Add as basic excerpt.
+		$response->data['excerpt']['basic'] = $post_excerpt_basic;
 
 		return $response;
 	}
