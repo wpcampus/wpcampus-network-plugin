@@ -46,6 +46,8 @@ final class WPCampus_Network_Global {
 		// Load our text domain.
 		add_action( 'init', [ $plugin, 'textdomain' ] );
 
+		add_filter( 'headless_mode_disable_front_end', [ $plugin, 'headless_mode_disable_front_end' ] );
+
 		// Add headers to the login page.
 		add_action( 'login_init', [ $plugin, 'add_header_content_security_policy' ] );
 
@@ -173,6 +175,25 @@ final class WPCampus_Network_Global {
 	 */
 	public function textdomain() {
 		load_plugin_textdomain( 'wpcampus-network', false, $this->helper->get_plugin_basename() . '/languages' );
+	}
+
+	/**
+	 * Return true if the front end should be disabled.
+	 *
+	 * @param $disable - default disabled status.
+	 *
+	 * @return bool
+	 */
+	public function headless_mode_disable_front_end( $disable ) {
+
+		/*
+		 * @TODO set back to "manage_options" after speaker app is done
+		 */
+		if ( ! empty( $_SERVER['REQUEST_URI'] ) && '/speaker-application/' == $_SERVER['REQUEST_URI'] ) {
+			return false;
+		}
+
+		return ! current_user_can( 'manage_options' );
 	}
 
 	/**
