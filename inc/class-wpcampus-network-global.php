@@ -634,24 +634,34 @@ final class WPCampus_Network_Global {
 				}
 			}
 
-			$post_excerpt_basic = $this->get_excerpt_basic( $post );
+			// Add excerpt info.
+			$post_excerpt_basic = '';
+
+			if ( ! empty( $post->post_excerpt ) ) {
+				$post_excerpt_basic = $this->get_excerpt_basic( $post->post_excerpt );
+			}
+
+			if ( empty( $post_excerpt_basic ) && ! empty( $post->post_content ) ) {
+				$post_excerpt_basic = $this->get_excerpt_basic( $post->post_content );
+			}
 
 			$clean_posts[] = [
-				'ID'       => $post->ID,
-				'title'    => $post->post_title,
-				'type'     => $post->post_type,
-				'author'   => $post->post_author,
-				'parent'   => $post->post_parent,
-				'date'     => $post->post_date,
-				'modified' => $post->post_modified,
-				'slug'     => $post->post_name,
-				'path'     => $post_path,
-				'status'   => $post->post_status,
-				'excerpt'  => [
-					'basic'    => $post_excerpt_basic,
-					'rendered' => wpautop( $post->post_excerpt ),
+				'ID'         => $post->ID,
+				'title'      => $post->post_title,
+				'type'       => $post->post_type,
+				'author'     => $author,
+				'parent'     => $post->post_parent,
+				'date'       => $post->post_date,
+				'modified'   => $post->post_modified,
+				'slug'       => $post->post_name,
+				'path'       => $post_path,
+				'status'     => $post->post_status,
+				'categories' => $categories,
+				'excerpt'    => [
+					'basic'    => ! empty( $post_excerpt_basic ) ? $post_excerpt_basic : '',
+					'rendered' => ! empty( $post_excerpt_basic ) ? wpautop( $post_excerpt_basic ) : '',
 				],
-				'content'  => [
+				'content'    => [
 					'basic'    => $post->post_content,
 					'rendered' => wpautop( $post->post_content ),
 				],
@@ -706,19 +716,16 @@ final class WPCampus_Network_Global {
 	 *
 	 * @return mixed
 	 */
-	private function get_excerpt_basic( $post ) {
-
-		if ( ! empty( $post->post_excerpt ) ) {
-			$post_excerpt = $post->post_excerpt;
-		} else {
-			$post_excerpt = $post->post_content;
+	private function get_excerpt_basic( $excerpt, $length = 30 ) {
+		if ( empty( $excerpt ) ) {
+			return "";
 		}
 
 		// Remove any tags.
-		$post_excerpt = strip_tags( $post_excerpt );
+		$excerpt = strip_tags( $excerpt );
 
 		// Trim the length.
-		return wp_trim_words( $post_excerpt, 30, '...' );
+		return wp_trim_words( $excerpt, $length, '...' );
 	}
 
 	/**
@@ -732,15 +739,25 @@ final class WPCampus_Network_Global {
 	 */
 	public function filter_rest_prepare_post( $response, $post, $request ) {
 
-		$post_excerpt_basic = $this->get_excerpt_basic( $post );
+		// Add excerpt info.
+		$post_excerpt_basic = '';
+
+		if ( ! empty( $post->post_excerpt ) ) {
+			$post_excerpt_basic = $this->get_excerpt_basic( $post->post_excerpt );
+		}
+
+		if ( empty( $post_excerpt_basic ) && ! empty( $post->post_content ) ) {
+			$post_excerpt_basic = $this->get_excerpt_basic( $post->post_content );
+		}
 
 		// Make sure we have an excerpt item.
 		if ( ! isset( $response->data['excerpt'] ) ) {
 			$response->data['excerpt'] = [];
 		}
 
-		// Add as basic excerpt.
-		$response->data['excerpt']['basic'] = $post_excerpt_basic;
+		// Add a "basic" excerpt.
+		$response->data['excerpt']['basic'] = ! empty( $post_excerpt_basic) ? $post_excerpt_basic : '';
+		$response->data['excerpt']['rendered'] = ! empty( $post_excerpt_basic ) ? wpautop( $post_excerpt_basic ) : '';
 
 		return $response;
 	}
@@ -805,6 +822,26 @@ final class WPCampus_Network_Global {
 		];
 
 		$response->data['crumb'] = $crumb;
+
+		// Add excerpt info.
+		$post_excerpt_basic = '';
+
+		if ( ! empty( $post->post_excerpt ) ) {
+			$post_excerpt_basic = $this->get_excerpt_basic( $post->post_excerpt );
+		}
+
+		if ( empty( $post_excerpt_basic ) && ! empty( $post->post_content ) ) {
+			$post_excerpt_basic = $this->get_excerpt_basic( $post->post_content );
+		}
+
+		// Make sure we have an excerpt item.
+		if ( ! isset( $response->data['excerpt'] ) ) {
+			$response->data['excerpt'] = [];
+		}
+
+		// Add a "basic" excerpt.
+		$response->data['excerpt']['basic'] = ! empty( $post_excerpt_basic ) ? $post_excerpt_basic : '';
+		$response->data['excerpt']['rendered'] = ! empty( $post_excerpt_basic ) ? wpautop( $post_excerpt_basic ) : '';
 
 		return $response;
 	}
