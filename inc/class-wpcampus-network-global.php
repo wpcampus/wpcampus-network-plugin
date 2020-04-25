@@ -89,6 +89,7 @@ final class WPCampus_Network_Global {
 
 		// Manage the REST API.
 		add_action( 'rest_api_init', [ $plugin, 'register_rest_routes' ] );
+		add_action( 'rest_api_init', [ $plugin, 'register_rest_fields' ] );
 		add_filter( 'rest_user_query', [ $plugin, 'filter_rest_user_query' ], 10, 2 );
 		add_filter( 'rest_prepare_post', [ $plugin, 'filter_rest_prepare_post' ], 10, 3 );
 		add_filter( 'rest_prepare_page', [ $plugin, 'filter_rest_prepare_page' ], 10, 3 );
@@ -504,6 +505,70 @@ final class WPCampus_Network_Global {
 				'callback' => [ $this, 'get_search_results' ],
 			]
 		);
+	}
+
+	/**
+	 * Register custom fields for REST API.
+	 */
+	public function register_rest_fields() {
+
+		register_rest_field(
+			[
+				'post',
+				'page',
+				'podcast',
+			],
+			'wpc_seo',
+			[
+				'get_callback' => [ $this, 'get_wpc_seo_meta' ],
+			]
+		);
+	}
+
+	/**
+	 * Add data to "wpc_seo" API field.
+	 *
+	 * @param $object
+	 * @param $field_name
+	 *
+	 * @return array
+	 */
+	public function get_wpc_seo_meta( $object, $field_name ) {
+
+		$title = get_post_meta( $object['id'], 'wpc_seo_title', true );
+		if ( empty( $title ) ) {
+			$title = "";
+		}
+
+		$meta_desc = get_post_meta( $object['id'], 'wpc_seo_meta_desc', true );
+		if ( empty( $meta_desc ) ) {
+
+			// Add excerpt info.
+			$post_excerpt_basic = '';
+
+			if ( ! empty( $object['excerpt']['rendered'] ) ) {
+				$post_excerpt_basic = $this->get_excerpt_basic( $object['excerpt']['rendered'] );
+			}
+
+			if ( ! empty( $post_excerpt_basic ) ) {
+				$meta_desc = $post_excerpt_basic;
+			} else {
+				$meta_desc = "";
+			}
+		}
+
+		$robots = get_post_meta( $object['id'], 'wpc_seo_robots', true );
+		if ( empty( $robots ) || ! is_array( $robots ) ) {
+			$robots = [];
+		}
+
+		return [
+			'title' => $title,
+			'meta'  => [
+				'description' => $meta_desc,
+				'robots'      => $robots,
+			],
+		];
 	}
 
 	/**
