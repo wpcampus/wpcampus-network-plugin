@@ -193,8 +193,11 @@ final class WPCampus_Network_Global {
 		/*
 		 * @TODO set back to "manage_options" after speaker app is done
 		 */
-		if ( ! empty( $_SERVER['REQUEST_URI'] ) && '/speaker-application/' == $_SERVER['REQUEST_URI'] ) {
-			return false;
+		if ( ! empty( $_SERVER['REQUEST_URI'] ) ) {
+
+			if ( in_array( $_SERVER['REQUEST_URI'], [ '/speaker-application/', '/registration/' ] ) ) {
+				return false;
+			}
 		}
 
 		return ! current_user_can( 'manage_options' );
