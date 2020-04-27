@@ -141,6 +141,9 @@ final class WPCampus_Network_Global {
 		// Print our Javascript templates when needed.
 		add_action( 'wp_footer', [ $plugin, 'print_js_templates' ] );
 
+		// Filter search results.
+		add_filter( 'posts_clauses', [ $plugin, 'filter_search_results_query' ], 10, 2 );
+
 		// Stupid Gravity Slider Fields notices.
 		add_filter( 'gsf_show_notices', '__return_false' );
 
@@ -569,6 +572,28 @@ final class WPCampus_Network_Global {
 				'robots'      => $robots,
 			],
 		];
+	}
+
+	/**
+	 * Filter search results query to get author.
+	 *
+	 * @param $pieces
+	 * @param $query
+	 *
+	 * @return mixed
+	 */
+	public function filter_search_results_query( $pieces, $query ) {
+		global $wpdb;
+
+		// Only run on our search.
+		if ( empty( $query->get( 'wpcampus_search' ) ) ) {
+			return $pieces;
+		}
+
+		$pieces['fields'] .= ", wpc_users.display_name AS author_display_name, wpc_users.user_nicename AS author_path";
+		$pieces['join'] .= " LEFT JOIN {$wpdb->users} wpc_users ON wpc_users.ID = {$wpdb->posts}.post_author";
+
+		return $pieces;
 	}
 
 	/**
