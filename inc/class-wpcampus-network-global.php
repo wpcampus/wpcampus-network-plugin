@@ -91,7 +91,7 @@ final class WPCampus_Network_Global {
 		add_action( 'rest_api_init', [ $plugin, 'register_rest_routes' ] );
 		add_action( 'rest_api_init', [ $plugin, 'register_rest_fields' ] );
 		add_filter( 'rest_user_query', [ $plugin, 'filter_rest_user_query' ], 10, 2 );
-		add_filter( 'rest_prepare_post', [ $plugin, 'filter_rest_prepare_post' ], 10, 3 );
+		add_filter( 'rest_prepare_post', [ $plugin, 'filter_rest_prepare_post' ], 20, 3 );
 		add_filter( 'rest_prepare_page', [ $plugin, 'filter_rest_prepare_page' ], 10, 3 );
 
 		// Register the network footer menu.
@@ -885,6 +885,7 @@ final class WPCampus_Network_Global {
 	 * @return mixed
 	 */
 	public function filter_rest_prepare_post( $response, $post, $request ) {
+		global $wpdb;
 
 		// Add excerpt info.
 		$post_excerpt_basic = '';
@@ -903,8 +904,38 @@ final class WPCampus_Network_Global {
 		}
 
 		// Add a "basic" excerpt.
-		$response->data['excerpt']['basic'] = ! empty( $post_excerpt_basic) ? $post_excerpt_basic : '';
+		$response->data['excerpt']['basic'] = ! empty( $post_excerpt_basic ) ? $post_excerpt_basic : '';
 		$response->data['excerpt']['rendered'] = ! empty( $post_excerpt_basic ) ? wpautop( $post_excerpt_basic ) : '';
+
+		$params = $request->get_params();
+
+		// Only keep going if we need meta.
+		if ( empty( $params['get_meta'] ) ) {
+			return $response;
+		}
+
+		// Convert author IDs to info needed.
+		if ( ! empty( $response->data['author'] ) ) {
+
+			$author = $response->data['author'];
+
+			if ( ! is_array( $author ) ) {
+				$author = [ $author ];
+			}
+
+			$author = array_map( function ( $author ) {
+				if ( ! empty( $author->ID ) ) {
+					return $author->ID;
+				}
+				return $author;
+			}, $author );
+
+			$author_str = "(" . implode( ",", $author ) . ")";
+
+			$authors = $wpdb->get_results( "SELECT ID, display_name, user_nicename AS path FROM {$wpdb->users} WHERE ID IN " . $author_str );
+
+			$response->data['author'] = $authors;
+		}
 
 		return $response;
 	}
