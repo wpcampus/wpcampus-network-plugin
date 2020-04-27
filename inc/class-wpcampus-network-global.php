@@ -791,6 +791,30 @@ final class WPCampus_Network_Global {
 			}
 		}
 
+		if ( ! function_exists( 'wpcampus_speakers' ) ) {
+			return new WP_REST_Response( $clean_posts );
+		}
+
+		// Get sessions. Force these defaults.
+		$args['proposal_status'] = 'confirmed';
+		$args['get_feedback'] = false;
+		$args['get_subjects'] = true;
+		$args['search'] = $search_term;
+
+		// @TODO right now doesn't search speaker names.
+		$sessions = wpcampus_speakers()->get_sessions_public( $args );
+
+		if ( ! empty( $sessions ) ) {
+
+			// Add type to each session.
+			$sessions = array_map( function ( $session ) {
+				$session->type = "session";
+				return $session;
+			}, $sessions );
+
+			$clean_posts = array_merge( $clean_posts, $sessions );
+		}
+
 		//$found_ids = $query->query( $query_args );
 		//$total     = $query->found_posts;
 
