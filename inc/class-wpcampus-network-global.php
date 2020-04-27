@@ -604,10 +604,18 @@ final class WPCampus_Network_Global {
 	 * @return WP_REST_Response
 	 */
 	public function get_search_results() {
+		global $wpdb;
 
-		$post_types = [ 'post', 'page' ];
+		if ( empty( $_GET['search'] ) ) {
+			return new WP_REST_Response( [] );
+		}
+
+		$search_term = sanitize_text_field( $_GET['search'] );
+
+		$post_types = [ 'post', 'page', 'podcast' ];
 
 		$query_args = [
+			's'                   => $search_term,
 			'post_type'           => $post_types,
 			'post_status'         => 'publish',
 			//'paged'               => (int) $request['page'],
@@ -615,6 +623,7 @@ final class WPCampus_Network_Global {
 			'ignore_sticky_posts' => true,
 			'orderby'             => 'post_modified',
 			'order'               => 'DESC',
+			'wpcampus_search'     => true,
 			'meta_query'          => [
 				'relation' => 'OR',
 				[
@@ -629,10 +638,6 @@ final class WPCampus_Network_Global {
 			],
 		];
 
-		if ( ! empty( $_GET['search'] ) ) {
-			$query_args['s'] = sanitize_text_field( $_GET['search'] );
-		}
-
 		$query = new WP_Query( $query_args );
 
 		$posts = $query->posts;
@@ -641,9 +646,67 @@ final class WPCampus_Network_Global {
 
 		$blog_url = get_bloginfo( 'url' );
 
+		// Will hold ID of user info we need.
+		$author_ids = [];
+
+		$categories = [];
+
 		foreach ( $posts as $post ) {
 
-			if ( 'post' == $post->post_type ) {
+			// Author will be converted to an array for content that displays authors.
+			$author = (int) $post->post_author;
+
+			if ( in_array( $post->post_type, [ 'post', 'podcast' ] ) ) {
+
+				$categories = wp_get_post_categories( $post->ID, [ 'fields' => 'all' ] );
+
+				$author = [
+					[
+						'ID'           => $author,
+						'path'         => $post->author_path,
+						'display_name' => $post->author_display_name,
+					],
+				];
+
+				// Only running for posts that display author info.
+				if ( function_exists( 'my_multi_author' ) ) {
+
+					$multi_authors = my_multi_author()->get_authors( $post->ID );
+
+					if ( ! empty( $multi_authors ) ) {
+
+						// If we have the same amount of authors, nevermind.
+						if ( count( $multi_authors ) !== count( $author ) ) {
+
+							foreach ( $author as $author_info ) {
+
+								$author_id = 0;
+
+								if ( ! is_array( $author_info ) ) {
+									$author_id = (int) $author_info;
+								} else if ( ! empty( $author_info['ID'] ) ) {
+									$author_id = (int) $author_info['ID'];
+								}
+
+								if ( ! $author_id ) {
+									continue;
+								}
+
+								$key = array_search( $author_id, $multi_authors );
+
+								if ( $key >= 0 ) {
+									unset( $multi_authors[ $key ] );
+								}
+							}
+
+							// Store multi author ID back in result.
+							foreach ( $multi_authors as $author_id ) {
+								$author[] = [ 'ID' => $author_id ];
+								$author_ids[] = $author_id;
+							}
+						}
+					}
+				}
 
 				$post_path = get_permalink( $post->ID );
 
@@ -691,6 +754,41 @@ final class WPCampus_Network_Global {
 					'rendered' => wpautop( $post->post_content ),
 				],
 			];
+		}
+
+		if ( ! empty( $author_ids ) ) {
+
+			$author_ids = array_unique( $author_ids );
+
+			// Do 1 DB query to get all author info we need.
+			$author_id_str = "(" . implode( ",", $author_ids ) . ")";
+			$authors = $wpdb->get_results( "SELECT ID, display_name, user_nicename AS path FROM {$wpdb->users} WHERE ID IN {$author_id_str}" );
+
+			$authors_by_id = [];
+			foreach ( $authors as $author ) {
+				if ( isset( $authors_by_id[ $author->ID ] ) ) {
+					continue;
+				}
+				$authors_by_id[ $author->ID ] = $author;
+			}
+
+			if ( ! empty( $authors ) ) {
+
+				foreach ( $clean_posts as &$post ) {
+					if ( "post" != $post['type'] ) {
+						continue;
+					}
+					foreach ( $post['author'] as &$author ) {
+						if ( ! empty( $author['display_name'] ) ) {
+							continue;
+						}
+						if ( ! isset( $authors_by_id[ $author['ID'] ] ) ) {
+							continue;
+						}
+						$author = $authors_by_id[ $author['ID'] ];
+					}
+				}
+			}
 		}
 
 		//$found_ids = $query->query( $query_args );
