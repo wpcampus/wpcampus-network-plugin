@@ -1050,6 +1050,8 @@ final class WPCampus_Network_Global {
 		$css_dir = $plugin_url . 'assets/css/';
 		$js_dir = $plugin_url . 'assets/js/';
 
+		$assets_ver = '1.1';
+
 		// Setup the font weights we need.
 		$open_sans_weights = apply_filters( 'wpcampus_open_sans_font_weights', [] );
 
@@ -1090,7 +1092,7 @@ final class WPCampus_Network_Global {
 
 		// Enqueue the network banner styles.
 		if ( $this->helper->is_enabled( 'banner' ) ) {
-			wp_enqueue_style( 'wpc-network-banner', $css_dir . 'wpc-network-banner.min.css', [ 'wpc-fonts-open-sans' ], null );
+			wp_enqueue_style( 'wpc-network-banner', $css_dir . 'wpc-network-banner.min.css', [ 'wpc-fonts-open-sans' ], $assets_ver );
 			wp_enqueue_script( 'wpc-network-toggle-menu' );
 		}
 
