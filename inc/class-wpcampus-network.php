@@ -439,7 +439,7 @@ final class WPCampus_Network {
 
 		$banner .= '<div class="wpc-container">
 				<div class="wpc-logo">
-					<a href="https://wpcampus.org">
+					<a href="https://www.wpcampus.org">
 						<?xml version="1.0" encoding="utf-8"?>
 						<svg version="1.1" id="WPCampusOrgLogo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1275 100" style="enable-background:new 0 0 1275 100;" xml:space="preserve">
 							<title>' . sprintf( __( '%1$s: Where %2$s Meets Higher Education', 'wpcampus-network' ), 'WPCampus', 'WordPress' ) . '</title>
@@ -464,13 +464,14 @@ final class WPCampus_Network {
 						<div class="wpc-toggle-bar"></div>
 					</button>
 					<ul class="wpc-menu">
-						<li><a href="https://wpcampus.org/about/" title="' . sprintf( __( 'About %s', 'wpcampus-network' ), 'WPCampus' ) . '">' . __( 'About', 'wpcampus-network' ) . '</a></li>
-						<li><a href="https://wpcampus.org/blog/">' . __( 'Blog', 'wpcampus-network' ) . '</a></li>
-						<li><a href="https://wpcampus.org/library/">' . __( 'Library', 'wpcampus-network' ) . '</a></li>
-						<li><a href="https://wpcampus.org/conferences/">' . __( 'Conferences', 'wpcampus-network' ) . '</a></li>
-						<li><a href="https://shop.wpcampus.org/">' . __( 'Shop', 'wpcampus-network' ) . '</a></li>
-						<li><a href="https://wpcampus.org/about/contact/">' . __( 'Contact', 'wpcampus-network' ) . '</a></li>
-						<li class="highlight"><a href="https://wpcampus.org/get-involved/">' . __( 'Get Involved', 'wpcampus-network' ) . '</a></li>
+						<li><a href="https://www.wpcampus.org/about/" title="' . sprintf( __( 'About %s', 'wpcampus-network' ), 'WPCampus' ) . '">' . __( 'About', 'wpcampus-network' ) . '</a></li>
+						<li><a href="https://www.wpcampus.org/blog/">' . __( 'Blog', 'wpcampus-network' ) . '</a></li>
+						<li><a href="https://www.wpcampus.org/community/">' . __( 'Community', 'wpcampus-network' ) . '</a></li>
+						<li><a href="https://www.wpcampus.org/conferences/">' . __( 'Conferences', 'wpcampus-network' ) . '</a></li>
+						<li><a href="https://www.wpcampus.org/learning/">' . __( 'Learning', 'wpcampus-network' ) . '</a></li>
+						<li><a href="https://www.wpcampus.org/jobs/">' . __( 'Jobs', 'wpcampus-network' ) . '</a></li>
+						<li><a href="https://www.wpcampus.org/about/contact/">' . __( 'Contact', 'wpcampus-network' ) . '</a></li>
+						<li class="highlight"><a href="https://www.wpcampus.org/community/membership/">' . __( 'Become a member', 'wpcampus-network' ) . '</a></li>
 					</ul>' . $this->get_social_media_icons() .
 		           '</div>
 			</div>
@@ -603,9 +604,9 @@ final class WPCampus_Network {
 
 		$images_dir = "{$this->get_plugin_url()}assets/images/";
 
-		$home_url = 'https://wpcampus.org/';
-		$get_involved_url = 'https://wpcampus.org/get-involved/';
-		$github_url = 'https://github.com/wpcampus/wpcampus-wp-theme';
+		$home_url = 'https://www.wpcampus.org/';
+		$get_involved_url = 'https://www.wpcampus.org/community/membership/';
+		$github_url = 'https://github.com/wpcampus/';
 		$wp_org_url = 'https://wordpress.org/';
 
 		// Build the footer.
@@ -627,11 +628,13 @@ final class WPCampus_Network {
 
 		if ( empty( $footer_menu ) ) {
 			$footer_menu = '<ul>
-                <li><a href="https://wpcampus.org/about/">About WPCampus</a></li>
-                <li><a href="https://wpcampus.org/code-of-conduct/">Code of Conduct</a></li>
-                <li><a href="https://wpcampus.org/diversity/">Diversity, Equity, and Inclusion</a></li>
-                <li><a href="https://wpcampus.org/about/contact/">Contact us</a></li>
-            </ul>';
+				<li><a href="https://www.wpcampus.org/about/">About WPCampus</a></li>
+				<li><a href="https://www.wpcampus.org/blog/">Our Blog</a>
+				</li><li><a href="https://www.wpcampus.org/community/">Our Community</a>
+				</li><li><a href="https://www.wpcampus.org/conferences/">Our Conferences</a>
+				</li><li><a href="https://www.wpcampus.org/about/guidelines/">Our Guidelines</a>
+				</li><li><a href="https://www.wpcampus.org/about/contact/">Contact us</a></li>				
+			</ul>';
 		}
 
 		if ( ! empty( $footer_menu ) ) {
@@ -1027,7 +1030,7 @@ final class WPCampus_Network {
 		$social = [
 			'slack'    => [
 				'title' => sprintf( __( 'Join %1$s on %2$s', 'wpcampus-network' ), 'WPCampus', 'Slack' ),
-				'href'  => 'https://wpcampus.org/get-involved/',
+				'href'  => 'https://www.wpcampus.org/community/membership/',
 			],
 			'twitter'  => [
 				'title' => sprintf( __( 'Follow %1$s on %2$s', 'wpcampus-network' ), 'WPCampus', 'Twitter' ),
@@ -1094,7 +1097,7 @@ final class WPCampus_Network {
 		}
 
 		if ( empty( $output ) ) {
-			$read_url = 'https://wpcampus.org/code-of-conduct/';
+			$read_url = 'https://www.wpcampus.org/about/guidelines/conduct/';
 			$output = '<p>Read the <a href="' . $read_url . '">WPCampus Code of Conduct</a></p>';
 		}
 
@@ -1114,7 +1117,7 @@ final class WPCampus_Network {
 	 * @return string
 	 */
 	public function get_code_of_conduct_message() {
-		return sprintf( __( '%1$s seeks to provide a friendly, safe environment.  All participants should be able to engage in productive dialogue. They should share and learn with each other in an atmosphere of mutual respect. We require all participants adhere to our %2$scode of conduct%3$s. This applies to all community interaction and events.', 'wpcampus-network' ), 'WPCampus', '<a href="https://wpcampus.org/code-of-conduct/">', '</a>' );
+		return sprintf( __( '%1$s seeks to provide a friendly, safe environment.  All participants should be able to engage in productive dialogue. They should share and learn with each other in an atmosphere of mutual respect. We require all participants adhere to our %2$scode of conduct%3$s. This applies to all community interaction and events.', 'wpcampus-network' ), 'WPCampus', '<a href="https://www.wpcampus.org/about/guidelines/conduct/">', '</a>' );
 	}
 
 	/**
@@ -1317,7 +1320,7 @@ final class WPCampus_Network {
 
 	public function html_redirect( $url ) {
 		if ( empty( $url ) ) {
-			$url = 'https://wpcampus.org/';
+			$url = 'https://www.wpcampus.org/';
 		}
 		?>
 		<!DOCTYPE html>
