@@ -62,6 +62,8 @@ final class WPCampus_Network_Global {
 		// Add login stylesheet.
 		add_action( 'login_head', [ $plugin, 'enqueue_login_styles' ] );
 
+		add_action( 'login_footer', [ $plugin, 'add_to_login_footer' ] );
+
 		// Set default user role to "member".
 		add_filter( 'pre_option_default_role', [ $plugin, 'set_default_user_role' ] );
 
@@ -316,7 +318,124 @@ final class WPCampus_Network_Global {
 	 * Add login stylesheet.
 	 */
 	public function enqueue_login_styles() {
-		wp_enqueue_style( 'wpc-network-login', trailingslashit( $this->helper->get_plugin_url() ) . 'assets/css/wpc-network-login.min.css', [], null );
+		$login_ver = '1.3';
+		wp_enqueue_style( 'wpc-network-login', trailingslashit( $this->helper->get_plugin_url() ) . 'assets/css/wpc-network-login.min.css', [], $login_ver );
+	}
+
+	public function add_to_login_footer() {
+		global $blog_id;
+
+		// Default action is to login.
+		$action = 'login';
+
+		$available_actions = [ 'login', 'lostpassword' ];
+
+		if ( ! empty( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $available_actions ) ) {
+			$action = $_REQUEST['action'];
+		}
+
+		$nav_items = [];
+
+		if ( 'lostpassword' === $action ) {
+
+			$nav_items[] = [
+				'href' => wp_login_url(),
+				'text' => 'Login',
+				'icon' => 'login',
+			];
+		} else {
+
+			$lost_password_url = wp_lostpassword_url();
+
+			$nav_items[] = [
+				'href' => $lost_password_url,
+				'text' => 'Lost your password',
+				'icon' => 'question',
+			];
+
+			$nav_items[] = [
+				'href' => $lost_password_url,
+				'text' => 'Not sure if you have an account',
+				'icon' => 'question',
+			];
+		}
+
+		// Create an account.
+		$nav_items[] = [
+			'href' => 'https://www.wpcampus.org/community/membership/',
+			'text' => 'Create an account',
+			'icon' => 'plus',
+		];
+
+		/*
+		 * Always add home nav.
+		 */
+		if ( 1 == $blog_id ) {
+			$home_url = 'https://www.wpcampus.org';
+			$home_text = 'Go to wpcampus.org';
+		} else {
+
+			$home_url = home_url( '/' );
+			$home_url_parts = parse_url( $home_url );
+
+			if ( ! empty( $home_url_parts['host'] ) ) {
+				$home_text = "Go to {$home_url_parts['host']}";
+			} else {
+				$home_text = 'Go to website';
+			}
+		}
+
+		$nav_items[] = [
+			'href' => $home_url,
+			'text' => $home_text,
+			'icon' => 'home',
+		];
+
+		if ( 'lostpassword' === $action ) :
+
+			$contact_url = 'https://www.wpcampus.org/about/contact/';
+
+			?>
+			<div id="wpc-login-instructions">
+				<h2>When to use this form</h2>
+				<p>If you've lost your password or need to confirm you have an account.</p>
+				<h2>Next steps</h2>
+				<h3>If you know your username or email address</h3>
+				<p>Enter your username or email address. You will receive an email message with instructions on how to reset your password.</p>
+				<h3>If you're unsure if you have an account</h3>
+				<p>Enter your email address. If your account exists, you will receive an email message with instructions on how to reset your password. Feel free to try multiple email addresses.</p>
+				<h3>If nothing works</h3>
+				<p><a href="<?php echo esc_url( $contact_url ); ?>>">Contact WPCampus</a> and report the issue.</p>
+			</div>
+		<?php
+		endif;
+
+		?>
+		<nav id="wpc-login-nav">
+			<ul>
+				<?php
+
+				$allowed_icons = [ 'home', 'login', 'question', 'plus' ];
+
+				foreach ( $nav_items as $item ) :
+					if ( empty( $item['href'] ) || empty( $item['text'] ) ) {
+						continue;
+					}
+
+					$icon = '';
+					if ( ! empty( $item['icon'] ) && in_array( $item['icon'], $allowed_icons ) ) {
+						$icon = '<span class="wpc-icon wpc-icon--' . $item['icon'] . '"></span>';
+					}
+
+					?>
+					<li><a href="<?php echo esc_url( $item['href'] ); ?>"><?php echo $icon; ?><span><?php echo $item['text']; ?></span></a></li>
+				<?php
+				endforeach;
+
+				?>
+			</ul>
+		</nav>
+		<?php
 	}
 
 	/**
