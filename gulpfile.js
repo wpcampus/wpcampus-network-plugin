@@ -40,10 +40,32 @@ gulp.task('css', function(done) {
 		.on('end',done);
 });
 
-gulp.task('jsDist',function(done) {
+// Move our third-party assets.
+gulp.task('handlebars',function(done) {
 	return gulp.src(['./node_modules/mustache/mustache.min.js','./node_modules/handlebars/dist/handlebars.min.js'])
 		.pipe(gulp.dest(dest.js))
 		.on('end',done);
+});
+
+gulp.task( 'wpcfooter', function( done ) {
+	gulp.src([
+		'./node_modules/@wpcampus/wpcampus-wc-footer/dist/main.js'
+	])
+		.pipe(rename({
+			basename: "wpcampus-footer",
+			suffix: '.min'
+		}))
+		.pipe( gulp.dest( dest.js + '/@wpcampus/' ) );
+
+	return gulp.src([
+		'./node_modules/@wpcampus/wpcampus-wc-footer/dist/main.css'
+	])
+		.pipe(rename({
+			basename: "wpcampus-footer",
+			suffix: '.min'
+		}))
+		.pipe( gulp.dest( dest.css + '/@wpcampus/' ) )
+		.on( 'end', done );
 });
 
 // Take care of JS.
@@ -65,7 +87,7 @@ gulp.task('js',function(done) {
 gulp.task('compile',gulp.series('css','js'));
 
 // Let's get this party started.
-gulp.task('default', gulp.series('compile','jsDist'));
+gulp.task('default', gulp.series('compile','handlebars','wpcfooter'));
 
 // I've got my eyes on you(r file changes).
 gulp.task('watch', gulp.series('default',function(done) {
