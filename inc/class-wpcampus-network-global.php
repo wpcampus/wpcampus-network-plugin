@@ -1169,7 +1169,7 @@ final class WPCampus_Network_Global {
 		$css_dir = $plugin_url . 'assets/css/';
 		$js_dir = $plugin_url . 'assets/js/';
 
-		$assets_ver = '1.2';
+		$assets_ver = '1.4';
 
 		// Setup the font weights we need.
 		$open_sans_weights = apply_filters( 'wpcampus_open_sans_font_weights', [] );
@@ -1229,7 +1229,8 @@ final class WPCampus_Network_Global {
 
 		// Enqueue the network Code of Conduct styles.
 		if ( $this->helper->is_enabled( 'coc' ) ) {
-			wp_enqueue_style( 'wpc-network-coc', $css_dir . 'wpc-network-coc.min.css', [ 'wpc-fonts-open-sans' ], null );
+			wp_enqueue_style( 'wpc-network-conduct', $css_dir . '@wpcampus/wpcampus-conduct.min.css', [ 'wpc-fonts-open-sans' ] , $assets_ver );
+			wp_enqueue_script( 'wpc-network-conduct', $js_dir . '@wpcampus/wpcampus-conduct.min.js', [], $assets_ver, true );
 		}
 
 		// Enqueue the network footer styles.

@@ -47,6 +47,27 @@ gulp.task('handlebars',function(done) {
 		.on('end',done);
 });
 
+gulp.task( 'wpcconduct', function( done ) {
+	gulp.src([
+		'./node_modules/@wpcampus/wpcampus-wc-conduct/dist/main.js'
+	])
+		.pipe(rename({
+			basename: "wpcampus-conduct",
+			suffix: '.min'
+		}))
+		.pipe( gulp.dest( dest.js + '/@wpcampus/' ) );
+
+	return gulp.src([
+		'./node_modules/@wpcampus/wpcampus-wc-conduct/dist/main.css'
+	])
+		.pipe(rename({
+			basename: "wpcampus-conduct",
+			suffix: '.min'
+		}))
+		.pipe( gulp.dest( dest.css + '/@wpcampus/' ) )
+		.on( 'end', done );
+});
+
 gulp.task( 'wpcfooter', function( done ) {
 	gulp.src([
 		'./node_modules/@wpcampus/wpcampus-wc-footer/dist/main.js'
@@ -87,7 +108,7 @@ gulp.task('js',function(done) {
 gulp.task('compile',gulp.series('css','js'));
 
 // Let's get this party started.
-gulp.task('default', gulp.series('compile','handlebars','wpcfooter'));
+gulp.task('default', gulp.series('compile','handlebars','wpcconduct','wpcfooter'));
 
 // I've got my eyes on you(r file changes).
 gulp.task('watch', gulp.series('default',function(done) {

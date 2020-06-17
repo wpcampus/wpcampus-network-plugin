@@ -1088,12 +1088,7 @@ final class WPCampus_Network {
 			return;
 		}
 
-		return '<aside id="wpc-code-of-conduct" aria-label="' . esc_attr__( 'Code of Conduct', 'wpcampus-network' ) . '">
-			<div class="wpc-container">
-				<h2 class="container-title">' . __( 'Our Code of Conduct', 'wpcampus-network' ) . '</h2>
-				<p>' . $this->get_code_of_conduct_message() . '</p>
-			</div>
-		</aside>';
+		return '<wpcampus-conduct></wpcampus-conduct>';
 	}
 
 	/**
